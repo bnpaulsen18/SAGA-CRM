@@ -1,36 +1,131 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SAGA CRM
+
+AI-powered nonprofit customer relationship management platform.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4 + shadcn/ui
+- **Database:** PostgreSQL (Supabase)
+- **ORM:** Prisma 7
+- **Deployment:** Vercel
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
+- Node.js 20+
+- npm
+- Git
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/bnpaulsen18/SAGA-CRM.git
+cd SAGA-CRM
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local` and add your database credentials:
 
-## Learn More
+```env
+DATABASE_URL="your_supabase_connection_string"
+DIRECT_URL="your_supabase_direct_url"
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your_generated_secret"
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Generate Prisma Client:
+```bash
+npx prisma generate
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Start development server:
+```bash
+npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Open [http://localhost:3000](http://localhost:3000)
 
-## Deploy on Vercel
+## Development
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Commands
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run format       # Format code with Prettier
+npm run db:generate  # Generate Prisma Client
+npm run db:push      # Push schema changes
+npm run db:studio    # Open Prisma Studio
+```
+
+### Database
+
+View and edit data:
+```bash
+npx prisma studio
+```
+
+## Deployment
+
+Automatically deploys to Vercel on push to `main` branch.
+
+Production URL: [saga-crm-j.vercel.app](https://saga-crm-j.vercel.app)
+
+## Project Structure
+
+```
+SAGA-CRM/
+├── app/              # Next.js App Router
+│   ├── api/         # API routes
+│   └── page.tsx     # Home page
+├── lib/             # Utility functions
+│   └── prisma.ts   # Prisma client
+├── prisma/          # Database schema
+│   └── schema.prisma
+├── components/      # React components
+│   └── ui/         # shadcn/ui components
+└── public/          # Static files
+```
+
+## Week 1 Status
+
+✅ Next.js project initialized
+✅ TypeScript + Tailwind configured
+✅ shadcn/ui components installed
+✅ Supabase database connected
+✅ Prisma ORM configured
+✅ Database schema created
+✅ Deployed to Vercel
+✅ Production-ready foundation
+
+## Database Schema
+
+### Organizations
+- Unique EIN
+- Contact information
+- One-to-many relationship with Users
+
+### Users
+- Email/password authentication
+- Role-based access (ADMIN, MEMBER, VIEWER)
+- Organization membership
+
+## License
+
+MIT
+
+## Contributing
+
+Week 1 foundation complete. Ready for feature development!
