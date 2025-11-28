@@ -81,7 +81,7 @@ npx prisma studio
 
 Automatically deploys to Vercel on push to `main` branch.
 
-Production URL: [saga-crm-j.vercel.app](https://saga-crm-j.vercel.app)
+Production URL: [sagacrm.io](https://sagacrm.io)
 
 ## Project Structure
 
