@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +8,10 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ========================================
+// CORE MODELS
+// ========================================
 
 model Organization {
   id        String   @id @default(cuid())
@@ -22,7 +23,14 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users User[]
+  // Relationships
+  users        User[]
+  contacts     Contact[]
+  donations    Donation[]
+  campaigns    Campaign[]
+  emails       Email[]
+  interactions Interaction[]
+  tasks        Task[]
 
   @@map("organizations")
 }
@@ -38,7 +46,10 @@ model User {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  // Relationships
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  interactions Interaction[]
+  tasks        Task[]
 
   @@index([organizationId])
   @@map("users")
@@ -48,4 +59,356 @@ enum UserRole {
   ADMIN
   MEMBER
   VIEWER
+}
+
+// ========================================
+// CONTACT MANAGEMENT
+// ========================================
+
+model Contact {
+  id             String @id @default(cuid())
+  organizationId String
+
+  // Basic Info
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+
+  // Address
+  street  String?
+  city    String?
+  state   String?
+  zip     String?
+  country String  @default("USA")
+
+  // Contact Type
+  type   ContactType   @default(DONOR)
+  status ContactStatus @default(ACTIVE)
+
+  // Metadata
+  tags  String[]
+  notes String?
+
+  // Relationships
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  donations        Donation[]
+  interactions     Interaction[]
+  campaignContacts CampaignContact[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("contacts")
+}
+
+enum ContactType {
+  DONOR
+  VOLUNTEER
+  BOARD_MEMBER
+  STAFF
+  VENDOR
+  OTHER
+}
+
+enum ContactStatus {
+  ACTIVE
+  INACTIVE
+  DECEASED
+  DO_NOT_CONTACT
+}
+
+// ========================================
+// DONATIONS
+// ========================================
+
+model Donation {
+  id             String  @id @default(cuid())
+  organizationId String
+  contactId      String
+  campaignId     String?
+
+  // Donation Details
+  amount   Float
+  currency String         @default("USD")
+  type     DonationType   @default(ONE_TIME)
+  method   PaymentMethod  @default(CREDIT_CARD)
+  status   DonationStatus @default(COMPLETED)
+
+  // Payment Info
+  transactionId String?
+  receiptNumber String? @unique
+
+  // Tax Receipt
+  taxDeductible Boolean   @default(true)
+  receiptSent   Boolean   @default(false)
+  receiptSentAt DateTime?
+
+  // Metadata
+  notes              String?
+  acknowledgmentSent Boolean @default(false)
+
+  // Relationships
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact      Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  campaign     Campaign?    @relation(fields: [campaignId], references: [id])
+
+  donatedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([contactId])
+  @@index([campaignId])
+  @@index([donatedAt])
+  @@map("donations")
+}
+
+enum DonationType {
+  ONE_TIME
+  MONTHLY
+  QUARTERLY
+  ANNUAL
+  IN_KIND
+  STOCK
+}
+
+enum PaymentMethod {
+  CREDIT_CARD
+  DEBIT_CARD
+  BANK_TRANSFER
+  CHECK
+  CASH
+  PAYPAL
+  VENMO
+  CRYPTOCURRENCY
+  OTHER
+}
+
+enum DonationStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+// ========================================
+// CAMPAIGNS
+// ========================================
+
+model Campaign {
+  id             String @id @default(cuid())
+  organizationId String
+
+  // Campaign Details
+  name        String
+  description String?
+  goal        Float?
+  raised      Float   @default(0)
+
+  // Status & Dates
+  status    CampaignStatus @default(DRAFT)
+  startDate DateTime?
+  endDate   DateTime?
+
+  // Metadata
+  tags String[]
+
+  // Relationships
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  donations        Donation[]
+  campaignContacts CampaignContact[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("campaigns")
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model CampaignContact {
+  id         String @id @default(cuid())
+  campaignId String
+  contactId  String
+
+  // Contact's participation
+  role String?
+
+  campaign  Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contact   Contact  @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([campaignId, contactId])
+  @@index([campaignId])
+  @@index([contactId])
+  @@map("campaign_contacts")
+}
+
+// ========================================
+// EMAIL COMMUNICATIONS
+// ========================================
+
+model Email {
+  id             String @id @default(cuid())
+  organizationId String
+
+  // Email Details
+  subject String
+  body    String
+  from    String
+
+  // Status
+  status       EmailStatus @default(DRAFT)
+  scheduledFor DateTime?
+  sentAt       DateTime?
+
+  // Recipients
+  recipients EmailRecipient[]
+
+  // Metadata
+  tags String[]
+
+  // Relationships
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+  @@map("emails")
+}
+
+enum EmailStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
+}
+
+model EmailRecipient {
+  id        String @id @default(cuid())
+  emailId   String
+  contactId String
+
+  // Tracking
+  sent    Boolean @default(false)
+  opened  Boolean @default(false)
+  clicked Boolean @default(false)
+  bounced Boolean @default(false)
+
+  sentAt    DateTime?
+  openedAt  DateTime?
+  clickedAt DateTime?
+
+  email     Email    @relation(fields: [emailId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([emailId])
+  @@index([contactId])
+  @@map("email_recipients")
+}
+
+// ========================================
+// INTERACTIONS
+// ========================================
+
+model Interaction {
+  id             String @id @default(cuid())
+  organizationId String
+  contactId      String
+  userId         String
+
+  // Interaction Details
+  type    InteractionType
+  subject String
+  notes   String?
+
+  // Date/Time
+  occurredAt DateTime @default(now())
+
+  // Relationships
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  contact      Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([contactId])
+  @@index([userId])
+  @@map("interactions")
+}
+
+enum InteractionType {
+  NOTE
+  CALL
+  MEETING
+  EMAIL_SENT
+  EMAIL_RECEIVED
+  DONATION_RECEIVED
+  EVENT_ATTENDED
+  OTHER
+}
+
+// ========================================
+// TASK MANAGEMENT
+// ========================================
+
+model Task {
+  id             String  @id @default(cuid())
+  organizationId String
+  userId         String
+  contactId      String?
+
+  // Task Details
+  title       String
+  description String?
+  priority    TaskPriority @default(MEDIUM)
+  status      TaskStatus   @default(TODO)
+
+  // Due Date
+  dueDate     DateTime?
+  completedAt DateTime?
+
+  // Relationships
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([status])
+  @@index([dueDate])
+  @@map("tasks")
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
