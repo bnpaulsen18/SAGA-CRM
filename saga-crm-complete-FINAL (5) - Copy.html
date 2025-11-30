@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA CRM - Complete Edition</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        /* HEADER */
+        .header {
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 25%, #5c1644 50%, #8b1e4b 75%, #b4154b 85%, #ff6b35 100%);
+            border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+            padding: 0 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 75px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .logo-image {
+            height: 50px;
+            width: auto;
+        }
+        
+        .tagline {
+            color: rgba(255,255,255,0.85);
+            font-size: 1rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .search-bar {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 0.65rem 1.3rem;
+            width: 300px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #ffa07a;
+            background: rgba(255,255,255,0.15);
+        }
+
+        .settings-btn {
+            background: #764ba2;
+            border: 2px solid #764ba2;
+            padding: 0.65rem 1.4rem;
+            border-radius: 8px;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(118, 75, 162, 0.3);
+        }
+
+        .settings-btn:hover {
+            background: #8b5fb8;
+            border-color: #8b5fb8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.4);
+        }
+
+        /* NAVIGATION */
+        .navigation {
+            background: rgba(30, 30, 50, 0.95);
+            padding: 0;
+            border-bottom: 1px solid rgba(255, 107, 107, 0.2);
+            position: sticky;
+            top: 75px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .nav-item {
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 107, 107, 0.08);
+            border-bottom-color: rgba(255, 107, 107, 0.4);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 107, 107, 0.15);
+            border-bottom-color: #ffa07a;
+            font-weight: 600;
+        }
+
+        .nav-item.has-dropdown::after {
+            content: "\25BE";
+            margin-left: 0.3rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(26, 26, 46, 0.98);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            min-width: 220px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            z-index: 1000;
+            margin-top: 3px;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 0.9rem 1.3rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(255, 107, 107, 0.1);
+            padding-left: 1.6rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(255, 107, 107, 0.2);
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .section-icon {
+            font-size: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffa07a 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(26, 26, 46, 0.7);
+            border: 1px solid rgba(255, 107, 107, 0.25);
+            border-radius: 12px;
+            padding: 1.8rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .card:hover {
+            border-color: rgba(255, 107, 107, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 107, 107, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffa07a;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+
+        .composer-container {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .composer-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .composer-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffa07a;
+        }
+
+        .composer-textarea {
+            width: 100%;
+            min-height: 180px;
+            background: rgba(30, 30, 50, 0.9);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            border-radius: 12px;
+            padding: 1.3rem;
+            color: white;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            resize: vertical;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        .composer-textarea:focus {
+            outline: none;
+            border-color: #ffa07a;
+            background: rgba(30, 30, 50, 1);
+            box-shadow: 0 0 0 3px rgba(255, 160, 122, 0.1);
+        }
+
+        .composer-textarea::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        .composer-toolbar {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1.2rem;
+            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+        }
+
+        .toolbar-section {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .toolbar-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .platform-toggles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .platform-toggle {
+            background: rgba(30, 30, 50, 0.8);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 0.8rem 1.4rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .platform-toggle:hover {
+            border-color: rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+
+        .platform-toggle.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #764ba2;
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        .platform-icon {
+            font-size: 1.3rem;
+        }
+
+        .tone-buttons {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .tone-btn {
+            background: rgba(30, 30, 50, 0.8);
+            border: 2px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 0.6rem 1.1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .tone-btn:hover {
+            border-color: #ffa07a;
+            transform: translateY(-1px);
+        }
+
+        .tone-btn.active {
+            background: rgba(255, 160, 122, 0.2);
+            border-color: #ffa07a;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffa07a 100%);
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            color: #ffa07a;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: rgba(255, 107, 107, 0.5);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .btn-lg {
+            padding: 1.1rem 2.2rem;
+            font-size: 1.05rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.12) 0%, rgba(255, 160, 122, 0.12) 100%);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 14px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(255, 107, 107, 0.2);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffa07a;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .builder-container {
+            background: rgba(26, 26, 46, 0.8);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .builder-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            min-height: 400px;
+            color: #333;
+        }
+
+        .customize-panel {
+            background: rgba(30, 30, 50, 0.9);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .customize-section {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .customize-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .customize-section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffa07a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-row:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .toggle-label {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            left: 27px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.9rem;
+            background: rgba(30, 30, 50, 0.8);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            color: white;
+            font-size: 0.95rem;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #ffa07a;
+            background: rgba(30, 30, 50, 1);
+        }
+
+        .info-box {
+            background: rgba(78, 205, 196, 0.1);
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 12px;
+            padding: 1.3rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-box h3 {
+            color: #4ecdc4;
+            margin-bottom: 0.6rem;
+        }
+
+        @media (max-width: 1200px) {
+            .nav-container {
+                justify-content: flex-start;
+                overflow-x: auto;
+            }
+
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 1rem;
+                height: auto;
+                min-height: 70px;
+                flex-wrap: wrap;
+            }
+
+            .search-bar {
+                width: 200px;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+
+            .composer-textarea {
+                min-height: 140px;
+            }
+        }
+    
+        /* Tooltips for hover descriptions */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 0.75rem;
+            color: #667eea;
+            cursor: help;
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-icon:hover {
+            background: rgba(102, 126, 234, 0.5);
+            transform: scale(1.1);
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            background: rgba(26, 26, 46, 0.98);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: rgba(102, 126, 234, 0.4) transparent transparent transparent;
+        }
+
+        .tooltip-icon:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .tooltip-enabled,
+        .tooltip-disabled {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-enabled {
+            color: #4ecdc4;
+        }
+
+        .tooltip-disabled {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Collapsible Category Sections */
+        .customize-section {
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .customize-section.collapsed .customize-section-content {
+            display: none;
+        }
+
+        .customize-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            background: rgba(102, 126, 234, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .customize-section-header:hover {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .customize-section-title {
+            color: #ffa07a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-toggle-icon {
+            font-size: 1.2rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .customize-section.collapsed .section-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .customize-section-content {
+            padding: 1rem 1.2rem;
+        }
+
+        .section-badge {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+
+        /* Editable donation amounts */
+        .donation-amount-editable {
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .donation-amount-editable:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .donation-amount-editable.editing {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .amount-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+
+        .edit-hint {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(102, 126, 234, 0.9);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+        }
+
+        .donation-amount-editable:hover .edit-hint {
+            opacity: 1;
+        }
+
+    
+        /* Tooltips for hover descriptions */
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 16px;
+            font-size: 0.75rem;
+            color: #667eea;
+            cursor: help;
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .tooltip-icon:hover {
+            background: rgba(102, 126, 234, 0.5);
+            transform: scale(1.1);
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            background: rgba(26, 26, 46, 0.98);
+            border: 2px solid rgba(102, 126, 234, 0.4);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: all 0.3s ease;
+        }
+
+        .tooltip-text::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -8px;
+            border-width: 8px;
+            border-style: solid;
+            border-color: rgba(102, 126, 234, 0.4) transparent transparent transparent;
+        }
+
+        .tooltip-icon:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .tooltip-title {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .tooltip-enabled,
+        .tooltip-disabled {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 0.5rem;
+        }
+
+        .tooltip-enabled {
+            color: #4ecdc4;
+        }
+
+        .tooltip-disabled {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Collapsible Category Sections */
+        .customize-section {
+            margin-bottom: 1.5rem;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .customize-section.collapsed .customize-section-content {
+            display: none;
+        }
+
+        .customize-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.2rem;
+            background: rgba(102, 126, 234, 0.1);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .customize-section-header:hover {
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        .customize-section-title {
+            color: #ffa07a;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-toggle-icon {
+            font-size: 1.2rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .customize-section.collapsed .section-toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .customize-section-content {
+            padding: 1rem 1.2rem;
+        }
+
+        .section-badge {
+            background: rgba(78, 205, 196, 0.2);
+            color: #4ecdc4;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+
+        /* Editable donation amounts */
+        .donation-amount-editable {
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .donation-amount-editable:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .donation-amount-editable.editing {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .amount-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #2c3e50;
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            outline: none;
+        }
+
+        .edit-hint {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(102, 126, 234, 0.95);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .donation-amount-editable:hover .edit-hint {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-section">
+            <img src="data:image/png;base64,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" alt="SAGA" class="logo-image">
+            <div class="tagline">every donor has a story</div>
+        </div>
+        <div class="header-right">
+            <input type="text" class="search-bar" placeholder="Search donors, donations, campaigns...">
+            <button class="settings-btn" onclick="showSection('settings')">
+                &#9881; Settings
+            </button>
+        </div>
+    </div>
+
+    <div class="navigation">
+        <div class="nav-container">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                &#128202; Dashboard
+            </div>
+            <div class="nav-item" onclick="showSection('donors')">
+                &#128101; Donors
+            </div>
+            <div class="nav-item has-dropdown">
+                &#128176; Fundraising
+                <div class="dropdown-menu">
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('donations')">&#128181; Donations</div>
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('donation-pages')">&#128196; Donation Pages</div>
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('campaigns')">&#127912; Campaigns</div>
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('donor-gifts')">&#127873; Donor Gifts</div>
+                </div>
+            </div>
+            <div class="nav-item has-dropdown">
+                &#128172; Engagement
+                <div class="dropdown-menu">
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('social-media')">&#128241; Social Media</div>
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('communications')">&#128231; Communications</div>
+                    <div class="dropdown-item" onclick="event.stopPropagation(); showSection('automation')">&#129302; Automation</div>
+                </div>
+            </div>
+            <div class="nav-item" onclick="showSection('integrations')">
+                &#128279; Integrations
+            </div>
+            <div class="nav-item" onclick="showSection('reports')">
+                &#128200; Reports
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Dashboard</h1>
+                </div>
+                <span class="ai-badge">&#10024; AI Powered</span>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">$127,482</div>
+                    <div class="stat-label">Total Raised (YTD)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-label">Active Donors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$44.76</div>
+                    <div class="stat-label">Avg. Gift Size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">92%</div>
+                    <div class="stat-label">Retention Rate</div>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>&#128161; AI Insight</h3>
+                <p style="color: rgba(255,255,255,0.8);">Your end-of-year campaign is tracking 23% above projections. AI predicts you'll reach $150,000 by December 31st if current trends continue. Consider launching a matching gift challenge to capitalize on momentum.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"> Recent Donations</div>
+                    <div style="color: rgba(255,255,255,0.9);">
+                        <p style="margin-bottom: 0.8rem;"><strong>Sarah Johnson</strong> &bull; $500  2 hours &bull; ago</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Michael Chen</strong> &bull; $250  4 hours &bull; ago</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Emma Davis</strong> &bull; $1,000  5 hours &bull; ago</p>
+                        <button class="btn btn-secondary" style="margin-top: 1rem;">View All</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">&#127919; Active Campaigns</div>
+                    <div style="color: rgba(255,255,255,0.9);">
+                        <p style="margin-bottom: 0.8rem;"><strong>Holiday Giving</strong> &bull; $42,500 / $50,000 (85%)</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Building Fund</strong> &bull; $18,200 / $100,000 (18%)</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Scholarship Drive</strong> &bull; $8,750 / $25,000 (35%)</p>
+                        <button class="btn btn-secondary" style="margin-top: 1rem;">Manage Campaigns</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donors Section -->
+        <div id="donors" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Donors</h1>
+                </div>
+                <button class="btn" onclick="addDonor()"> &#10133; Add Donor</button>
+            </div>
+
+            <div class="card">
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                        <input type="text" class="input-field" placeholder="Search donors by name or email..." style="flex: 1;">
+                        <button class="btn btn-secondary"> &#128270; Search</button>
+                        <button class="btn btn-secondary"> &#128202; Export</button>
+                    </div>
+                    <div style="display: flex; gap: 1rem; align-items: center; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 8px;">
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">Start Date</label>
+                            <input type="date" class="input-field" />
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">End Date</label>
+                            <input type="date" class="input-field" />
+                        </div>
+                        <button class="btn" style="margin-top: 1.7rem;">Apply Filters</button>
+                        <button class="btn btn-secondary" style="margin-top: 1.7rem;">Clear</button>
+                    </div>
+                    <p style="margin-top: 0.8rem; font-size: 0.85rem; color: rgba(255,255,255,0.6);">
+                        &#128161; Filter donors by their last gift date to find lapsed donors, recent contributors, or specific timeframes.
+                    </p>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 0 0.5rem;">
+                        <thead>
+                            <tr style="text-align: left; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                                <th style="padding: 0.5rem;">Name</th>
+                                <th style="padding: 0.5rem;">Email</th>
+                                <th style="padding: 0.5rem;">Total Given</th>
+                                <th style="padding: 0.5rem;">Last Gift</th>
+                                <th style="padding: 0.5rem;">AI Score</th>
+                                <th style="padding: 0.5rem;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;"><strong>Sarah Johnson</strong></td>
+                                <td style="padding: 1rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dba8baa9bab3f5b19bbeb6bab2b7f5b8b4b6">[email&#160;protected]</a></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$2,450</strong></td>
+                                <td style="padding: 1rem;">Nov 9, 2025</td>
+                                <td style="padding: 1rem;"><span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">95</span></td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary" onclick="viewDonor('sarah')">View</button></td>
+                            </tr>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;"><strong>Michael Chen</strong></td>
+                                <td style="padding: 1rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0adeea3a8a5ae80a5ada1a9aceea3afad">[email&#160;protected]</a></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$1,825</strong></td>
+                                <td style="padding: 1rem;">Nov 10, 2025</td>
+                                <td style="padding: 1rem;"><span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">88</span></td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary" onclick="viewDonor('michael')">View</button></td>
+                            </tr>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;"><strong>Emma Davis</strong></td>
+                                <td style="padding: 1rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56333b3b37783216333b373f3a7835393b">[email&#160;protected]</a></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$5,200</strong></td>
+                                <td style="padding: 1rem;">Nov 11, 2025</td>
+                                <td style="padding: 1rem;"><span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">98</span></td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary" onclick="viewDonor('emma')">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Donations Section -->
+        <div id="donations" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Donations</h1>
+                </div>
+                <button class="btn" onclick="recordDonation()"> &#10133; Record Donation</button>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">$8,450</div>
+                    <div class="stat-label">This Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$12,280</div>
+                    <div class="stat-label">Last Month</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">142</div>
+                    <div class="stat-label">Transactions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$59.51</div>
+                    <div class="stat-label">Avg. Gift</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">&#128200; Recent Donations</div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: separate; border-spacing: 0 0.5rem;">
+                        <thead>
+                            <tr style="text-align: left; color: rgba(255,255,255,0.6); font-size: 0.9rem;">
+                                <th style="padding: 0.5rem;">Date</th>
+                                <th style="padding: 0.5rem;">Donor</th>
+                                <th style="padding: 0.5rem;">Amount</th>
+                                <th style="padding: 0.5rem;">Campaign</th>
+                                <th style="padding: 0.5rem;">Method</th>
+                                <th style="padding: 0.5rem;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;">Nov 11, 2025</td>
+                                <td style="padding: 1rem;"><strong>Emma Davis</strong></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$1,000</strong></td>
+                                <td style="padding: 1rem;">Holiday Giving</td>
+                                <td style="padding: 1rem;"> &#128179; Credit Card</td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary">View</button></td>
+                            </tr>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;">Nov 10, 2025</td>
+                                <td style="padding: 1rem;"><strong>Michael Chen</strong></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$250</strong></td>
+                                <td style="padding: 1rem;">Holiday Giving</td>
+                                <td style="padding: 1rem;"> &#127974; ACH</td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary">View</button></td>
+                            </tr>
+                            <tr style="background: rgba(30,30,50,0.6);">
+                                <td style="padding: 1rem; border-radius: 8px 0 0 8px;">Nov 9, 2025</td>
+                                <td style="padding: 1rem;"><strong>Sarah Johnson</strong></td>
+                                <td style="padding: 1rem;"><strong style="color: #4ecdc4;">$500</strong></td>
+                                <td style="padding: 1rem;">Building Fund</td>
+                                <td style="padding: 1rem;"> &#128179; Credit Card</td>
+                                <td style="padding: 1rem; border-radius: 0 8px 8px 0;"><button class="btn btn-secondary">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- DONATION PAGES Section - NEW -->
+        <div id="donation-pages" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Donation Pages</h1>
+                </div>
+                <button class="btn" onclick="createDonationPage()"> Create Page</button>
+            </div>
+
+            <div class="info-box">
+                <h3> Beautiful Donation Pages</h3>
+                <p style="color: rgba(255,255,255,0.8);">Create stunning, mobile-optimized donation pages that convert. Embed them on your website or share via social media. Track performance with built-in analytics.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title"> Holiday Campaign Page</div>
+                    <div style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Live</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Views:</strong> 2,847 | <strong>Conversions:</strong> 4.2%</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Amount Raised:</strong> $42,500</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="editPage('holiday')">Edit</button>
+                        <button class="btn btn-secondary" onclick="viewPage('holiday')"></button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Scholarship Fund</div>
+                    <div style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Live</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Views:</strong> 1,234 | <strong>Conversions:</strong> 3.8%</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Amount Raised:</strong> $8,750</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="editPage('scholarship')">Edit</button>
+                        <button class="btn btn-secondary" onclick="viewPage('scholarship')"></button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Building Fund</div>
+                    <div style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                        <p style="margin-bottom: 0.5rem;"><strong>Status:</strong> <span style="background: rgba(255,255,255,0.1); padding: 0.3rem 0.6rem; border-radius: 4px; color: rgba(255,255,255,0.6); font-weight: 600;">Draft</span></p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Views:</strong> 0 | <strong>Conversions:</strong> 0%</p>
+                        <p style="margin-bottom: 0.5rem;"><strong>Amount Raised:</strong> $0</p>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="editPage('building')">Edit</button>
+                        <button class="btn btn-success" onclick="publishPage('building')"> Publish</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"> Page Performance</div>
+                <div class="grid-4">
+                    <div style="text-align: center; padding: 1rem; background: rgba(78,205,196,0.1); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #4ecdc4;">4,081</div>
+                        <div style="color: rgba(255,255,255,0.7);">Total Views</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: rgba(255,160,122,0.1); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #ffa07a;">4.1%</div>
+                        <div style="color: rgba(255,255,255,0.7);">Avg Conversion</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: rgba(102,126,234,0.1); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #667eea;">$51,250</div>
+                        <div style="color: rgba(255,255,255,0.7);">Total Raised</div>
+                    </div>
+                    <div style="text-align: center; padding: 1rem; background: rgba(255,107,107,0.1); border-radius: 8px;">
+                        <div style="font-size: 2rem; font-weight: 700; color: #ff6b6b;">3.2min</div>
+                        <div style="color: rgba(255,255,255,0.7);">Avg Time</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DONOR GIFTS Section - NEW -->
+        <div id="donor-gifts" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Donor Gifts</h1>
+                </div>
+                <button class="btn" onclick="createGift()"> Create Gift</button>
+            </div>
+
+            <div class="info-box">
+                <h3> NPR-Style Donor Incentives</h3>
+                <p style="color: rgba(255,255,255,0.8);">Reward donors with tangible gifts! Connected to Printful for automatic fulfillment. Set gift tiers, track inventory, and delight your supporters with branded merchandise.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                            
+                        </div>
+                    </div>
+                    <div class="card-title">Logo T-Shirt</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Premium cotton tee with SAGA logo</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Donation Tier:</strong> $50+</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Fulfilled:</strong> 124 shirts</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="editGift('tshirt')">Edit Gift</button>
+                </div>
+
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                            
+                        </div>
+                    </div>
+                    <div class="card-title">Coffee Mug</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Ceramic mug with inspiring message</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Donation Tier:</strong> $25+</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Fulfilled:</strong> 287 mugs</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="editGift('mug')">Edit Gift</button>
+                </div>
+
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">
+                            
+                        </div>
+                    </div>
+                    <div class="card-title">Tote Bag</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Eco-friendly canvas tote</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Donation Tier:</strong> $75+</p>
+                    <p style="margin-bottom: 0.5rem;"><strong>Fulfilled:</strong> 63 bags</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="editGift('tote')">Edit Gift</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"> Fulfillment Status</div>
+                <div style="color: rgba(255,255,255,0.9);">
+                    <p style="margin-bottom: 1rem;"><strong>Printful Integration:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Connected</span></p>
+                    
+                    <div style="background: rgba(30,30,50,0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong>Order #1247</strong> - Logo T-Shirt (Size L)  Sarah Johnson<br>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Status: Shipped  Tracking: 1Z999AA10123456784</span>
+                    </div>
+
+                    <div style="background: rgba(30,30,50,0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong>Order #1246</strong> - Coffee Mug  Michael Chen<br>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Status: In Production  Est. Ship: Nov 13</span>
+                    </div>
+
+                    <div style="background: rgba(30,30,50,0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong>Order #1245</strong> - Tote Bag  Emma Davis<br>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Status: Delivered  Nov 8, 2025</span>
+                    </div>
+
+                    <button class="btn btn-secondary" style="margin-top: 1rem;">View All Orders</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Section -->
+
+        <!-- PROFESSIONAL SOCIAL MEDIA SECTION -->
+        <div id="social-media" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Social Media</h1>
+                </div>
+                <span class="ai-badge">&#10024; AI Powered</span>
+            </div>
+
+            <div class="composer-container">
+                <div class="composer-header">
+                    <span style="font-size: 1.8rem;"></span>
+                    <div class="composer-title">AI Post Composer</div>
+                    <span style="background: rgba(102,126,234,0.2); padding: 0.3rem 0.8rem; border-radius: 15px; font-size: 0.85rem; color: #667eea;">Generate engaging posts with AI</span>
+                </div>
+
+                <textarea 
+                    class="composer-textarea" 
+                    id="postContent"
+                    placeholder="What would you like to share with your followers? Describe your message, achievement, or story..."
+                >We just reached 75% of our holiday campaign goal! Thanks to incredible supporters like you, we're on track to serve 500 families this season. Every donation makes a difference. ¤</textarea>
+
+                <div class="composer-toolbar">
+                    <div class="toolbar-section" style="flex: 1;">
+                        <div class="toolbar-label"> Select Platforms</div>
+                        <div class="platform-toggles">
+                            <div class="platform-toggle active" onclick="togglePlatform(this)">
+                                <span class="platform-icon"></span> Facebook
+                            </div>
+                            <div class="platform-toggle" onclick="togglePlatform(this)">
+                                <span class="platform-icon"></span> Instagram
+                            </div>
+                            <div class="platform-toggle" onclick="togglePlatform(this)">
+                                <span class="platform-icon"></span> LinkedIn
+                            </div>
+                            <div class="platform-toggle" onclick="togglePlatform(this)">
+                                <span class="platform-icon">•</span> X (Twitter)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="toolbar-section">
+                        <div class="toolbar-label"> Tone</div>
+                        <div class="tone-buttons">
+                            <div class="tone-btn active" onclick="setTone(this, 'grateful')">
+                                 Grateful
+                            </div>
+                            <div class="tone-btn" onclick="setTone(this, 'celebratory')">
+                                 Celebratory
+                            </div>
+                            <div class="tone-btn" onclick="setTone(this, 'urgent')">
+                                 Urgent
+                            </div>
+                            <div class="tone-btn" onclick="setTone(this, 'inspirational')">
+                                 Inspirational
+                            </div>
+                            <div class="tone-btn" onclick="setTone(this, 'educational')">
+                                 Educational
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-lg" onclick="generateAIPost()">
+                         Generate Post with AI
+                    </button>
+                    <button class="btn btn-secondary" onclick="schedulePost()">
+                         Schedule Post
+                    </button>
+                    <button class="btn btn-secondary" onclick="attachMedia()">
+                         Add Image
+                    </button>
+                </div>
+            </div>
+
+            <!-- Social Media Stats -->
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">24.5K</div>
+                    <div class="stat-label">Total Followers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,847</div>
+                    <div class="stat-label">Engagement (30d)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">Scheduled Posts</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">4.2%</div>
+                    <div class="stat-label">Avg Engagement Rate</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"> Upcoming Posts</div>
+                    <div style="color: rgba(255,255,255,0.9);">
+                        <p style="margin-bottom: 0.8rem;"><strong>Tomorrow, 10:00 AM</strong><br>Holiday campaign milestone update</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Friday, 2:00 PM</strong><br>Volunteer spotlight story</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Monday, 9:00 AM</strong><br>Weekly impact report</p>
+                        <button class="btn btn-secondary" style="margin-top: 1rem;">Manage Schedule</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Top Performing Posts</div>
+                    <div style="color: rgba(255,255,255,0.9);">
+                        <p style="margin-bottom: 0.8rem;"><strong>Campaign Launch Video</strong><br>2.4K likes  342 shares</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Donor Success Story</strong><br>1.8K likes  218 shares</p>
+                        <p style="margin-bottom: 0.8rem;"><strong>Impact Infographic</strong><br>1.5K likes  189 shares</p>
+                        <button class="btn btn-secondary" style="margin-top: 1rem;">View Analytics</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CAMPAIGN BUILDER WITH FULL CUSTOMIZATION -->
+        <div id="campaigns" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Campaign Builder</h1>
+                </div>
+                <span class="ai-badge">&#10024; AI Powered</span>
+            </div>
+
+            <div class="info-box">
+                <h3> Full Customization Control</h3>
+                <p style="color: rgba(255,255,255,0.8);">Create beautiful, high-converting campaign pages with our drag-and-drop builder. Enable or disable any feature to match your organization's needs. Let AI optimize your campaigns for maximum impact.</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="builder-container">
+                    <h2 style="color: #ffa07a; margin-bottom: 1.5rem; font-size: 1.4rem;"> Campaign Settings</h2>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Campaign Name</label>
+                        <input type="text" class="input-field" value="Holiday Giving 2025" />
+                        
+                        <label style="display: block; margin: 1rem 0 0.5rem; font-weight: 600;">Goal Amount</label>
+                        <input type="text" class="input-field" value="$50,000" />
+
+                        <label style="display: block; margin: 1rem 0 0.5rem; font-weight: 600;">End Date</label>
+                        <input type="date" class="input-field" value="2025-12-31" />
+                    </div>
+
+                    <button class="btn" style="width: 100%; margin-bottom: 1rem;" onclick="aiOptimizeCampaign()">
+                         AI: Optimize This Campaign
+                    </button>
+
+                    <div class="customize-panel">
+                        <h3 style="color: #ffa07a; margin-bottom: 1.2rem; font-size: 1.2rem;"> Customize Page Features</h3>
+
+                        <!-- Feature Toggles -->
+                        <div class="customize-section">
+                            <div class="customize-section-title"> Progress & Goals</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Show Progress Bar</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Display Goal Amount</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Show Total Raised</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Display Donor Count</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Show Days Remaining</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="customize-section">
+                            <div class="customize-section-title"> Donation Options</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Suggested Amounts</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Custom Amount Field</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Recurring Donation Option</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Cover Processing Fees</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Tribute/Memorial Giving</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="customize-section">
+                            <div class="customize-section-title"> Social Features</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Recent Donor Wall</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Top Donors Leaderboard</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Social Share Buttons</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Donor Comments</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="customize-section">
+                            <div class="customize-section-title"> Incentives</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Donor Gifts/Rewards</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Milestone Badges</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Matching Gift Tracker</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="customize-section">
+                            <div class="customize-section-title"> Content Sections</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Campaign Story/Description</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Hero Image/Video</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Photo Gallery</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Impact Statement</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">FAQ Section</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Team Members</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+
+                        <div class="customize-section">
+                            <div class="customize-section-title"> AI Features</div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">AI Suggested Donation Amounts</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">AI Generated Social Posts</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Predictive Goal Tracking</span>
+                                <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                            </div>
+                            <div class="toggle-row">
+                                <span class="toggle-label">Smart Send Time Optimization</span>
+                                <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn" style="flex: 1;" onclick="saveCampaign()">
+                             Save Campaign
+                        </button>
+                        <button class="btn btn-success" style="flex: 1;" onclick="publishCampaign()">
+                             Publish Live
+                        </button>
+                    </div>
+                </div>
+
+                <div class="builder-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <h2 style="color: #ffa07a; font-size: 1.4rem;"> Live Preview</h2>
+                        <button class="btn btn-secondary" onclick="togglePreviewMode()">
+                             Switch View
+                        </button>
+                    </div>
+
+                    <div class="builder-preview">
+                        <div style="text-align: center; margin-bottom: 2rem;">
+                            <div style="width: 100%; height: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                                <span style="font-size: 4rem;"></span>
+                            </div>
+                            <h1 style="font-size: 2.5rem; color: #2c3e50; margin-bottom: 0.5rem;">Holiday Giving 2025</h1>
+                            <p style="font-size: 1.1rem; color: #7f8c8d;">Help us serve 500 families this holiday season</p>
+                        </div>
+
+                        <div style="background: #f8f9fa; padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                            <div style="margin-bottom: 1rem;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                    <span style="font-weight: 600; color: #2c3e50;">$42,500 raised</span>
+                                    <span style="color: #7f8c8d;">of $50,000 goal</span>
+                                </div>
+                                <div style="width: 100%; height: 20px; background: #e9ecef; border-radius: 10px; overflow: hidden;">
+                                    <div style="width: 85%; height: 100%; background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);"></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 2rem; font-size: 0.9rem; color: #7f8c8d;">
+                                <div><strong style="color: #2c3e50;">847</strong> donors</div>
+                                <div><strong style="color: #2c3e50;">23</strong> days left</div>
+                            </div>
+                        </div>
+
+                        <div style="background: #fff; border: 2px solid #e9ecef; padding: 2rem; border-radius: 12px;">
+                            <h3 style="color: #2c3e50; margin-bottom: 1rem;">Choose Your Gift Amount</h3>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                                <div style="border: 2px solid #667eea; padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer; background: #f8f9fa;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">$25</div>
+                                </div>
+                                <div style="border: 2px solid #e9ecef; padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #2c3e50;">$50</div>
+                                </div>
+                                <div style="border: 2px solid #e9ecef; padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #2c3e50;">$100</div>
+                                </div>
+                                <div style="border: 2px solid #e9ecef; padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: #2c3e50;">$250</div>
+                                </div>
+                            </div>
+                            <button style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer;">
+                                 Donate Now
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 12px;">
+                            <h4 style="color: #2c3e50; margin-bottom: 0.8rem;">&#128161; AI Insight</h4>
+                            <p style="color: #7f8c8d; font-size: 0.95rem;">Based on your donor behavior, adding a $150 tier could increase average donations by 18%. Consider adding matching gift messaging to boost urgency.</p>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="btn btn-secondary" onclick="viewFullPage()">
+                             View Full Page
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMMUNICATIONS Section -->
+        <div id="communications" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Communications</h1>
+                </div>
+                <span class="ai-badge">&#10024; AI Powered</span>
+            </div>
+
+            <div class="info-box">
+                <h3> Unified Communication Hub</h3>
+                <p style="color: rgba(255,255,255,0.8);">Send emails, SMS, and in-app messages from one place. Track opens, clicks, and responses.</p>
+            </div>
+
+            <div class="composer-container">
+                <div class="composer-header">
+                    <span style="font-size: 1.8rem;"></span>
+                    <div class="composer-title">New Campaign Message</div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Subject Line</label>
+                    <input type="text" class="input-field" value="Your Impact This Year - Thank You!">
+                </div>
+
+                <textarea class="composer-textarea">Dear [First Name],
+
+As we approach the end of 2025, we wanted to thank you for your incredible support.
+
+Your generosity has helped us achieve amazing things this year!
+
+With gratitude,
+Hope Foundation Team</textarea>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button class="btn btn-lg" onclick="sendCommunication()"> Send Message</button>
+                    <button class="btn btn-secondary" onclick="aiPersonalize()"> AI Personalize</button>
+                    <button class="btn btn-secondary"> Preview</button>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">2,847</div>
+                    <div class="stat-label">Total Recipients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">46.2%</div>
+                    <div class="stat-label">Avg Open Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12.8%</div>
+                    <div class="stat-label">Avg Click Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">98.4%</div>
+                    <div class="stat-label">Deliverability</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AUTOMATION Section -->
+        <div id="automation" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Automation Hub</h1>
+                </div>
+                <span class="ai-badge">&#10024; AI Powered</span>
+            </div>
+
+            <div class="info-box">
+                <h3> Powerful Automation Workflows</h3>
+                <p style="color: rgba(255,255,255,0.8);">Set it and forget it! Create automated workflows that run 24/7. Send thank you emails, follow up with lapsed donors, recognize milestones, and more.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem;"></div>
+                    </div>
+                    <div class="card-title">Thank You Sequence</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Automatically send personalized thank you emails within 2 hours</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;">Edit Workflow</button>
+                </div>
+
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem;"></div>
+                    </div>
+                    <div class="card-title">Birthday Greetings</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Send birthday wishes with special gift match offer</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;">Edit Workflow</button>
+                </div>
+
+                <div class="card">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="width: 100%; height: 120px; background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 3rem;"></div>
+                    </div>
+                    <div class="card-title">Monthly Updates</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Keep monthly donors engaged with impact updates</p>
+                    <p style="margin-bottom: 1rem;"><strong>Status:</strong> <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;">Edit Workflow</button>
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="stat-card">
+                    <div class="stat-value">1,834</div>
+                    <div class="stat-label">Total Emails Sent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">72.4%</div>
+                    <div class="stat-label">Avg Open Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">156</div>
+                    <div class="stat-label">Hours Saved</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">$8,450</div>
+                    <div class="stat-label">Revenue Generated</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrations Section -->
+        <div id="integrations" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Integrations</h1>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3> Seamless Connectivity</h3>
+                <p style="color: rgba(255,255,255,0.8);">Connect SAGA with your essential tools. All integrations sync automatically.</p>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title"> Stripe</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Payment processing</p>
+                    <span style="background: rgba(78,205,196,0.2); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; color: #4ecdc4; font-weight: 600;"> Connected</span>
+                    <button class="btn btn-secondary" style="margin-top: 1rem; width: 100%;">Manage</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Mailchimp</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Email marketing</p>
+                    <span style="background: rgba(78,205,196,0.2); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; color: #4ecdc4; font-weight: 600;"> Connected</span>
+                    <button class="btn btn-secondary" style="margin-top: 1rem; width: 100%;">Manage</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Printful</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Donor gifts fulfillment</p>
+                    <span style="background: rgba(78,205,196,0.2); padding: 0.4rem 0.8rem; border-radius: 15px; font-size: 0.85rem; color: #4ecdc4; font-weight: 600;"> Connected</span>
+                    <button class="btn btn-secondary" style="margin-top: 1rem; width: 100%;">Manage</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Slack</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Team notifications</p>
+                    <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectIntegration('slack')">Connect</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Meta</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Facebook & Instagram</p>
+                    <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectIntegration('meta')">Connect</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> QuickBooks</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Accounting sync</p>
+                    <button class="btn" style="margin-top: 1rem; width: 100%;" onclick="connectIntegration('quickbooks')">Connect</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Reports</h1>
+                </div>
+                <button class="btn" onclick="createReport()"> Create Report</button>
+            </div>
+
+            <div class="grid-3">
+                <div class="card">
+                    <div class="card-title"> Donor Activity</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Track donor engagement and giving patterns</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Campaign Performance</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Analyze campaign ROI and effectiveness</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Monthly Summary</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Comprehensive monthly fundraising overview</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Retention Analysis</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Understand donor retention trends</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">&#128161; AI Insights</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">AI-powered predictions and recommendations</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Payment Processing</div>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Transaction fees and payment methods</p>
+                    <button class="btn btn-secondary" style="width: 100%;">Generate</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Section -->
+        <div id="settings" class="content-section">
+            <div class="section-header">
+                <div class="section-header-left">
+                    <span class="section-icon"></span>
+                    <h1 class="section-title">Settings</h1>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-title"> Organization Profile</div>
+                    <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Organization Name</label>
+                    <input type="text" class="input-field" value="Hope Foundation" />
+
+                    <label style="display: block; margin: 1rem 0 0.5rem; font-weight: 600;">EIN</label>
+                    <input type="text" class="input-field" value="12-3456789" />
+
+                    <button class="btn" style="margin-top: 1.5rem; width: 100%;"> Save Changes</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Team Members</div>
+                    <div style="background: rgba(30,30,50,0.6); padding: 1rem; border-radius: 8px; margin-bottom: 0.5rem;">
+                        <strong>Beau Burroughs</strong> - Administrator<br>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.9rem;"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="89ebece8fcc9e1e6f9ecefe6fce7ede8fde0e6e7a7e6fbee">[email&#160;protected]</a></span>
+                    </div>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;"> Invite Team Member</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Payment Processing</div>
+                    <p style="margin-bottom: 1rem;"><strong>Stripe Integration</strong></p>
+                    <p style="color: rgba(255,255,255,0.7); margin-bottom: 1rem;">Status: <span style="background: rgba(78,205,196,0.2); padding: 0.3rem 0.6rem; border-radius: 4px; color: #4ecdc4; font-weight: 600;">Active</span></p>
+                    <button class="btn btn-secondary" style="width: 100%;"> Manage Stripe</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title"> Notifications</div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> New donations
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> Campaign milestones
+                        </label>
+                    </div>
+                    <div style="margin-bottom: 0.5rem;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="checkbox" checked style="margin-right: 0.5rem;"> AI alerts
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js">
+        // Make donation amounts editable
+        function makeAmountEditable(button) {
+            const currentAmount = button.getAttribute('data-amount');
+            const display = button.querySelector('.amount-display');
+            
+            // Create input field
+            const input = document.createElement('input');
+            input.type = 'number';
+            input.className = 'amount-input';
+            input.value = currentAmount;
+            input.min = '1';
+            input.step = '1';
+            
+            // Replace display with input
+            display.style.display = 'none';
+            button.appendChild(input);
+            button.classList.add('editing');
+            input.focus();
+            input.select();
+            
+            // Handle save on blur or enter
+            function saveAmount() {
+                const newAmount = Math.max(1, parseInt(input.value) || currentAmount);
+                button.setAttribute('data-amount', newAmount);
+                display.textContent = '$' + newAmount;
+                display.style.display = '';
+                input.remove();
+                button.classList.remove('editing');
+            }
+            
+            input.addEventListener('blur', saveAmount);
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    saveAmount();
+                }
+            });
+        }
+
+    </script><script>
+        console.log('SAGA CRM JavaScript loaded successfully');
+        
+        // Navigation - Ensure global scope
+        window.showSection = function(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+                section.style.display = 'none';
+            });
+            
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show the selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+                selectedSection.style.display = 'block';
+            }
+            
+            // Activate the correct nav item
+            const sectionToNavMap = {
+                'dashboard': 0,
+                'donors': 1,
+                'donations': 2,
+                'donation-pages': 2,
+                'campaigns': 2,
+                'donor-gifts': 2,
+                'social-media': 3,
+                'communications': 3,
+                'automation': 3,
+                'integrations': 4,
+                'reports': 5,
+                'settings': 6
+            };
+            
+            const navIndex = sectionToNavMap[sectionId];
+            if (navIndex !== undefined) {
+                const navItems = document.querySelectorAll('.nav-item');
+                if (navItems[navIndex]) {
+                    navItems[navIndex].classList.add('active');
+                }
+            }
+            
+            // Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize on page load - ensure only dashboard is visible
+        document.addEventListener('DOMContentLoaded', function() {
+            showSection('dashboard');
+        });
+
+
+        // Social Media
+        function togglePlatform(element) { element.classList.toggle('active'); }
+        function setTone(element) {
+            document.querySelectorAll('.tone-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+        function generateAIPost() { alert(' Generating AI-optimized post...'); }
+        function schedulePost() { alert(' Opening scheduler...'); }
+        function attachMedia() { alert(' Opening media uploader...'); }
+
+        // Campaign Builder
+        function toggleFeature(element) { element.classList.toggle('active'); }
+
+        // Collapsible Sections
+        function toggleSection(element) {
+            const section = element.closest('.customize-section');
+            section.classList.toggle('collapsed');
+        }
+
+        function aiOptimizeCampaign() { alert(' AI analyzing campaign for optimization...'); }
+        function saveCampaign() { alert(' Campaign saved!'); }
+        function publishCampaign() { if(confirm('Publish campaign?')) alert(' Campaign published!'); }
+        function togglePreviewMode() { alert(' Switching preview mode...'); }
+        function viewFullPage() { alert(' Opening full page preview...'); }
+
+        // Donation Pages
+        function createDonationPage() { alert('Creating new donation page...'); }
+        function editPage(name) { alert(`Editing ${name} page...`); }
+        function viewPage(name) { alert(`Viewing ${name} page...`); }
+        function publishPage(name) { alert(`Publishing ${name} page...`); }
+
+        // Donor Gifts
+        function createGift() { alert('Creating new donor gift...'); }
+        function editGift(name) { alert(`Editing ${name} gift...`); }
+
+        // Communications
+        function sendCommunication() { alert(' Sending message...'); }
+        function aiPersonalize() { alert(' AI personalizing message...'); }
+        function previewEmail() { alert(' Opening preview...'); }
+        function saveDraft() { alert(' Draft saved!'); }
+
+        // Automation
+        function editAutomation(name) { alert(`Editing ${name} automation...`); }
+        function activateAutomation(name) { alert(`Activating ${name} automation...`); }
+        function createAutomation() { alert('Creating new automation workflow...'); }
+
+        // Integrations
+        function connectIntegration(name) { alert(`Connecting to ${name}...`); }
+
+        // Donors/Donations
+        function addDonor() { alert('Adding new donor...'); }
+        function viewDonor(name) { alert(`Viewing ${name} donor profile...`); }
+        function recordDonation() { alert('Recording new donation...'); }
+    </script>
+</body>
+</html>

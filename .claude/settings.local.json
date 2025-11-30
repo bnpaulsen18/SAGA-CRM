@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(where:*)",
+      "Bash(set DATABASE_URL=%DIRECT_URL%)",
+      "Bash(timeout 60 npx prisma db push:*)",
+      "Bash(taskkill:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

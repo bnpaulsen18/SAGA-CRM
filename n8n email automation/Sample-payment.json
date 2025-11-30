@@ -1,0 +1,27 @@
+[ 
+{"name": "Jane Donor",
+ "email": "jane@example.com",
+ "amount": 50.00,
+ "currency": "usd",
+ "date": "2025-11-12T00:00:00Z",
+ "source": "Mock Stripe"
+},
+
+{ "name": "Mark Tester",
+   "email": "mark@test.com",
+   "amount": 25.00,
+   "currency": "usd",
+   "date": "2025-11-13-12T00:00:00Z",
+   "source": "Mock Stripe"
+},
+
+{  "name": "Alex Supporter",
+   "email": "Alex@support.org",
+   "amount": 100.00,
+   "currency": "usd",
+   "date": "2025-11-14T00:00:00Z",
+   "source": "Mock Stripe"
+   
+}
+
+]
