@@ -57,7 +57,7 @@ export default function Home() {
           </div>
 
           <div className="mt-16 text-sm text-gray-500">
-            Week 2 Complete - Authentication & Dashboard Ready
+            ✨ Week 2 Complete - Authentication & Dashboard Ready ✨
           </div>
         </div>
       </div>
