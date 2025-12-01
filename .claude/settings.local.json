@@ -4,7 +4,8 @@
       "Bash(where:*)",
       "Bash(set DATABASE_URL=%DIRECT_URL%)",
       "Bash(timeout 60 npx prisma db push:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(del \".next\\dev\\lock\")"
     ],
     "deny": [],
     "ask": []
