@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA CRM - Dashboard Preview</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 25%, #5c1644 50%, #8b1e4b 75%, #b4154b 85%, #ff6b35 100%);
+            border-bottom: 2px solid rgba(255, 107, 53, 0.3);
+            height: 75px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 100%;
+            padding: 0 40px;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .tagline {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 16px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .search-bar {
+            width: 300px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            font-size: 15px;
+        }
+
+        .search-bar::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .user-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            padding: 10px 20px;
+            background: #764ba2;
+            border-radius: 8px;
+            border: 2px solid #764ba2;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-section:hover {
+            background: #8b5fb8;
+            transform: translateY(-1px);
+        }
+
+        /* Navigation */
+        .nav {
+            background: rgba(26, 10, 46, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: sticky;
+            top: 75px;
+            z-index: 999;
+        }
+
+        .nav-content {
+            display: flex;
+            gap: 8px;
+            padding: 0 40px;
+        }
+
+        .nav-item {
+            padding: 16px 24px;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        .nav-item.active {
+            color: white;
+            border-bottom-color: #ffa07a;
+            background: rgba(255, 107, 107, 0.12);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 32px 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+
+        .stat-card.purple {
+            border-color: rgba(118, 75, 162, 0.3);
+            background: rgba(118, 75, 162, 0.08);
+        }
+
+        .stat-card.pink {
+            border-color: rgba(255, 107, 107, 0.3);
+            background: rgba(255, 107, 107, 0.08);
+        }
+
+        .stat-card.orange {
+            border-color: rgba(255, 107, 53, 0.3);
+            background: rgba(255, 107, 53, 0.08);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #4ade80;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.negative {
+            color: #f87171;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .card-subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 4px;
+        }
+
+        .view-all {
+            color: #ffa07a;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-all:hover {
+            color: #ff8a5c;
+            text-decoration: underline;
+        }
+
+        /* Activity List */
+        .activity-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.donation {
+            background: rgba(34, 197, 94, 0.2);
+        }
+
+        .activity-icon.contact {
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .activity-icon.email {
+            background: rgba(168, 85, 247, 0.2);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            color: white;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .activity-meta {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .activity-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ade80;
+        }
+
+        /* AI Insights Panel */
+        .ai-panel {
+            background: linear-gradient(135deg, rgba(118, 75, 162, 0.15), rgba(255, 107, 107, 0.12));
+            border: 1px solid rgba(255, 107, 53, 0.25);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .ai-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 107, 53, 0.3);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .ai-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .ai-insight {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        .ai-insight:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 107, 53, 0.2);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            border-radius: 12px;
+            font-size: 12px;
+            color: #ffa07a;
+            margin-right: 8px;
+            margin-top: 8px;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .action-btn {
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(to right, #764ba2, #ff6b35);
+            border: none;
+        }
+
+        .action-btn.primary:hover {
+            opacity: 0.9;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Top Donors Table */
+        .donors-table {
+            width: 100%;
+        }
+
+        .donors-table th {
+            text-align: left;
+            padding: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .donors-table td {
+            padding: 12px;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .donors-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .donor-name {
+            font-weight: 500;
+        }
+
+        .donor-amount {
+            color: #4ade80;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <span>SAGA</span>
+                <span class="tagline">Nonprofit CRM & Donor Management</span>
+            </div>
+            <input type="search" class="search-bar" placeholder="Search contacts, donations...">
+            <div class="user-section">
+                <span>⚙️</span>
+                <span>Admin User</span>
+                <span style="opacity: 0.7;">•</span>
+                <span>Sign Out</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-content">
+            <div class="nav-item active">📊 Dashboard</div>
+            <div class="nav-item">👥 Contacts</div>
+            <div class="nav-item">💰 Donations</div>
+            <div class="nav-item">📊 Campaigns</div>
+            <div class="nav-item">📧 Communications</div>
+            <div class="nav-item">📈 Reports</div>
+            <div class="nav-item">⚙️ Settings</div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Welcome back, Admin 👋</h1>
+            <p class="page-subtitle">Here's what's happening with your fundraising today</p>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="stat-label">Total Raised This Month</div>
+                <div class="stat-value">$24,850</div>
+                <div class="stat-change">
+                    <span>↗</span>
+                    <span>+12.3% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card pink">
+                <div class="stat-label">New Donors This Month</div>
+                <div class="stat-value">47</div>
+                <div class="stat-change">
+                    <span>↗</span>
+                    <span>+8 from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card orange">
+                <div class="stat-label">Average Gift Size</div>
+                <div class="stat-value">$186</div>
+                <div class="stat-change">
+                    <span>↗</span>
+                    <span>+5.2% from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-label">Total Active Donors</div>
+                <div class="stat-value">342</div>
+                <div class="stat-change">
+                    <span>↗</span>
+                    <span>+23 this quarter</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="content-grid">
+            <!-- Monthly Giving Trend Chart -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Monthly Giving Trend</div>
+                        <div class="card-subtitle">Last 6 months comparison</div>
+                    </div>
+                    <div class="view-all">View Full Report →</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="givingChart"></canvas>
+                </div>
+            </div>
+
+            <!-- AI Insights Panel -->
+            <div class="ai-panel">
+                <div class="ai-header">
+                    <div class="ai-icon">🤖</div>
+                    <div class="ai-title">AI Insights</div>
+                </div>
+                <div class="ai-insight">
+                    <strong>Major Gift Opportunity:</strong> Sarah Johnson has increased her giving by 45% over the past 3 months. Consider reaching out for a major gift conversation.
+                </div>
+                <div class="ai-insight">
+                    <strong>Lapse Risk Alert:</strong> 12 donors haven't given in 90+ days. Send personalized re-engagement emails this week.
+                </div>
+                <div class="ai-insight">
+                    <strong>Campaign Performance:</strong> Your "Summer Impact" campaign is outperforming similar campaigns by 23%. Consider extending the deadline.
+                </div>
+                <div style="margin-top: 16px;">
+                    <span class="ai-tag">📈 Trending Up</span>
+                    <span class="ai-tag">⚠️ Needs Attention</span>
+                    <span class="ai-tag">✨ Opportunity</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="content-grid">
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Recent Activity</div>
+                        <div class="card-subtitle">Latest donations and updates</div>
+                    </div>
+                    <div class="view-all">View All →</div>
+                </div>
+                <div>
+                    <div class="activity-item">
+                        <div class="activity-icon donation">💰</div>
+                        <div class="activity-content">
+                            <div class="activity-title">New donation from Michael Chen</div>
+                            <div class="activity-meta">2 minutes ago • Summer Impact Campaign</div>
+                        </div>
+                        <div class="activity-amount">$500</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon email">📧</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Thank-you email sent to Sarah Johnson</div>
+                            <div class="activity-meta">15 minutes ago • AI-powered personalization</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon contact">👤</div>
+                        <div class="activity-content">
+                            <div class="activity-title">New contact added: Jessica Martinez</div>
+                            <div class="activity-meta">1 hour ago • Imported from event registration</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon donation">💰</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Recurring donation from David Lee</div>
+                            <div class="activity-meta">3 hours ago • Monthly sustainer</div>
+                        </div>
+                        <div class="activity-amount">$150</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon email">📧</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Campaign email opened by 47 contacts</div>
+                            <div class="activity-meta">5 hours ago • 23% open rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Top Donors -->
+            <div>
+                <!-- Quick Actions -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <div class="card-title">Quick Actions</div>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="action-btn primary">➕ Add Donation</button>
+                        <button class="action-btn">👤 Add Contact</button>
+                        <button class="action-btn">📧 Send Email</button>
+                        <button class="action-btn">📊 New Campaign</button>
+                    </div>
+                </div>
+
+                <!-- Top Donors -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Top Donors</div>
+                            <div class="card-subtitle">Lifetime giving</div>
+                        </div>
+                        <div class="view-all">View All →</div>
+                    </div>
+                    <table class="donors-table">
+                        <thead>
+                            <tr>
+                                <th>Donor</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="donor-name">Sarah Johnson</td>
+                                <td class="donor-amount">$12,450</td>
+                            </tr>
+                            <tr>
+                                <td class="donor-name">Michael Chen</td>
+                                <td class="donor-amount">$9,200</td>
+                            </tr>
+                            <tr>
+                                <td class="donor-name">David Lee</td>
+                                <td class="donor-amount">$7,800</td>
+                            </tr>
+                            <tr>
+                                <td class="donor-name">Jessica Martinez</td>
+                                <td class="donor-amount">$6,500</td>
+                            </tr>
+                            <tr>
+                                <td class="donor-name">Robert Thompson</td>
+                                <td class="donor-amount">$5,900</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Monthly Giving Trend Chart
+        const ctx = document.getElementById('givingChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['July', 'August', 'September', 'October', 'November', 'December'],
+                datasets: [{
+                    label: 'Total Raised',
+                    data: [18200, 21500, 19800, 22400, 20100, 24850],
+                    borderColor: '#ff6b35',
+                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

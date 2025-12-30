@@ -10,6 +10,11 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // Platform admins should use the /admin dashboard
+  if (session.user.isPlatformAdmin || !session.user.organizationId) {
+    redirect("/admin");
+  }
+
   // Fetch some basic stats for the dashboard
   const [
     totalContacts,

@@ -1,0 +1,4 @@
+First Name,Last Name,Email,Phone,Street,City,State,ZIP,Type,Status,Tags,Notes
+John,Doe,john.doe@example.com,555-1234,123 Main St,Boston,MA,02101,DONOR,ACTIVE,"major-donor, monthly-giver",Long-time supporter
+Jane,Smith,jane.smith@example.com,555-5678,456 Oak Ave,Cambridge,MA,02138,VOLUNTEER,ACTIVE,volunteer,Volunteers every Saturday
+Robert,Johnson,robert.johnson@example.com,555-9012,789 Pine Rd,Somerville,MA,02144,BOARD_MEMBER,ACTIVE,"board, leadership",Board treasurer since 2020

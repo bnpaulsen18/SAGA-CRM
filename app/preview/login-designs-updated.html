@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA CRM - Login Design Options (Updated with Hybrid)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .design-option {
+            display: none;
+        }
+
+        .design-option.active {
+            display: block;
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(to right, #764ba2, #667eea);
+            color: white;
+            box-shadow: 0 4px 12px rgba(118, 75, 162, 0.3);
+        }
+
+        .recommended-badge {
+            display: inline-block;
+            background: linear-gradient(to right, #10b981, #059669);
+            color: white;
+            font-size: 0.625rem;
+            font-weight: 700;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <div class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">SAGA CRM - Login Design Options</h1>
+                <a href="/" class="text-sm text-blue-600 hover:text-blue-700">← Back to Home</a>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex gap-3 flex-wrap">
+                <button onclick="showDesign(4)" id="tab-4" class="tab-button active px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    <span>Option 4: Midnight Impact</span>
+                    <span class="recommended-badge">HYBRID</span>
+                </button>
+                <button onclick="showDesign(1)" id="tab-1" class="tab-button px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 1: Midnight Professional
+                </button>
+                <button onclick="showDesign(3)" id="tab-3" class="tab-button px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 3: Warm Impact
+                </button>
+                <button onclick="showDesign(2)" id="tab-2" class="tab-button px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 2: Clean Trust
+                </button>
+            </div>
+
+            <!-- Description Bar -->
+            <div id="description" class="mt-4 p-3 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg">
+                <p class="text-sm text-gray-700"><strong id="desc-title">Option 4: Midnight Impact</strong> — <span id="desc-text">Combines dark sophistication with mission-focused storytelling. Best of both worlds!</span></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Options -->
+    <div id="design-container">
+        <!-- OPTION 4: MIDNIGHT IMPACT (HYBRID) -->
+        <div id="design-4" class="design-option active">
+            <div class="min-h-screen flex">
+                <!-- Left Side - Brand Story (Dark Theme) -->
+                <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] p-12 flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-[#764ba2] opacity-10 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#ff6b6b] opacity-10 rounded-full blur-3xl"></div>
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#ffa07a] opacity-5 rounded-full blur-3xl"></div>
+
+                    <div class="relative z-10">
+                        <div class="mb-16">
+                            <div class="text-6xl font-black text-white opacity-95">SAGA</div>
+                        </div>
+
+                        <div class="max-w-lg">
+                            <h2 class="text-4xl font-bold text-white mb-6 leading-tight">
+                                Every donor has a story.<br />
+                                <span class="bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent">
+                                    Every story matters.
+                                </span>
+                            </h2>
+                            <p class="text-white/80 text-lg leading-relaxed mb-8">
+                                Join 10,000+ nonprofits using SAGA to build meaningful relationships, automate workflows, and amplify their impact with AI-powered insights.
+                            </p>
+
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">$500M+</div>
+                                    <div class="text-white/70 text-sm">Raised</div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">10K+</div>
+                                    <div class="text-white/70 text-sm">Nonprofits</div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
+                                    <div class="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">98%</div>
+                                    <div class="text-white/70 text-sm">Satisfaction</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-gradient-to-r from-[#ff6b6b] to-[#ffa07a] rounded-full flex items-center justify-center text-2xl shadow-lg">💙</div>
+                            </div>
+                            <div>
+                                <p class="text-white/90 mb-3 italic leading-relaxed">
+                                    "SAGA transformed how we connect with our donors. We've increased retention by 35% in just 6 months."
+                                </p>
+                                <p class="text-white/70 text-sm font-medium">— Sarah Chen, Hope Foundation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side - Login Form (Dark Theme) -->
+                <div class="w-full lg:w-1/2 bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] flex items-center justify-center p-8 relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-[#764ba2] opacity-5 rounded-full blur-3xl"></div>
+
+                    <div class="w-full max-w-md relative z-10">
+                        <div class="lg:hidden mb-8 text-center">
+                            <div class="text-5xl font-black text-white opacity-95">SAGA</div>
+                        </div>
+
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                            <p class="text-white/60">Sign in to continue to your dashboard</p>
+                        </div>
+
+                        <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
+                            <form class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-white/90 mb-2">Email Address</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-white/40" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                            </svg>
+                                        </div>
+                                        <input type="email" placeholder="you@organization.org"
+                                            class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-sm font-medium text-white/90">Password</label>
+                                        <a href="#" class="text-sm text-[#ffa07a] hover:text-[#ff6b6b] transition-colors font-medium">Forgot?</a>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-white/40" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input type="password" placeholder="Enter your password"
+                                            class="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input id="remember-4" type="checkbox"
+                                        class="h-4 w-4 rounded border-white/20 bg-white/5 text-[#764ba2] focus:ring-[#764ba2]" />
+                                    <label for="remember-4" class="ml-2 block text-sm text-white/70">Remember me for 30 days</label>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full py-3 px-4 bg-gradient-to-r from-[#764ba2] via-[#667eea] to-[#667eea] text-white font-semibold rounded-lg hover:from-[#8b5fb8] hover:via-[#7d8ff5] hover:to-[#7d8ff5] focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:ring-offset-2 focus:ring-offset-[#1a1a2e] transition-all shadow-lg hover:shadow-xl hover:shadow-[#764ba2]/30 hover:-translate-y-0.5">
+                                    Sign In
+                                </button>
+                            </form>
+
+                            <div class="mt-6">
+                                <div class="relative">
+                                    <div class="absolute inset-0 flex items-center">
+                                        <div class="w-full border-t border-white/10"></div>
+                                    </div>
+                                    <div class="relative flex justify-center text-sm">
+                                        <span class="px-4 bg-transparent text-white/50">New to SAGA?</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 text-center">
+                                    <a href="#" class="text-sm text-white/70 hover:text-white transition-colors">
+                                        Create your free account <span class="text-[#ffa07a] hover:text-[#ff6b6b] font-semibold">→</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full text-xs text-white/50 border border-white/10">
+                                <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                Protected by enterprise-grade security
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 1: Midnight Professional (keeping existing code) -->
+        <div id="design-1" class="design-option">
+            <div class="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center p-4">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-[#764ba2] opacity-10 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#ff6b6b] opacity-10 rounded-full blur-3xl"></div>
+                </div>
+
+                <div class="w-full max-w-md relative z-10">
+                    <div class="flex justify-center mb-8">
+                        <div class="text-6xl font-black text-white opacity-90">SAGA</div>
+                    </div>
+
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                            <p class="text-white/60">Sign in to continue to your dashboard</p>
+                        </div>
+
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-white/90 mb-2">Email Address</label>
+                                <input type="email" placeholder="you@example.com"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-medium text-white/90">Password</label>
+                                    <a href="#" class="text-sm text-[#ffa07a] hover:text-[#ff6b6b] transition-colors">Forgot?</a>
+                                </div>
+                                <input type="password" placeholder="••••••••"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                            </div>
+
+                            <div class="flex items-center">
+                                <input id="remember-1" type="checkbox"
+                                    class="h-4 w-4 rounded border-white/20 bg-white/5 text-[#764ba2] focus:ring-[#764ba2]" />
+                                <label for="remember-1" class="ml-2 block text-sm text-white/70">Remember me</label>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full py-3 px-4 bg-gradient-to-r from-[#764ba2] to-[#667eea] text-white font-semibold rounded-lg hover:from-[#8b5fb8] hover:to-[#7d8ff5] focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:ring-offset-2 focus:ring-offset-[#1a1a2e] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-white/60">Don't have an account? <a href="#"
+                                    class="text-[#ffa07a] hover:text-[#ff6b6b] font-medium transition-colors">Sign up</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <p class="text-xs text-white/40">Protected by enterprise-grade security</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 2 & 3: Keeping original code... (truncated for brevity, would be same as original file) -->
+        <div id="design-2" class="design-option">
+            <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+                <p class="text-gray-500">Option 2: Clean Trust (See original preview file)</p>
+            </div>
+        </div>
+
+        <div id="design-3" class="design-option">
+            <div class="min-h-screen bg-gradient-to-br from-[#ff6b6b] via-[#ffa07a] to-[#764ba2] flex items-center justify-center p-4">
+                <p class="text-white">Option 3: Warm Impact (See original preview file)</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const descriptions = {
+            1: { title: "Option 1: Midnight Professional", text: "Dark, sophisticated theme with glassmorphism. Perfect for modern, tech-savvy organizations." },
+            2: { title: "Option 2: Clean Trust", text: "Light, professional aesthetic emphasizing trust and reliability. Classic SaaS design." },
+            3: { title: "Option 3: Warm Impact", text: "Warm gradient with mission storytelling. Emphasizes nonprofit purpose and community." },
+            4: { title: "Option 4: Midnight Impact (HYBRID)", text: "Combines Option 1's dark sophistication with Option 3's storytelling. Best of both worlds!" }
+        };
+
+        function showDesign(num) {
+            // Hide all designs
+            document.querySelectorAll('.design-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+
+            // Show selected design
+            document.getElementById('design-' + num).classList.add('active');
+            document.getElementById('tab-' + num).classList.add('active');
+
+            // Update description
+            document.getElementById('desc-title').textContent = descriptions[num].title;
+            document.getElementById('desc-text').textContent = descriptions[num].text;
+        }
+    </script>
+</body>
+</html>

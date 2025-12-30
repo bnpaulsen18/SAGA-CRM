@@ -6,7 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ========================================
@@ -20,6 +22,20 @@ model Organization {
   email     String
   phone     String?
   website   String?
+
+  // Hierarchical Structure - For Fiscal Sponsorship / Parent-Project relationships
+  organizationType   OrganizationType @default(INDEPENDENT)
+  parentOrganizationId String?
+
+  // Nonprofit Compliance Fields
+  taxExemptStatus    TaxExemptStatus  @default(EXEMPT_501C3)
+  fiscalYearEnd      String?          // Format: "MM-DD" (e.g., "12-31")
+  missionStatement   String?
+  primaryProgram     String?
+
+  // Settings
+  allowSubProjects   Boolean          @default(false) // Can this org create sub-projects?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -32,7 +48,31 @@ model Organization {
   interactions Interaction[]
   tasks        Task[]
 
+  // Hierarchical relationships
+  parentOrganization Organization?  @relation("OrgHierarchy", fields: [parentOrganizationId], references: [id])
+  subProjects        Organization[] @relation("OrgHierarchy")
+
+  // Donations designated for this project (when this is a sub-project)
+  designatedDonations Donation[] @relation("DesignatedProject")
+
+  @@index([parentOrganizationId])
   @@map("organizations")
+}
+
+enum OrganizationType {
+  INDEPENDENT   // Standalone nonprofit
+  PARENT        // Fiscal sponsor / Parent org with sub-projects
+  PROJECT       // Sub-project under a parent org
+}
+
+enum TaxExemptStatus {
+  EXEMPT_501C3       // Public charity
+  EXEMPT_501C4       // Social welfare
+  EXEMPT_501C6       // Business league
+  EXEMPT_501C7       // Social club
+  EXEMPT_OTHER       // Other tax-exempt
+  FOR_PROFIT         // Not tax-exempt (rare but possible for projects)
+  PENDING            // Application pending
 }
 
 model User {
@@ -42,23 +82,36 @@ model User {
   firstName      String
   lastName       String
   role           UserRole @default(MEMBER)
-  organizationId String
+  organizationId String?  // Nullable for PLATFORM_ADMIN users
+
+  // NextAuth fields
+  emailVerified  DateTime?
+  image          String?
+
+  // Platform Admin Settings
+  isPlatformAdmin Boolean @default(false) // Redundant with role, but useful for quick checks
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   // Relationships
-  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   interactions Interaction[]
   tasks        Task[]
+  accounts     Account[]
+  sessions     Session[]
+  auditLogs    AuditLog[]
 
   @@index([organizationId])
+  @@index([role])
   @@map("users")
 }
 
 enum UserRole {
-  ADMIN
-  MEMBER
-  VIEWER
+  PLATFORM_ADMIN  // SAGA platform owner - can access all organizations
+  ADMIN           // Organization admin - full access within org + sub-projects
+  MEMBER          // Regular user - access to assigned org only
+  VIEWER          // Read-only access
 }
 
 // ========================================
@@ -146,6 +199,15 @@ model Donation {
   receiptSent   Boolean   @default(false)
   receiptSentAt DateTime?
 
+  // Fund Accounting & Restrictions (IRS Compliance)
+  fundRestriction   FundRestriction @default(UNRESTRICTED)
+  designatedProjectId String?       // If donor restricts gift to specific project
+  donorIntent       String?         // Specific donor restrictions or instructions
+
+  // Fiscal Sponsorship Tracking
+  passedThroughToProject Boolean @default(false) // Has parent org disbursed to project?
+  disbursedAt            DateTime?               // When funds were passed through
+
   // Metadata
   notes              String?
   acknowledgmentSent Boolean @default(false)
@@ -155,6 +217,9 @@ model Donation {
   contact      Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
   campaign     Campaign?    @relation(fields: [campaignId], references: [id])
 
+  // Project designation for fiscal sponsorship
+  designatedProject Organization? @relation("DesignatedProject", fields: [designatedProjectId], references: [id])
+
   donatedAt DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -163,7 +228,17 @@ model Donation {
   @@index([contactId])
   @@index([campaignId])
   @@index([donatedAt])
+  @@index([designatedProjectId])
+  @@index([fundRestriction])
   @@map("donations")
+}
+
+enum FundRestriction {
+  UNRESTRICTED        // No donor restrictions - org can use freely
+  TEMPORARILY_RESTRICTED  // Time or purpose restricted (e.g., "for 2025 programs")
+  PERMANENTLY_RESTRICTED  // Endowment - principal can't be spent
+  PROGRAM_RESTRICTED     // Restricted to specific program
+  PROJECT_DESIGNATED     // Donor designated for specific sub-project
 }
 
 enum DonationType {
@@ -322,6 +397,35 @@ model EmailRecipient {
   @@map("email_recipients")
 }
 
+// Email Log for tracking individual email sends (receipts, thank-yous, etc.)
+model EmailLog {
+  id             String  @id @default(cuid())
+  organizationId String
+  contactId      String?
+  donationId     String?
+
+  // Email Details
+  to      String
+  subject String
+  status  String  @default("SENT") // SENT, FAILED, BOUNCED
+
+  // Tracking
+  messageId String? // External email provider ID (e.g., Resend)
+  sentAt    DateTime
+  openedAt  DateTime?
+
+  // Metadata
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([contactId])
+  @@index([donationId])
+  @@map("email_logs")
+}
+
 // ========================================
 // INTERACTIONS
 // ========================================
@@ -411,4 +515,69 @@ enum TaskStatus {
   IN_PROGRESS
   COMPLETED
   CANCELLED
+}
+
+// ========================================
+// NEXTAUTH MODELS
+// ========================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+// ========================================
+// AUDIT LOG (GDPR Compliance)
+// ========================================
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  userId     String
+  action     String   // "CREATE", "UPDATE", "DELETE", "VIEW", "EXPORT", "GDPR_DELETE"
+  resource   String   // "Contact", "Donation", "Campaign", etc.
+  resourceId String?
+  metadata   Json?    // Store changed fields, IP address, user agent, etc.
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([resource, resourceId])
+  @@index([createdAt])
+  @@index([action])
+  @@map("audit_logs")
 }

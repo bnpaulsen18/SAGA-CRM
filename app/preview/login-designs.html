@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAGA CRM - Login Design Options</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .design-option {
+            display: none;
+        }
+
+        .design-option.active {
+            display: block;
+        }
+
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(to right, #ff6b6b, #ffa07a);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <div class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">SAGA CRM - Login Design Options</h1>
+                <a href="/" class="text-sm text-blue-600 hover:text-blue-700">← Back to Home</a>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex gap-3">
+                <button onclick="showDesign(1)" id="tab-1" class="tab-button active px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 1: Midnight Professional
+                </button>
+                <button onclick="showDesign(2)" id="tab-2" class="tab-button px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 2: Clean Trust
+                </button>
+                <button onclick="showDesign(3)" id="tab-3" class="tab-button px-6 py-2 rounded-lg font-semibold bg-gray-200 text-gray-700">
+                    Option 3: Warm Impact
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Design Options -->
+    <div id="design-container">
+        <!-- OPTION 1: Midnight Professional -->
+        <div id="design-1" class="design-option active">
+            <div class="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] flex items-center justify-center p-4">
+                <!-- Background Decoration -->
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-[#764ba2] opacity-10 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-[#ff6b6b] opacity-10 rounded-full blur-3xl"></div>
+                </div>
+
+                <!-- Login Card -->
+                <div class="w-full max-w-md relative z-10">
+                    <!-- Logo Placeholder -->
+                    <div class="flex justify-center mb-8">
+                        <div class="text-6xl font-black text-white opacity-90">SAGA</div>
+                    </div>
+
+                    <!-- Card -->
+                    <div class="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-white mb-2">Welcome Back</h1>
+                            <p class="text-white/60">Sign in to continue to your dashboard</p>
+                        </div>
+
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-white/90 mb-2">Email Address</label>
+                                <input type="email" placeholder="you@example.com"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-medium text-white/90">Password</label>
+                                    <a href="#" class="text-sm text-[#ffa07a] hover:text-[#ff6b6b] transition-colors">Forgot?</a>
+                                </div>
+                                <input type="password" placeholder="••••••••"
+                                    class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all" />
+                            </div>
+
+                            <div class="flex items-center">
+                                <input id="remember-1" type="checkbox"
+                                    class="h-4 w-4 rounded border-white/20 bg-white/5 text-[#764ba2] focus:ring-[#764ba2]" />
+                                <label for="remember-1" class="ml-2 block text-sm text-white/70">Remember me</label>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full py-3 px-4 bg-gradient-to-r from-[#764ba2] to-[#667eea] text-white font-semibold rounded-lg hover:from-[#8b5fb8] hover:to-[#7d8ff5] focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:ring-offset-2 focus:ring-offset-[#1a1a2e] transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+                                Sign In
+                            </button>
+                        </form>
+
+                        <div class="mt-6 text-center">
+                            <p class="text-sm text-white/60">Don't have an account? <a href="#"
+                                    class="text-[#ffa07a] hover:text-[#ff6b6b] font-medium transition-colors">Sign up</a>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <p class="text-xs text-white/40">Protected by enterprise-grade security</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 2: Clean Trust -->
+        <div id="design-2" class="design-option">
+            <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center p-4">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-100 rounded-full blur-3xl opacity-30"></div>
+                    <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-100 rounded-full blur-3xl opacity-30"></div>
+                </div>
+
+                <div class="w-full max-w-md relative z-10">
+                    <div class="text-center mb-8">
+                        <div class="inline-block bg-white rounded-2xl shadow-sm p-6 mb-4">
+                            <div class="text-5xl font-black text-gray-900">SAGA</div>
+                        </div>
+                        <h1 class="text-2xl font-bold text-gray-900 mb-1">Welcome to SAGA</h1>
+                        <p class="text-gray-600">Sign in to manage your nonprofit's impact</p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                        <form class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                <input type="email" placeholder="you@organization.org"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                            </div>
+
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-semibold text-gray-700">Password</label>
+                                    <a href="#" class="text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">Forgot password?</a>
+                                </div>
+                                <input type="password" placeholder="Enter your password"
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" />
+                            </div>
+
+                            <div class="flex items-center">
+                                <input id="remember-2" type="checkbox"
+                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" />
+                                <label for="remember-2" class="ml-2 block text-sm text-gray-700">Remember me</label>
+                            </div>
+
+                            <button type="submit"
+                                class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all shadow-lg hover:shadow-xl">
+                                Sign In to Dashboard
+                            </button>
+                        </form>
+
+                        <div class="mt-6">
+                            <div class="relative">
+                                <div class="absolute inset-0 flex items-center">
+                                    <div class="w-full border-t border-gray-200"></div>
+                                </div>
+                                <div class="relative flex justify-center text-sm">
+                                    <span class="px-4 bg-white text-gray-500">New to SAGA?</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-6 text-center">
+                                <a href="#"
+                                    class="inline-flex items-center justify-center w-full px-4 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 font-medium transition-all">
+                                    Create an Account
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex items-center justify-center gap-6 text-xs text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            Secure Login
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                            </svg>
+                            24/7 Support
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-purple-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm9.707 5.707a1 1 0 00-1.414-1.414L9 12.586l-1.293-1.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            SOC 2 Certified
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- OPTION 3: Warm Impact -->
+        <div id="design-3" class="design-option">
+            <div class="min-h-screen flex">
+                <!-- Left Side -->
+                <div class="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#ff6b6b] via-[#ffa07a] to-[#764ba2] p-12 flex-col justify-between relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+                    <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+
+                    <div class="relative z-10">
+                        <div class="mb-16">
+                            <div class="text-6xl font-black text-white opacity-95">SAGA</div>
+                        </div>
+
+                        <div class="max-w-lg">
+                            <h2 class="text-4xl font-bold text-white mb-6 leading-tight">
+                                Every donor has a story.<br />Every story matters.
+                            </h2>
+                            <p class="text-white/90 text-lg leading-relaxed mb-8">
+                                Join 10,000+ nonprofits using SAGA to build meaningful relationships, automate workflows, and amplify their impact.
+                            </p>
+
+                            <div class="grid grid-cols-3 gap-6">
+                                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                    <div class="text-3xl font-bold text-white mb-1">$500M+</div>
+                                    <div class="text-white/80 text-sm">Raised</div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                    <div class="text-3xl font-bold text-white mb-1">10K+</div>
+                                    <div class="text-white/80 text-sm">Nonprofits</div>
+                                </div>
+                                <div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                    <div class="text-3xl font-bold text-white mb-1">98%</div>
+                                    <div class="text-white/80 text-sm">Satisfaction</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative z-10 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
+                        <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-2xl">💙</div>
+                            </div>
+                            <div>
+                                <p class="text-white/95 mb-3 italic">
+                                    "SAGA transformed how we connect with our donors. We've increased retention by 35% in just 6 months."
+                                </p>
+                                <p class="text-white/80 text-sm font-medium">— Sarah Chen, Hope Foundation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side -->
+                <div class="w-full lg:w-1/2 bg-gradient-to-br from-[#fefaf6] to-[#fff5f0] flex items-center justify-center p-8">
+                    <div class="w-full max-w-md">
+                        <div class="lg:hidden mb-8 text-center">
+                            <div class="text-5xl font-black text-gray-900">SAGA</div>
+                        </div>
+
+                        <div class="mb-8">
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+                            <p class="text-gray-600">Continue making an impact with your team</p>
+                        </div>
+
+                        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+                            <form class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                            </svg>
+                                        </div>
+                                        <input type="email" placeholder="you@organization.org"
+                                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b] focus:border-transparent transition-all" />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-sm font-semibold text-gray-700">Password</label>
+                                        <a href="#" class="text-sm text-[#ff6b6b] hover:text-[#ffa07a] font-medium transition-colors">Forgot password?</a>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                            <svg class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                        <input type="password" placeholder="Enter your password"
+                                            class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b] focus:border-transparent transition-all" />
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center">
+                                    <input id="remember-3" type="checkbox"
+                                        class="h-4 w-4 text-[#ff6b6b] focus:ring-[#ff6b6b] border-gray-300 rounded" />
+                                    <label for="remember-3" class="ml-2 block text-sm text-gray-700">Keep me signed in</label>
+                                </div>
+
+                                <button type="submit"
+                                    class="w-full py-3 px-4 bg-gradient-to-r from-[#ff6b6b] via-[#ffa07a] to-[#764ba2] text-white font-semibold rounded-lg hover:shadow-lg hover:shadow-[#ff6b6b]/30 focus:outline-none focus:ring-2 focus:ring-[#ff6b6b] focus:ring-offset-2 transition-all shadow-md hover:-translate-y-0.5">
+                                    Sign In
+                                </button>
+                            </form>
+
+                            <div class="mt-6 text-center">
+                                <p class="text-sm text-gray-600">
+                                    New to SAGA? <a href="#" class="text-[#ff6b6b] hover:text-[#ffa07a] font-semibold transition-colors">Create your free account</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 text-center">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/50 backdrop-blur-sm rounded-full text-xs text-gray-600 border border-gray-200">
+                                <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                                </svg>
+                                Your data is encrypted and secure
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showDesign(num) {
+            // Hide all designs
+            document.querySelectorAll('.design-option').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+
+            // Show selected design
+            document.getElementById('design-' + num).classList.add('active');
+            document.getElementById('tab-' + num).classList.add('active');
+        }
+    </script>
+</body>
+</html>

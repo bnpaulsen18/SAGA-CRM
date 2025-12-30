@@ -120,3 +120,47 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* SAGA Logo Gradient Blending */
+.saga-logo-container {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+}
+
+.saga-logo-container::before {
+  content: '';
+  position: absolute;
+  inset: -15px;
+  background: radial-gradient(
+    ellipse 110% 90% at 50% 50%,
+    rgba(92, 22, 68, 0.5) 0%,
+    rgba(139, 30, 75, 0.3) 50%,
+    transparent 100%
+  );
+  z-index: 1;
+  filter: blur(25px);
+  pointer-events: none;
+}
+
+.saga-logo-container::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(45, 27, 61, 0.3) 0%,
+    rgba(92, 22, 68, 0.2) 40%,
+    transparent 60%
+  );
+  z-index: 3;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.saga-logo-img {
+  position: relative;
+  z-index: 2;
+  filter: brightness(1.08) contrast(1.05);
+  mix-blend-mode: screen;
+  opacity: 0.95;
+}
