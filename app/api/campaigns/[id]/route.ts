@@ -5,9 +5,10 @@ import { prisma } from '@/lib/prisma';
 // GET /api/campaigns/[id] - Get a single campaign
 export async function GET(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
 
     if (!session || !session.user || !session.user.organizationId) {
@@ -16,7 +17,7 @@ export async function GET(
 
     const campaign = await prisma.campaign.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
       },
       include: {
@@ -45,9 +46,10 @@ export async function GET(
 // PUT /api/campaigns/[id] - Update a campaign
 export async function PUT(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
 
     if (!session || !session.user || !session.user.organizationId) {
@@ -75,7 +77,7 @@ export async function PUT(
     // Verify the campaign belongs to the user's organization
     const existingCampaign = await prisma.campaign.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
       },
     });
@@ -89,7 +91,7 @@ export async function PUT(
 
     // Update the campaign
     const campaign = await prisma.campaign.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         name,
         description,
@@ -120,9 +122,10 @@ export async function PUT(
 // DELETE /api/campaigns/[id] - Delete a campaign (soft delete)
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const session = await auth();
 
     if (!session || !session.user || !session.user.organizationId) {
@@ -132,7 +135,7 @@ export async function DELETE(
     // Verify the campaign belongs to the user's organization
     const campaign = await prisma.campaign.findFirst({
       where: {
-        id: params.id,
+        id,
         organizationId: session.user.organizationId,
       },
     });
@@ -146,7 +149,7 @@ export async function DELETE(
 
     // Soft delete by setting status to CANCELLED
     await prisma.campaign.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         status: 'CANCELLED',
       },

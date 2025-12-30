@@ -3,10 +3,10 @@ import { sendDonationReceipt } from '@/lib/email/send-donation-receipt';
 
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
 
     // Send the receipt
     const result = await sendDonationReceipt({ donationId: id });
