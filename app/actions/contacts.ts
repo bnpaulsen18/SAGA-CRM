@@ -68,7 +68,7 @@ export async function createContact(formData: FormData) {
     if (error instanceof ZodError) {
       return {
         success: false,
-        error: error.errors[0]?.message || 'Validation failed'
+        error: error.issues[0]?.message || 'Validation failed'
       }
     }
 
@@ -142,7 +142,7 @@ export async function updateContact(contactId: string, formData: FormData) {
     if (error instanceof ZodError) {
       return {
         success: false,
-        error: error.errors[0]?.message || 'Validation failed'
+        error: error.issues[0]?.message || 'Validation failed'
       }
     }
 
