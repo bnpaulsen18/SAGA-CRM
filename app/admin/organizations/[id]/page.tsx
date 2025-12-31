@@ -259,10 +259,7 @@ export default async function OrganizationDetailPage({
                     </th>
                   </tr>
                 </thead>
-                <tbody
-                  className="divide-y"
-                  style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                >
+                <tbody className="divide-y divide-white/5">
                   {organization.users.map((user) => (
                     <tr
                       key={user.id}
@@ -338,10 +335,7 @@ export default async function OrganizationDetailPage({
                     </th>
                   </tr>
                 </thead>
-                <tbody
-                  className="divide-y"
-                  style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                >
+                <tbody className="divide-y divide-white/5">
                   {organization.subProjects.map((project) => (
                     <tr
                       key={project.id}
@@ -421,10 +415,7 @@ export default async function OrganizationDetailPage({
                     </th>
                   </tr>
                 </thead>
-                <tbody
-                  className="divide-y"
-                  style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                >
+                <tbody className="divide-y divide-white/5">
                   {recentDonations.map((donation) => (
                     <tr
                       key={donation.id}
