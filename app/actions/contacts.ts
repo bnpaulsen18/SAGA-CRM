@@ -291,7 +291,7 @@ export async function importContacts(contacts: any[]) {
       } catch (error) {
         results.failed++
         if (error instanceof ZodError) {
-          results.errors.push(`Row ${rowNumber}: ${error.errors[0]?.message || 'Validation failed'}`)
+          results.errors.push(`Row ${rowNumber}: ${error.issues[0]?.message || 'Validation failed'}`)
         } else if (error instanceof Error) {
           results.errors.push(`Row ${rowNumber}: ${error.message}`)
         } else {
