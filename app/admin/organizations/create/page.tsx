@@ -121,11 +121,10 @@ export default async function CreateOrganizationPage() {
                   id="name"
                   name="name"
                   required
-                  className="w-full px-4 py-2 rounded-lg text-white focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#ff6b35]"
                   style={{
                     background: 'rgba(255, 255, 255, 0.1)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    focusRingColor: '#ff6b35'
+                    border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                   placeholder="e.g., Community Hope Foundation"
                 />

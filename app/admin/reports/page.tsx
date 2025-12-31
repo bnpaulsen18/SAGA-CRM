@@ -436,10 +436,7 @@ export default async function PlatformReportsPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody
-                    className="divide-y"
-                    style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                  >
+                  <tbody className="divide-y divide-white/5">
                     {topOrganizationsByDonations.map((org, index) => (
                       <tr
                         key={org.id}
@@ -532,10 +529,7 @@ export default async function PlatformReportsPage() {
                       </th>
                     </tr>
                   </thead>
-                  <tbody
-                    className="divide-y"
-                    style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                  >
+                  <tbody className="divide-y divide-white/5">
                     {recentOrganizations.map((org) => (
                       <tr
                         key={org.id}

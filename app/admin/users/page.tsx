@@ -146,10 +146,7 @@ export default async function UsersManagementPage() {
                     </th>
                   </tr>
                 </thead>
-                <tbody
-                  className="divide-y"
-                  style={{ divideColor: "rgba(255, 255, 255, 0.05)" }}
-                >
+                <tbody className="divide-y divide-white/5">
                   {allUsers.map((u) => (
                     <tr
                       key={u.id}

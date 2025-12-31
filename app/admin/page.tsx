@@ -58,7 +58,7 @@ export default async function PlatformAdminDashboard() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-white/70 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y" style={{ divideColor: 'rgba(255, 255, 255, 0.05)' }}>
+              <tbody className="divide-y divide-white/5">
                 {organizations.map((org) => (
                   <tr key={org.id} className="hover:bg-white/5 transition-colors">
                     <td className="px-6 py-4">
