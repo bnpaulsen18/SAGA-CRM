@@ -11,8 +11,8 @@ export async function GET(
     // Generate the PDF
     const pdfBuffer = await generateDonationReceiptPDF(id);
 
-    // Return PDF with proper headers - use Response for binary data
-    return new Response(pdfBuffer, {
+    // Return PDF with proper headers - convert Buffer to Uint8Array for Next.js 16
+    return new Response(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
