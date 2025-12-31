@@ -105,7 +105,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
 
   return (
     <DashboardLayout
-      userName={session.user.name || session.user.email}
+      userName={session.user.name || session.user.email || 'User'}
       userRole={session.user.role}
     >
       {/* Page Header */}

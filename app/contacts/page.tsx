@@ -56,7 +56,7 @@ export default async function ContactsPage() {
 
   return (
     <DashboardLayout
-      userName={session.user.name || session.user.email}
+      userName={session.user.name || session.user.email || 'User'}
       userRole={session.user.role}
       searchPlaceholder="Search contacts by name, email, phone..."
     >

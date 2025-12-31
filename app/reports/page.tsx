@@ -176,7 +176,7 @@ export default async function ReportsPage() {
 
   return (
     <DashboardLayout
-      userName={session.user.name || session.user.email}
+      userName={session.user.name || session.user.email || 'User'}
       userRole={session.user.role}
     >
       {/* Page Header */}

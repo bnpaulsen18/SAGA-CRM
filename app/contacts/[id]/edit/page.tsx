@@ -37,7 +37,7 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
 
   return (
     <DashboardLayout
-      userName={session.user.name || session.user.email}
+      userName={session.user.name || session.user.email || 'User'}
       userRole={session.user.role}
     >
       {/* Page Header */}
