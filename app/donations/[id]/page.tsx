@@ -197,12 +197,6 @@ export default async function DonationDetailPage({ params }: DonationDetailPageP
                   <p className="text-white mt-1">{donation.fundRestriction.replace('_', ' ')}</p>
                 </div>
               )}
-              {donation.reference && (
-                <div>
-                  <label className="text-sm font-medium text-white/70">Reference</label>
-                  <p className="text-white mt-1">{donation.reference}</p>
-                </div>
-              )}
               {donation.notes && (
                 <div className="col-span-2">
                   <label className="text-sm font-medium text-white/70">Notes</label>
