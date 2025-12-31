@@ -93,7 +93,10 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
   // Handle recurring donation payment
-  if (invoice.subscription && invoice.metadata) {
+  // Type assertion: invoice.subscription exists in Stripe API but not in TS type definitions
+  const invoiceWithSubscription = invoice as Stripe.Invoice & { subscription?: string | Stripe.Subscription };
+
+  if (invoiceWithSubscription.subscription && invoice.metadata && Object.keys(invoice.metadata).length > 0) {
     const metadata = invoice.metadata;
 
     await prisma.donation.create({
