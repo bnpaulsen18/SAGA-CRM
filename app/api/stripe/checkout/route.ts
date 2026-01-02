@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe/client';
+import { stripe, isStripeAvailable } from '@/lib/stripe/client';
 import { requireAuth } from '@/lib/permissions';
 
 export async function POST(req: Request) {
   try {
     const session = await requireAuth();
+
+    // Check if Stripe is available
+    if (!stripe || !isStripeAvailable) {
+      return NextResponse.json(
+        {
+          error: 'Stripe integration not configured. Use manual donation entry.',
+          fallbackUrl: '/donations/new'
+        },
+        { status: 503 }
+      );
+    }
+
     const body = await req.json();
 
     const {

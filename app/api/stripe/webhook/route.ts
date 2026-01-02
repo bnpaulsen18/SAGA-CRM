@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
-import { stripe, STRIPE_WEBHOOK_SECRET } from '@/lib/stripe/client';
+import { stripe, isStripeAvailable, STRIPE_WEBHOOK_SECRET } from '@/lib/stripe/client';
 import { prisma } from '@/lib/prisma';
 import { sendAutomatedThankYou } from '@/lib/email/send-donation-receipt';
 
@@ -12,6 +12,23 @@ export async function POST(req: Request) {
 
   if (!signature) {
     return NextResponse.json({ error: 'No signature' }, { status: 400 });
+  }
+
+  // Check if Stripe is available
+  if (!stripe || !isStripeAvailable) {
+    console.error('[Stripe Webhook] Stripe not configured but webhook received');
+    return NextResponse.json(
+      { error: 'Stripe integration not configured' },
+      { status: 503 }
+    );
+  }
+
+  if (!STRIPE_WEBHOOK_SECRET) {
+    console.error('[Stripe Webhook] STRIPE_WEBHOOK_SECRET not configured');
+    return NextResponse.json(
+      { error: 'Webhook secret not configured' },
+      { status: 500 }
+    );
   }
 
   let event: Stripe.Event;
