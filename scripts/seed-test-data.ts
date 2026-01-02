@@ -66,9 +66,7 @@ async function main() {
     data: {
       organizationId: org.id,
       name: 'Annual Fundraising Campaign 2024',
-      slug: 'annual-2024',
       status: 'ACTIVE',
-      type: 'GENERAL',
       goal: 50000,
       raised: 15000,
       startDate: new Date('2024-01-01'),
@@ -116,7 +114,7 @@ async function main() {
         campaignId: campaign.id,
         amount: 500,
         currency: 'USD',
-        type: 'RECURRING',
+        type: 'MONTHLY',
         method: 'ACH',
         status: 'COMPLETED',
         fundRestriction: 'PROGRAM_SPECIFIC',
