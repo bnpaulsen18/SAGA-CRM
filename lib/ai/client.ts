@@ -1,9 +1,17 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-// Initialize Anthropic client with API key from environment
-export const ai = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const initAnthropic = (): Anthropic | null => {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.warn('[Anthropic] ANTHROPIC_API_KEY not configured. AI features disabled.');
+    return null;
+  }
+  return new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+};
+
+export const ai = initAnthropic();
+export const isAnthropicAvailable = !!ai;
 
 /**
  * Generate text using Claude AI with a given prompt and optional system message
@@ -17,6 +25,10 @@ export async function generateText(
   system?: string,
   maxTokens: number = 1024
 ): Promise<string> {
+  if (!ai) {
+    throw new Error('AI service not configured');
+  }
+
   try {
     const response = await ai.messages.create({
       model: 'claude-3-5-sonnet-20241022',

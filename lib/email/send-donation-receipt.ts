@@ -1,7 +1,7 @@
 'use server'
 
 import { render } from '@react-email/components'
-import { resend, FROM_EMAIL } from './client'
+import { resend, isResendAvailable, FROM_EMAIL } from './client'
 import DonationReceiptEmail from './templates/DonationReceiptEmail'
 import { getPrismaWithRLS } from '@/lib/prisma-rls'
 import { requireAuth } from '@/lib/permissions'
@@ -51,6 +51,15 @@ export async function sendDonationReceipt({ donationId, recipientEmail }: SendDo
         success: false,
         error: 'Donation not found'
       }
+    }
+
+    // Check if Resend is available
+    if (!resend || !isResendAvailable) {
+      console.warn('[Email] Cannot send receipt - Resend not configured');
+      return {
+        success: false,
+        error: 'Email service not configured. Receipt saved but not sent.'
+      };
     }
 
     // Use provided email or default to contact's email
