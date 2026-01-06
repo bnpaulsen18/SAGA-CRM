@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+export const runtime = 'nodejs'
+
 interface DonationDetailPageProps {
   params: { id: string }
 }

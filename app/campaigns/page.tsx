@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import CampaignCard from '@/components/campaigns/CampaignCard';
 
+export const runtime = 'nodejs'
+
 export default async function CampaignsPage() {
   const session = await auth();
 

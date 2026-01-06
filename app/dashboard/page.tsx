@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import DashboardNav from "@/components/DashboardNav";
 
+export const runtime = 'nodejs'
+
 export default async function DashboardPage() {
   const session = await auth();
 

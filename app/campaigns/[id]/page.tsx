@@ -5,6 +5,8 @@ import { auth } from '@/lib/auth';
 import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignStats from '@/components/campaigns/CampaignStats';
 
+export const runtime = 'nodejs'
+
 export default async function CampaignDetailPage({ params }: { params: { id: string } }) {
   const session = await auth();
 

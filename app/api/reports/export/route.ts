@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { requireAuth } from '@/lib/permissions';
 import { getPrismaWithRLS } from '@/lib/prisma-rls';
 
+export const runtime = 'nodejs'
+
 export async function GET(req: Request) {
   try {
     const session = await requireAuth();

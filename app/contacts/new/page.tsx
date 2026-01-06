@@ -4,6 +4,8 @@ import SagaCard from '@/components/ui/saga-card'
 import ContactForm from '@/components/contacts/ContactForm'
 import Link from 'next/link'
 
+export const runtime = 'nodejs'
+
 export default async function NewContactPage() {
   const session = await requireAuth()
 

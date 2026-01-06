@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { stripe, isStripeAvailable } from '@/lib/stripe/client';
 import { requireAuth } from '@/lib/permissions';
 
+export const runtime = 'nodejs'
+
 export async function POST(req: Request) {
   try {
     const session = await requireAuth();

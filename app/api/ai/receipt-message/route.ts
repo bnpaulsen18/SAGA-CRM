@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth';
 import { generateThankYouMessage } from '@/lib/ai/receipt-generator';
 import { prisma } from '@/lib/prisma';
 
+export const runtime = 'nodejs'
+
 // POST /api/ai/receipt-message - Generate AI thank-you message
 export async function POST(req: Request) {
   try {

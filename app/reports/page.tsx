@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import MonthlyGivingChart from '@/components/reports/MonthlyGivingChart'
 import TopDonorsTable from '@/components/reports/TopDonorsTable'
 
+export const runtime = 'nodejs'
+
 export default async function ReportsPage() {
   const session = await requireAuth()
   const prisma = await getPrismaWithRLS()

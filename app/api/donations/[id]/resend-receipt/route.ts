@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { sendDonationReceipt } from '@/lib/email/send-donation-receipt';
 
+export const runtime = 'nodejs'
+
 export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> }

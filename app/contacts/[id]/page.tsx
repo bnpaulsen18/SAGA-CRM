@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
+export const runtime = 'nodejs'
+
 interface ContactDetailPageProps {
   params: {
     id: string

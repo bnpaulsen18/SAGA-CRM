@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import DonationRowActions from './DonationRowActions';
 
+export const runtime = 'nodejs'
+
 export default async function DonationsPage() {
   const session = await auth();
 

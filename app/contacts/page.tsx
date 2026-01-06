@@ -6,47 +6,57 @@ import SagaCard from '@/components/ui/saga-card'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
+export const runtime = 'nodejs'
+
 export default async function ContactsPage() {
   const session = await requireAuth()
   const prisma = await getPrismaWithRLS()
 
-  // Fetch contacts with aggregated donation data
+  // Fetch contacts with ALL their donations in one query (fixes N+1 problem)
   // RLS: Contacts are automatically filtered by organizationId at the database level
   const contacts = await prisma.contact.findMany({
     where: {
       organizationId: session.user.organizationId || undefined
     },
     include: {
-      _count: { select: { donations: true } },
       donations: {
-        select: { amount: true, donatedAt: true },
-        orderBy: { donatedAt: 'desc' },
-        take: 1 // Last donation
+        select: { amount: true, donatedAt: true }
       }
     },
     orderBy: { lastName: 'asc' },
     take: 100 // Initial page - TODO: Add pagination
   })
 
-  // Calculate lifetime giving for each contact
-  const contactsWithStats = await Promise.all(
-    contacts.map(async (contact) => {
-      const lifetimeGiving = await prisma.donation.aggregate({
-        where: {
-          contactId: contact.id,
-          organizationId: session.user.organizationId || undefined
-        },
-        _sum: { amount: true }
-      })
+  // Calculate stats in memory (1 query instead of 101!)
+  const contactsWithStats = contacts.map((contact) => {
+    const lifetimeGiving = contact.donations.reduce((sum, d) => sum + d.amount, 0)
+    const sortedDonations = contact.donations.sort((a, b) =>
+      b.donatedAt.getTime() - a.donatedAt.getTime()
+    )
 
-      return {
-        ...contact,
-        lifetimeGiving: lifetimeGiving._sum.amount || 0,
-        lastGiftDate: contact.donations[0]?.donatedAt || null,
-        lastGiftAmount: contact.donations[0]?.amount || null
-      }
-    })
-  )
+    return {
+      id: contact.id,
+      firstName: contact.firstName,
+      lastName: contact.lastName,
+      email: contact.email,
+      phone: contact.phone,
+      status: contact.status,
+      type: contact.type,
+      donationCount: contact.donations.length,
+      lifetimeGiving,
+      lastGiftDate: sortedDonations[0]?.donatedAt || null,
+      lastGiftAmount: sortedDonations[0]?.amount || null,
+      street: contact.street,
+      city: contact.city,
+      state: contact.state,
+      zip: contact.zip,
+      country: contact.country,
+      tags: contact.tags,
+      notes: contact.notes,
+      createdAt: contact.createdAt,
+      updatedAt: contact.updatedAt
+    }
+  })
 
   // Calculate stats
   const totalContacts = contacts.length

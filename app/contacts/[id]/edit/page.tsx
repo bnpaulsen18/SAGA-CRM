@@ -6,6 +6,8 @@ import ContactFormEdit from '@/components/contacts/ContactFormEdit'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 
+export const runtime = 'nodejs'
+
 interface ContactEditPageProps {
   params: {
     id: string

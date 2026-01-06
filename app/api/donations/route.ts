@@ -3,6 +3,8 @@ import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { sendAutomatedThankYou } from '@/lib/email/send-donation-receipt';
 
+export const runtime = 'nodejs'
+
 // GET /api/donations - List all donations for the user's organization
 export async function GET(req: Request) {
   try {

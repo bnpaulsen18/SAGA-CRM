@@ -4,6 +4,8 @@ import SagaCard from '@/components/ui/saga-card'
 import CSVImportWizard from '@/components/contacts/CSVImportWizard'
 import Link from 'next/link'
 
+export const runtime = 'nodejs'
+
 export default async function ContactImportPage() {
   const session = await requireAuth()
 

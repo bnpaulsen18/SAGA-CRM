@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { generateDonationReceiptPDF } from '@/lib/pdf/generate-receipt';
 
+export const runtime = 'nodejs'
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }

@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+export const runtime = 'nodejs'
+
 // GET /api/campaigns - List all campaigns for the user's organization
 export async function GET(req: Request) {
   try {

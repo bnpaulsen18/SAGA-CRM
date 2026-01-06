@@ -5,6 +5,8 @@ import { stripe, isStripeAvailable, STRIPE_WEBHOOK_SECRET } from '@/lib/stripe/c
 import { prisma } from '@/lib/prisma';
 import { sendAutomatedThankYou } from '@/lib/email/send-donation-receipt';
 
+export const runtime = 'nodejs'
+
 export async function POST(req: Request) {
   const body = await req.text();
   const headersList = await headers();
