@@ -239,11 +239,7 @@ export default function DonationEditForm({ donation, contacts, campaigns }: Dona
         <Button
           type="submit"
           disabled={loading}
-          className="flex-1 text-white font-semibold"
-          style={{
-            background: 'linear-gradient(to right, #764ba2, #ff6b35)',
-            border: 'none'
-          }}
+          className="flex-1 text-white font-semibold saga-button border-none"
         >
           {loading ? 'Saving...' : 'Save Changes'}
         </Button>

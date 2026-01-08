@@ -3,7 +3,6 @@ import { getPrismaWithRLS } from '@/lib/prisma-rls'
 import DashboardLayout from '@/components/DashboardLayout'
 import SagaCard from '@/components/ui/saga-card'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { PencilSimple, CurrencyDollar } from '@phosphor-icons/react/dist/ssr'
@@ -71,38 +70,18 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
     : 0
   const lastGiftDate = contact.donations[0]?.donatedAt || null
 
-  const getStatusBadgeStyle = (status: string) => {
+  const getStatusBadgeClass = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return {
-          background: 'rgba(34, 197, 94, 0.2)',
-          border: '1px solid rgba(34, 197, 94, 0.4)',
-          color: '#4ade80'
-        }
+        return 'saga-badge saga-badge-active'
       case 'INACTIVE':
-        return {
-          background: 'rgba(156, 163, 175, 0.2)',
-          border: '1px solid rgba(156, 163, 175, 0.4)',
-          color: '#9ca3af'
-        }
+        return 'saga-badge saga-badge-inactive'
       case 'DECEASED':
-        return {
-          background: 'rgba(239, 68, 68, 0.2)',
-          border: '1px solid rgba(239, 68, 68, 0.4)',
-          color: '#ef4444'
-        }
+        return 'saga-badge saga-badge-deceased'
       case 'DO_NOT_CONTACT':
-        return {
-          background: 'rgba(234, 179, 8, 0.2)',
-          border: '1px solid rgba(234, 179, 8, 0.4)',
-          color: '#eab308'
-        }
+        return 'saga-badge saga-badge-do-not-contact'
       default:
-        return {
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: '#ffffff'
-        }
+        return 'saga-badge'
     }
   }
 
@@ -123,19 +102,12 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
             {contact.firstName} {contact.lastName}
           </h1>
           <div className="flex items-center gap-3">
-            <Badge variant="outline" style={getStatusBadgeStyle(contact.status)}>
+            <span className={getStatusBadgeClass(contact.status)}>
               {contact.status}
-            </Badge>
-            <Badge
-              variant="outline"
-              style={{
-                background: 'rgba(118, 75, 162, 0.2)',
-                border: '1px solid rgba(118, 75, 162, 0.4)',
-                color: 'white'
-              }}
-            >
+            </span>
+            <span className="saga-badge bg-purple-500/20 border-purple-500/40 text-white">
               {contact.type}
-            </Badge>
+            </span>
           </div>
         </div>
         <div className="flex gap-3">
@@ -148,12 +120,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
               Edit Contact
             </Button>
           </Link>
-          <Button
-            className="text-white flex items-center gap-2"
-            style={{
-              background: 'linear-gradient(to right, #764ba2, #ff6b35)'
-            }}
-          >
+          <Button className="saga-button text-white flex items-center gap-2 border-none">
             <CurrencyDollar size={18} weight="bold" />
             Add Donation
           </Button>
@@ -176,7 +143,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
 
         <SagaCard variant="orange">
           <h3 className="text-sm font-medium text-white/70">Largest Gift</h3>
-          <p className="text-3xl font-bold" style={{ color: '#ff6b35' }}>
+          <p className="text-3xl font-bold saga-text-orange">
             ${largestGift.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
         </SagaCard>
@@ -221,18 +188,12 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
                   <p className="text-xs text-white/50 uppercase mb-2">Tags</p>
                   <div className="flex flex-wrap gap-2">
                     {contact.tags.map((tag: string, i: number) => (
-                      <Badge
+                      <span
                         key={i}
-                        variant="outline"
-                        className="text-xs"
-                        style={{
-                          background: 'rgba(255, 107, 53, 0.2)',
-                          border: '1px solid rgba(255, 107, 53, 0.4)',
-                          color: 'white'
-                        }}
+                        className="saga-badge text-xs bg-orange-500/20 border-orange-500/40 text-white"
                       >
                         {tag}
-                      </Badge>
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -268,12 +229,7 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
             {contact.donations.length === 0 ? (
               <div className="text-center py-8">
                 <p className="text-white/70 mb-4">No donations yet</p>
-                <Button
-                  className="text-white flex items-center gap-2"
-                  style={{
-                    background: 'linear-gradient(to right, #764ba2, #ff6b35)'
-                  }}
-                >
+                <Button className="saga-button text-white flex items-center gap-2 border-none">
                   <CurrencyDollar size={18} weight="bold" />
                   Record First Donation
                 </Button>
@@ -283,39 +239,20 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
                 {contact.donations.map((donation) => (
                   <div
                     key={donation.id}
-                    className="flex items-center justify-between p-4 rounded-lg transition-colors hover:bg-white/5"
-                    style={{
-                      border: '1px solid rgba(255, 255, 255, 0.1)'
-                    }}
+                    className="flex items-center justify-between p-4 rounded-lg transition-colors hover:bg-white/5 border border-white/10"
                   >
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
                         <p className="text-lg font-semibold text-green-400">
                           ${donation.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </p>
-                        <Badge
-                          variant="outline"
-                          className="text-xs"
-                          style={{
-                            background: 'rgba(118, 75, 162, 0.2)',
-                            border: '1px solid rgba(118, 75, 162, 0.4)',
-                            color: 'white'
-                          }}
-                        >
+                        <span className="saga-badge text-xs bg-purple-500/20 border-purple-500/40 text-white">
                           {donation.method}
-                        </Badge>
+                        </span>
                         {donation.campaign && (
-                          <Badge
-                            variant="outline"
-                            className="text-xs"
-                            style={{
-                              background: 'rgba(255, 107, 53, 0.2)',
-                              border: '1px solid rgba(255, 107, 53, 0.4)',
-                              color: 'white'
-                            }}
-                          >
+                          <span className="saga-badge text-xs bg-orange-500/20 border-orange-500/40 text-white">
                             {donation.campaign.name}
-                          </Badge>
+                          </span>
                         )}
                       </div>
                       <p className="text-sm text-white/70 mt-1">
@@ -353,25 +290,14 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
             {contact.interactions.map((interaction) => (
               <div
                 key={interaction.id}
-                className="p-4 rounded-lg"
-                style={{
-                  border: '1px solid rgba(255, 255, 255, 0.1)'
-                }}
+                className="p-4 rounded-lg border border-white/10"
               >
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge
-                        variant="outline"
-                        className="text-xs"
-                        style={{
-                          background: 'rgba(255, 107, 53, 0.2)',
-                          border: '1px solid rgba(255, 107, 53, 0.4)',
-                          color: 'white'
-                        }}
-                      >
+                      <span className="saga-badge text-xs bg-orange-500/20 border-orange-500/40 text-white">
                         {interaction.type}
-                      </Badge>
+                      </span>
                       <p className="text-white font-medium">{interaction.subject}</p>
                     </div>
                     {interaction.notes && (

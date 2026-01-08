@@ -99,14 +99,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div
-          className="p-4 rounded-lg text-sm"
-          style={{
-            background: 'rgba(239, 68, 68, 0.2)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            color: '#ef4444'
-          }}
-        >
+        <div className="p-4 rounded-lg text-sm bg-red-500/20 border border-red-500/40 text-red-400">
           {error}
         </div>
       )}
@@ -123,11 +116,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             type="text"
             required
             defaultValue={contact.firstName}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
 
@@ -141,11 +130,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             type="text"
             required
             defaultValue={contact.lastName}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
       </div>
@@ -162,11 +147,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             type="email"
             required
             defaultValue={contact.email}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
 
@@ -179,11 +160,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             name="phone"
             type="tel"
             defaultValue={contact.phone || ''}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
       </div>
@@ -198,11 +175,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
           name="street"
           type="text"
           defaultValue={contact.street || ''}
-          className="text-white"
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
-          }}
+          className="saga-input"
         />
       </div>
 
@@ -216,11 +189,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             name="city"
             type="text"
             defaultValue={contact.city || ''}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
 
@@ -233,11 +202,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             name="state"
             type="text"
             defaultValue={contact.state || ''}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
 
@@ -250,11 +215,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             name="zip"
             type="text"
             defaultValue={contact.zip || ''}
-            className="text-white"
-            style={{
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)'
-            }}
+            className="saga-input"
           />
         </div>
       </div>
@@ -266,21 +227,10 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             Contact Type <span className="text-red-400">*</span>
           </label>
           <Select name="type" value={type} onValueChange={setType} required>
-            <SelectTrigger
-              className="text-white"
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}
-            >
+            <SelectTrigger className="saga-input">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent
-              style={{
-                background: 'rgba(26, 10, 46, 0.98)',
-                border: '1px solid rgba(255, 107, 53, 0.3)'
-              }}
-            >
+            <SelectContent className="bg-[#1a0a2e]/98 saga-border-orange">
               <SelectItem value="DONOR" className="text-white hover:bg-white/10">Donor</SelectItem>
               <SelectItem value="VOLUNTEER" className="text-white hover:bg-white/10">Volunteer</SelectItem>
               <SelectItem value="BOARD_MEMBER" className="text-white hover:bg-white/10">Board Member</SelectItem>
@@ -296,21 +246,10 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             Status <span className="text-red-400">*</span>
           </label>
           <Select name="status" value={status} onValueChange={setStatus} required>
-            <SelectTrigger
-              className="text-white"
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)'
-              }}
-            >
+            <SelectTrigger className="saga-input">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent
-              style={{
-                background: 'rgba(26, 10, 46, 0.98)',
-                border: '1px solid rgba(255, 107, 53, 0.3)'
-              }}
-            >
+            <SelectContent className="bg-[#1a0a2e]/98 saga-border-orange">
               <SelectItem value="ACTIVE" className="text-white hover:bg-white/10">Active</SelectItem>
               <SelectItem value="INACTIVE" className="text-white hover:bg-white/10">Inactive</SelectItem>
               <SelectItem value="DECEASED" className="text-white hover:bg-white/10">Deceased</SelectItem>
@@ -331,11 +270,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
           type="text"
           placeholder="major-donor, monthly-giver, volunteer"
           defaultValue={contact.tags.join(', ')}
-          className="text-white placeholder:text-white/40"
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
-          }}
+          className="saga-input"
         />
       </div>
 
@@ -349,11 +284,7 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
           name="notes"
           rows={4}
           defaultValue={contact.notes || ''}
-          className="w-full px-3 py-2 rounded-md text-white placeholder:text-white/40 resize-none"
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)'
-          }}
+          className="saga-input w-full resize-none"
           placeholder="Any additional information about this contact..."
         />
       </div>
@@ -363,13 +294,9 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="text-white font-semibold"
-          style={{
-            background: isSubmitting
-              ? 'rgba(118, 75, 162, 0.5)'
-              : 'linear-gradient(to right, #764ba2, #ff6b35)',
-            border: 'none'
-          }}
+          className={`text-white font-semibold border-none ${
+            isSubmitting ? 'bg-purple-600/50' : 'saga-button'
+          }`}
         >
           {isSubmitting ? (
             'Saving...'
