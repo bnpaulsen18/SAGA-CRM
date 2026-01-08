@@ -1,45 +1,22 @@
-import { redirect } from 'next/navigation';
-import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
-import { Warning, Target, CheckCircle, CurrencyDollar, Rocket } from '@phosphor-icons/react/dist/ssr';
-import CampaignCard from '@/components/campaigns/CampaignCard';
+import { requireAuth } from '@/lib/permissions'
+import { getPrismaWithRLS } from '@/lib/prisma-rls'
+import DashboardLayout from '@/components/DashboardLayout'
+import SagaCard from '@/components/ui/saga-card'
+import { Button } from '@/components/ui/button'
+import Link from 'next/link'
+import { Target, CheckCircle, CurrencyDollar, Rocket, Plus } from '@phosphor-icons/react/dist/ssr'
+import CampaignCard from '@/components/campaigns/CampaignCard'
 
 export const runtime = 'nodejs'
 
 export default async function CampaignsPage() {
-  const session = await auth();
-
-  if (!session || !session.user) {
-    redirect('/login');
-  }
-
-  if (!session.user.organizationId) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] flex items-center justify-center p-8">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md text-center">
-          <div className="flex justify-center mb-4">
-            <Warning size={64} weight="bold" className="text-yellow-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-white mb-2">No Organization Assigned</h1>
-          <p className="text-white/70 mb-6">
-            Your account is not associated with an organization.
-          </p>
-          <Link
-            href="/dashboard"
-            className="inline-block px-6 py-3 bg-gradient-to-r from-[#764ba2] to-[#667eea] rounded-lg text-white font-medium hover:scale-105 transition-transform"
-          >
-            Go to Dashboard
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const session = await requireAuth()
+  const prisma = await getPrismaWithRLS()
 
   // Fetch campaigns for the user's organization
   const campaigns = await prisma.campaign.findMany({
     where: {
-      organizationId: session.user.organizationId,
+      organizationId: session.user.organizationId || undefined,
     },
     include: {
       _count: {
@@ -51,58 +28,68 @@ export default async function CampaignsPage() {
     orderBy: {
       createdAt: 'desc',
     },
-  });
+  })
 
   // Calculate stats
-  const totalGoal = campaigns.reduce((sum, c) => sum + (c.goal || 0), 0);
-  const totalRaised = campaigns.reduce((sum, c) => sum + c.raised, 0);
-  const activeCampaigns = campaigns.filter(c => c.status === 'ACTIVE').length;
+  const totalGoal = campaigns.reduce((sum, c) => sum + (c.goal || 0), 0)
+  const totalRaised = campaigns.reduce((sum, c) => sum + c.raised, 0)
+  const activeCampaigns = campaigns.filter(c => c.status === 'ACTIVE').length
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] p-8">
-      {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Campaigns</h1>
-            <p className="text-white/60">Manage your fundraising campaigns</p>
-          </div>
-          <Link
-            href="/campaigns/new"
-            className="px-6 py-3 bg-gradient-to-r from-[#764ba2] to-[#667eea] rounded-lg text-white font-medium hover:scale-105 transition-transform shadow-lg"
-          >
-            + New Campaign
-          </Link>
+    <DashboardLayout
+      userName={session.user.name || session.user.email || 'User'}
+      userRole={session.user.role}
+      searchPlaceholder="Search campaigns by name, status..."
+    >
+      {/* Page Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-white mb-2">Campaigns</h1>
+          <p className="text-white/70">Manage your fundraising campaigns</p>
         </div>
+        <Link href="/campaigns/new">
+          <Button
+            className="text-white font-semibold flex items-center gap-2"
+            style={{
+              background: 'linear-gradient(to right, #764ba2, #ff6b35)',
+              border: 'none'
+            }}
+          >
+            <Plus size={18} weight="bold" />
+            New Campaign
+          </Button>
+        </Link>
       </div>
 
       {/* Stats Cards */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <SagaCard variant="default">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm mb-1">Total Campaigns</p>
-              <p className="text-3xl font-bold text-white">{campaigns.length}</p>
+              <h3 className="text-sm font-medium text-white/70">Total Campaigns</h3>
+              <p className="text-3xl font-bold text-white mt-2">{campaigns.length}</p>
+              <p className="text-xs text-white/50 mt-1">All campaigns</p>
             </div>
             <Target size={40} weight="bold" className="text-blue-400" />
           </div>
-        </div>
+        </SagaCard>
 
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+        <SagaCard variant="purple">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm mb-1">Active Campaigns</p>
-              <p className="text-3xl font-bold text-green-400">{activeCampaigns}</p>
+              <h3 className="text-sm font-medium text-white/70">Active Campaigns</h3>
+              <p className="text-3xl font-bold text-green-400 mt-2">{activeCampaigns}</p>
+              <p className="text-xs text-white/50 mt-1">Currently fundraising</p>
             </div>
             <CheckCircle size={40} weight="bold" className="text-green-400" />
           </div>
-        </div>
+        </SagaCard>
 
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+        <SagaCard variant="orange">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white/60 text-sm mb-1">Total Raised</p>
-              <p className="text-3xl font-bold text-white">
+              <h3 className="text-sm font-medium text-white/70">Total Raised</h3>
+              <p className="text-3xl font-bold text-white mt-2">
                 ${totalRaised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
               <p className="text-xs text-white/50 mt-1">
@@ -111,33 +98,38 @@ export default async function CampaignsPage() {
             </div>
             <CurrencyDollar size={40} weight="bold" className="text-green-400" />
           </div>
-        </div>
+        </SagaCard>
       </div>
 
       {/* Campaigns Grid */}
-      <div className="max-w-7xl mx-auto">
-        {campaigns.length === 0 ? (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 text-center">
+      {campaigns.length === 0 ? (
+        <SagaCard>
+          <div className="p-12 text-center">
             <div className="flex justify-center mb-4">
               <Rocket size={64} weight="bold" className="text-purple-400" />
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">No campaigns yet</h3>
             <p className="text-white/60 mb-6">Create your first fundraising campaign to get started</p>
-            <Link
-              href="/campaigns/new"
-              className="inline-block px-6 py-3 bg-gradient-to-r from-[#764ba2] to-[#667eea] rounded-lg text-white font-medium hover:scale-105 transition-transform"
-            >
-              Create First Campaign
+            <Link href="/campaigns/new">
+              <Button
+                className="text-white font-semibold"
+                style={{
+                  background: 'linear-gradient(to right, #764ba2, #ff6b35)',
+                  border: 'none'
+                }}
+              >
+                Create First Campaign
+              </Button>
             </Link>
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {campaigns.map((campaign) => (
-              <CampaignCard key={campaign.id} campaign={campaign} />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
+        </SagaCard>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {campaigns.map((campaign) => (
+            <CampaignCard key={campaign.id} campaign={campaign} />
+          ))}
+        </div>
+      )}
+    </DashboardLayout>
+  )
 }
