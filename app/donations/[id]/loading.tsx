@@ -2,7 +2,7 @@ import SagaCard from '@/components/ui/saga-card'
 
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] p-8">
+    <div className="min-h-screen saga-gradient p-8">
       <div className="max-w-7xl mx-auto">
         {/* Header Skeleton */}
         <div className="flex justify-between items-start mb-8">
