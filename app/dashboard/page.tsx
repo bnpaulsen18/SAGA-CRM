@@ -192,11 +192,7 @@ export default async function DashboardPage() {
                     className="block"
                   >
                     <div
-                      className="p-4 rounded-lg transition-all hover:bg-white/5"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                      }}
+                      className="p-4 rounded-lg transition-all hover:bg-white/5 bg-white/3 border border-white/10"
                     >
                       <div className="flex justify-between items-start mb-2">
                         <div>
@@ -218,12 +214,12 @@ export default async function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
+                          className={`saga-badge ${
                             donation.status === 'COMPLETED'
-                              ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                              ? 'saga-badge-completed'
                               : donation.status === 'PENDING'
-                              ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
-                              : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                              ? 'saga-badge-pending'
+                              : 'saga-badge-failed'
                           }`}
                         >
                           {donation.status}
@@ -257,11 +253,7 @@ export default async function DashboardPage() {
                     className="block"
                   >
                     <div
-                      className="p-4 rounded-lg transition-all hover:bg-white/5"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)'
-                      }}
+                      className="p-4 rounded-lg transition-all hover:bg-white/5 bg-white/3 border border-white/10"
                     >
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
@@ -282,12 +274,13 @@ export default async function DashboardPage() {
                       {/* Progress Bar */}
                       <div className="w-full bg-white/10 rounded-full h-2">
                         <div
-                          className="h-2 rounded-full transition-all"
+                          className={`h-2 rounded-full transition-all ${
+                            percentage >= 100
+                              ? 'bg-linear-to-r from-green-500 to-green-400'
+                              : 'saga-button'
+                          }`}
                           style={{
-                            width: `${Math.min(percentage, 100)}%`,
-                            background: percentage >= 100
-                              ? 'linear-gradient(to right, #10b981, #34d399)'
-                              : 'linear-gradient(to right, #764ba2, #ff6b35)'
+                            width: `${Math.min(percentage, 100)}%`
                           }}
                         />
                       </div>
