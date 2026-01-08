@@ -9,9 +9,48 @@ import Link from 'next/link'
 
 export const runtime = 'nodejs'
 
-export default async function ContactsPage() {
+interface ContactsPageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
+export default async function ContactsPage({ searchParams }: ContactsPageProps) {
   const session = await requireAuth()
   const prisma = await getPrismaWithRLS()
+
+  // Parse pagination params from URL
+  const params = await searchParams
+  const page = Number(params.page) || 1
+  const limit = Number(params.limit) || 50
+  const skip = (page - 1) * limit
+
+  // Get total counts for accurate stats (independent of pagination)
+  const [totalContactsCount, activeContactsCount, donorContactsCount, lifetimeGivingAggregate] = await Promise.all([
+    prisma.contact.count({
+      where: {
+        organizationId: session.user.organizationId || undefined
+      }
+    }),
+    prisma.contact.count({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        status: 'ACTIVE'
+      }
+    }),
+    prisma.contact.count({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        type: 'DONOR'
+      }
+    }),
+    prisma.donation.aggregate({
+      where: {
+        organizationId: session.user.organizationId || undefined
+      },
+      _sum: {
+        amount: true
+      }
+    })
+  ])
 
   // Fetch contacts with ALL their donations in one query (fixes N+1 problem)
   // RLS: Contacts are automatically filtered by organizationId at the database level
@@ -25,7 +64,8 @@ export default async function ContactsPage() {
       }
     },
     orderBy: { lastName: 'asc' },
-    take: 100 // Initial page - TODO: Add pagination
+    skip,
+    take: limit
   })
 
   // Calculate stats in memory (1 query instead of 101!)
@@ -59,11 +99,16 @@ export default async function ContactsPage() {
     }
   })
 
-  // Calculate stats
-  const totalContacts = contacts.length
-  const activeContacts = contacts.filter(c => c.status === 'ACTIVE').length
-  const donorContacts = contacts.filter(c => c.type === 'DONOR').length
-  const totalLifetimeGiving = contactsWithStats.reduce((sum, c) => sum + c.lifetimeGiving, 0)
+  // Use actual totals from count queries (not paginated subset)
+  const totalContacts = totalContactsCount
+  const activeContacts = activeContactsCount
+  const donorContacts = donorContactsCount
+  const totalLifetimeGiving = lifetimeGivingAggregate._sum.amount || 0
+
+  // Calculate pagination metadata
+  const totalPages = Math.ceil(totalContactsCount / limit)
+  const startRecord = totalContactsCount === 0 ? 0 : skip + 1
+  const endRecord = Math.min(skip + limit, totalContactsCount)
 
   return (
     <DashboardLayout
@@ -134,7 +179,15 @@ export default async function ContactsPage() {
       </div>
 
       {/* Contacts Table */}
-      <ContactsTable data={contactsWithStats} />
+      <ContactsTable
+        data={contactsWithStats}
+        currentPage={page}
+        totalPages={totalPages}
+        totalCount={totalContactsCount}
+        startRecord={startRecord}
+        endRecord={endRecord}
+        limit={limit}
+      />
     </DashboardLayout>
   )
 }

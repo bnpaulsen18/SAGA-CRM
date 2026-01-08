@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -13,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Plus } from '@phosphor-icons/react'
+import { Plus, CaretLeft, CaretRight } from '@phosphor-icons/react'
 
 type ContactWithStats = {
   id: string
@@ -31,12 +32,35 @@ type ContactWithStats = {
 
 interface ContactsTableProps {
   data: ContactWithStats[]
+  currentPage?: number
+  totalPages?: number
+  totalCount?: number
+  startRecord?: number
+  endRecord?: number
+  limit?: number
 }
 
-export default function ContactsTable({ data }: ContactsTableProps) {
+export default function ContactsTable({
+  data,
+  currentPage = 1,
+  totalPages = 1,
+  totalCount = 0,
+  startRecord = 0,
+  endRecord = 0,
+  limit = 50
+}: ContactsTableProps) {
+  const router = useRouter()
+  const searchParams = useSearchParams()
   const [searchTerm, setSearchTerm] = useState('')
   const [sortField, setSortField] = useState<keyof ContactWithStats>('lastName')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+
+  const handlePageChange = (newPage: number) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set('page', newPage.toString())
+    params.set('limit', limit.toString())
+    router.push(`?${params.toString()}`)
+  }
 
   // Filter contacts by search term
   const filteredData = data.filter((contact) => {
@@ -150,7 +174,7 @@ export default function ContactsTable({ data }: ContactsTableProps) {
           }}
         />
         <p className="text-xs text-white/50 mt-2">
-          Showing {sortedData.length} of {data.length} contacts
+          Showing {sortedData.length} of {data.length} contacts on this page • {totalCount.toLocaleString()} total
         </p>
       </div>
 
@@ -277,32 +301,41 @@ export default function ContactsTable({ data }: ContactsTableProps) {
         )}
       </div>
 
-      {/* Pagination (TODO: Add server-side pagination) */}
-      {sortedData.length > 0 && (
+      {/* Pagination */}
+      {totalCount > 0 && (
         <div
           className="p-4 border-t flex items-center justify-between"
           style={{ borderTopColor: 'rgba(255, 107, 107, 0.2)' }}
         >
           <span className="text-white/70 text-sm">
-            Showing {sortedData.length} contacts
+            Showing {startRecord.toLocaleString()}-{endRecord.toLocaleString()} of {totalCount.toLocaleString()} contacts
           </span>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              disabled
-              className="text-white border-white/30"
-            >
-              Previous
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              disabled
-              className="text-white border-white/30"
-            >
-              Next
-            </Button>
+          <div className="flex items-center gap-3">
+            <span className="text-white/60 text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage <= 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                <CaretLeft size={16} weight="bold" />
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+              >
+                Next
+                <CaretRight size={16} weight="bold" />
+              </Button>
+            </div>
           </div>
         </div>
       )}
