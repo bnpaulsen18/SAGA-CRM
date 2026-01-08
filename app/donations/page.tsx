@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { CurrencyDollar, TrendUp, Gift, HandCoins, Plus, CaretLeft, CaretRight } from '@phosphor-icons/react/dist/ssr'
 import DonationRowActions from './DonationRowActions'
+import DonationsFilters from '@/components/donations/DonationsFilters'
 
 export const runtime = 'nodejs'
 
@@ -17,33 +18,70 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
   const session = await requireAuth()
   const prisma = await getPrismaWithRLS()
 
-  // Parse pagination params from URL
+  // Parse pagination and filter params from URL
   const params = await searchParams
   const page = Number(params.page) || 1
   const limit = Number(params.limit) || 50
   const skip = (page - 1) * limit
 
-  // Get total counts and aggregates for accurate stats (independent of pagination)
+  // Parse filter parameters
+  const status = params.status as string | undefined
+  const campaignId = params.campaignId as string | undefined
+  const startDate = params.startDate as string | undefined
+  const endDate = params.endDate as string | undefined
+  const minAmount = params.minAmount as string | undefined
+  const maxAmount = params.maxAmount as string | undefined
+
+  // Build dynamic where clause based on filters
+  const baseWhere: any = {
+    organizationId: session.user.organizationId || undefined
+  }
+
+  // Apply filters to base where clause
+  const filterWhere = { ...baseWhere }
+
+  if (status && status !== 'all') {
+    filterWhere.status = status
+  }
+
+  if (campaignId && campaignId !== 'all') {
+    filterWhere.campaignId = campaignId
+  }
+
+  if (startDate || endDate) {
+    filterWhere.donatedAt = {}
+    if (startDate) filterWhere.donatedAt.gte = new Date(startDate)
+    if (endDate) {
+      // Set to end of day
+      const endDateTime = new Date(endDate)
+      endDateTime.setHours(23, 59, 59, 999)
+      filterWhere.donatedAt.lte = endDateTime
+    }
+  }
+
+  if (minAmount || maxAmount) {
+    filterWhere.amount = {}
+    if (minAmount) filterWhere.amount.gte = parseFloat(minAmount)
+    if (maxAmount) filterWhere.amount.lte = parseFloat(maxAmount)
+  }
+
+  // Get total counts and aggregates for accurate stats (independent of pagination and filters)
   const now = new Date()
   const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [totalDonationsCount, totalRaisedAggregate, thisMonthAggregate] = await Promise.all([
+  const [totalDonationsCount, totalRaisedAggregate, thisMonthAggregate, campaigns] = await Promise.all([
     prisma.donation.count({
-      where: {
-        organizationId: session.user.organizationId || undefined,
-      }
+      where: filterWhere
     }),
     prisma.donation.aggregate({
-      where: {
-        organizationId: session.user.organizationId || undefined,
-      },
+      where: baseWhere,
       _sum: {
         amount: true
       }
     }),
     prisma.donation.aggregate({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        ...baseWhere,
         donatedAt: {
           gte: firstDayOfMonth
         }
@@ -52,14 +90,24 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
         amount: true
       },
       _count: true
+    }),
+    prisma.campaign.findMany({
+      where: {
+        organizationId: session.user.organizationId || undefined
+      },
+      select: {
+        id: true,
+        name: true
+      },
+      orderBy: {
+        name: 'asc'
+      }
     })
   ])
 
-  // Fetch donations for the user's organization (paginated)
+  // Fetch donations for the user's organization (paginated and filtered)
   const donations = await prisma.donation.findMany({
-    where: {
-      organizationId: session.user.organizationId || undefined,
-    },
+    where: filterWhere,
     include: {
       contact: {
         select: {
@@ -156,6 +204,9 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
           </div>
         </SagaCard>
       </div>
+
+      {/* Filters */}
+      <DonationsFilters campaigns={campaigns} />
 
       {/* Donations Table */}
       <SagaCard>
@@ -261,44 +312,60 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
         </div>
 
         {/* Table Footer - Pagination */}
-        {totalDonationsCount > 0 && (
-          <div className="bg-white/5 border-t border-white/10 px-6 py-4 mt-6">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-white/60">
-                Showing {startRecord.toLocaleString()}-{endRecord.toLocaleString()} of {totalDonationsCount.toLocaleString()} donation{totalDonationsCount !== 1 ? 's' : ''}
-              </p>
-              <div className="flex items-center gap-3">
-                <span className="text-white/60 text-sm">
-                  Page {page} of {totalPages}
-                </span>
-                <div className="flex gap-2">
-                  <Link href={page <= 1 ? '#' : `/donations?page=${page - 1}&limit=${limit}`}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1}
-                      className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                    >
-                      <CaretLeft size={16} weight="bold" />
-                      Previous
-                    </Button>
-                  </Link>
-                  <Link href={page >= totalPages ? '#' : `/donations?page=${page + 1}&limit=${limit}`}>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= totalPages}
-                      className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
-                    >
-                      Next
-                      <CaretRight size={16} weight="bold" />
-                    </Button>
-                  </Link>
+        {totalDonationsCount > 0 && (() => {
+          // Build query string with current filters
+          const buildPageUrl = (newPage: number) => {
+            const queryParams = new URLSearchParams()
+            queryParams.set('page', newPage.toString())
+            queryParams.set('limit', limit.toString())
+            if (status && status !== 'all') queryParams.set('status', status)
+            if (campaignId && campaignId !== 'all') queryParams.set('campaignId', campaignId)
+            if (startDate) queryParams.set('startDate', startDate)
+            if (endDate) queryParams.set('endDate', endDate)
+            if (minAmount) queryParams.set('minAmount', minAmount)
+            if (maxAmount) queryParams.set('maxAmount', maxAmount)
+            return `/donations?${queryParams.toString()}`
+          }
+
+          return (
+            <div className="bg-white/5 border-t border-white/10 px-6 py-4 mt-6">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-white/60">
+                  Showing {startRecord.toLocaleString()}-{endRecord.toLocaleString()} of {totalDonationsCount.toLocaleString()} donation{totalDonationsCount !== 1 ? 's' : ''}
+                </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-white/60 text-sm">
+                    Page {page} of {totalPages}
+                  </span>
+                  <div className="flex gap-2">
+                    <Link href={page <= 1 ? '#' : buildPageUrl(page - 1)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={page <= 1}
+                        className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                      >
+                        <CaretLeft size={16} weight="bold" />
+                        Previous
+                      </Button>
+                    </Link>
+                    <Link href={page >= totalPages ? '#' : buildPageUrl(page + 1)}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={page >= totalPages}
+                        className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                      >
+                        Next
+                        <CaretRight size={16} weight="bold" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )
+        })()}
       </SagaCard>
     </DashboardLayout>
   )
