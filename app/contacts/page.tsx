@@ -2,6 +2,7 @@ import { requireAuth } from '@/lib/permissions'
 import { getPrismaWithRLS } from '@/lib/prisma-rls'
 import DashboardLayout from '@/components/DashboardLayout'
 import ContactsTable from '@/components/contacts/ContactsTable'
+import ContactsFilters from '@/components/contacts/ContactsFilters'
 import SagaCard from '@/components/ui/saga-card'
 import { Button } from '@/components/ui/button'
 import { FolderOpen, Plus } from '@phosphor-icons/react/dist/ssr'
@@ -17,28 +18,48 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   const session = await requireAuth()
   const prisma = await getPrismaWithRLS()
 
-  // Parse pagination params from URL
+  // Parse pagination and filter params from URL
   const params = await searchParams
   const page = Number(params.page) || 1
   const limit = Number(params.limit) || 50
   const skip = (page - 1) * limit
 
-  // Get total counts for accurate stats (independent of pagination)
+  // Parse filter parameters
+  const status = params.status as string | undefined
+  const type = params.type as string | undefined
+  const minLifetimeGiving = params.minLifetimeGiving as string | undefined
+  const maxLifetimeGiving = params.maxLifetimeGiving as string | undefined
+
+  // Build dynamic where clause based on filters
+  const baseWhere: any = {
+    organizationId: session.user.organizationId || undefined
+  }
+
+  // Apply filters to base where clause
+  const filterWhere = { ...baseWhere }
+
+  if (status && status !== 'all') {
+    filterWhere.status = status
+  }
+
+  if (type && type !== 'all') {
+    filterWhere.type = type
+  }
+
+  // Get total counts for accurate stats (use baseWhere for org-wide stats, filterWhere for filtered count)
   const [totalContactsCount, activeContactsCount, donorContactsCount, lifetimeGivingAggregate] = await Promise.all([
     prisma.contact.count({
-      where: {
-        organizationId: session.user.organizationId || undefined
-      }
+      where: baseWhere
     }),
     prisma.contact.count({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        ...baseWhere,
         status: 'ACTIVE'
       }
     }),
     prisma.contact.count({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        ...baseWhere,
         type: 'DONOR'
       }
     }),
@@ -52,12 +73,15 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
     })
   ])
 
+  // Get filtered count separately
+  const filteredContactsCount = await prisma.contact.count({
+    where: filterWhere
+  })
+
   // Fetch contacts with ALL their donations in one query (fixes N+1 problem)
   // RLS: Contacts are automatically filtered by organizationId at the database level
   const contacts = await prisma.contact.findMany({
-    where: {
-      organizationId: session.user.organizationId || undefined
-    },
+    where: filterWhere,
     include: {
       donations: {
         select: { amount: true, donatedAt: true }
@@ -69,7 +93,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   })
 
   // Calculate stats in memory (1 query instead of 101!)
-  const contactsWithStats = contacts.map((contact) => {
+  let contactsWithStats = contacts.map((contact) => {
     const lifetimeGiving = contact.donations.reduce((sum, d) => sum + d.amount, 0)
     const sortedDonations = contact.donations.sort((a, b) =>
       b.donatedAt.getTime() - a.donatedAt.getTime()
@@ -99,16 +123,26 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
     }
   })
 
+  // Apply in-memory filters for lifetime giving (computed field)
+  if (minLifetimeGiving || maxLifetimeGiving) {
+    contactsWithStats = contactsWithStats.filter((contact) => {
+      const min = minLifetimeGiving ? parseFloat(minLifetimeGiving) : 0
+      const max = maxLifetimeGiving ? parseFloat(maxLifetimeGiving) : Infinity
+      return contact.lifetimeGiving >= min && contact.lifetimeGiving <= max
+    })
+  }
+
   // Use actual totals from count queries (not paginated subset)
   const totalContacts = totalContactsCount
   const activeContacts = activeContactsCount
   const donorContacts = donorContactsCount
   const totalLifetimeGiving = lifetimeGivingAggregate._sum.amount || 0
 
-  // Calculate pagination metadata
-  const totalPages = Math.ceil(totalContactsCount / limit)
-  const startRecord = totalContactsCount === 0 ? 0 : skip + 1
-  const endRecord = Math.min(skip + limit, totalContactsCount)
+  // Calculate pagination metadata using filtered count or in-memory filtered count
+  const finalCount = (minLifetimeGiving || maxLifetimeGiving) ? contactsWithStats.length : filteredContactsCount
+  const totalPages = Math.ceil(finalCount / limit)
+  const startRecord = finalCount === 0 ? 0 : skip + 1
+  const endRecord = Math.min(skip + limit, finalCount)
 
   return (
     <DashboardLayout
@@ -178,12 +212,15 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
         </SagaCard>
       </div>
 
+      {/* Filters */}
+      <ContactsFilters />
+
       {/* Contacts Table */}
       <ContactsTable
         data={contactsWithStats}
         currentPage={page}
         totalPages={totalPages}
-        totalCount={totalContactsCount}
+        totalCount={finalCount}
         startRecord={startRecord}
         endRecord={endRecord}
         limit={limit}
