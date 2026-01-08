@@ -144,14 +144,7 @@ export default function CSVImportWizard() {
 
       {/* Error Message */}
       {error && (
-        <div
-          className="p-4 rounded-lg text-sm"
-          style={{
-            background: 'rgba(239, 68, 68, 0.2)',
-            border: '1px solid rgba(239, 68, 68, 0.4)',
-            color: '#ef4444'
-          }}
-        >
+        <div className="p-4 rounded-lg text-sm bg-red-500/20 border border-red-500/40 text-red-400">
           {error}
         </div>
       )}
@@ -160,13 +153,7 @@ export default function CSVImportWizard() {
       {step === 'upload' && (
         <SagaCard title="Step 1: Upload CSV File">
           <div className="space-y-4">
-            <div
-              className="border-2 border-dashed rounded-lg p-12 text-center transition-colors"
-              style={{
-                borderColor: 'rgba(255, 255, 255, 0.3)',
-                background: 'rgba(255, 255, 255, 0.02)'
-              }}
-            >
+            <div className="border-2 border-dashed border-white/30 bg-white/[0.02] rounded-lg p-12 text-center transition-colors">
               <input
                 type="file"
                 accept=".csv"
@@ -216,11 +203,8 @@ export default function CSVImportWizard() {
           <div className="space-y-4">
             <div className="w-full bg-white/10 rounded-full h-4 overflow-hidden">
               <div
-                className="h-full transition-all duration-300"
-                style={{
-                  width: `${importProgress}%`,
-                  background: 'linear-gradient(to right, #764ba2, #ff6b35)'
-                }}
+                className="h-full saga-button transition-all duration-300"
+                style={{ width: `${importProgress}%` }}
               ></div>
             </div>
             <p className="text-center text-white/70">
@@ -235,15 +219,15 @@ export default function CSVImportWizard() {
         <SagaCard title="✅ Import Complete">
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg" style={{ background: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)' }}>
+              <div className="text-center p-4 rounded-lg bg-green-500/10 border border-green-500/30">
                 <div className="text-3xl font-bold text-green-400">{importResult.success}</div>
                 <div className="text-sm text-white/70 mt-1">Imported</div>
               </div>
-              <div className="text-center p-4 rounded-lg" style={{ background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.3)' }}>
+              <div className="text-center p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
                 <div className="text-3xl font-bold text-yellow-400">{importResult.duplicates}</div>
                 <div className="text-sm text-white/70 mt-1">Duplicates Skipped</div>
               </div>
-              <div className="text-center p-4 rounded-lg" style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+              <div className="text-center p-4 rounded-lg bg-red-500/10 border border-red-500/30">
                 <div className="text-3xl font-bold text-red-400">{importResult.failed}</div>
                 <div className="text-sm text-white/70 mt-1">Failed</div>
               </div>
@@ -265,11 +249,7 @@ export default function CSVImportWizard() {
             <div className="flex gap-3 pt-4">
               <Button
                 onClick={() => router.push('/contacts')}
-                className="flex-1 text-white font-semibold"
-                style={{
-                  background: 'linear-gradient(to right, #764ba2, #ff6b35)',
-                  border: 'none'
-                }}
+                className="flex-1 text-white font-semibold saga-button border-none"
               >
                 View Contacts
               </Button>
@@ -296,16 +276,13 @@ function StepIndicator({ label, active, completed }: { label: string; active: bo
   return (
     <div className="flex flex-col items-center">
       <div
-        className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all"
-        style={{
-          background: completed
-            ? 'linear-gradient(to right, #764ba2, #ff6b35)'
+        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all text-white ${
+          completed
+            ? 'saga-button'
             : active
-            ? 'rgba(255, 107, 53, 0.3)'
-            : 'rgba(255, 255, 255, 0.1)',
-          border: active ? '2px solid #ff6b35' : '1px solid rgba(255, 255, 255, 0.2)',
-          color: 'white'
-        }}
+            ? 'bg-orange-500/30 border-2 border-orange-500'
+            : 'bg-white/10 border border-white/20'
+        }`}
       >
         {completed ? <Check size={18} weight="bold" /> : label.split('.')[0]}
       </div>
