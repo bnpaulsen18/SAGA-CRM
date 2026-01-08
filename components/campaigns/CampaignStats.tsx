@@ -1,4 +1,5 @@
 import { Campaign, Donation } from '@prisma/client';
+import { CurrencyDollar, Gift, ChartBar, Confetti, Target } from '@phosphor-icons/react/dist/ssr';
 
 interface CampaignStatsProps {
   campaign: Campaign & {
@@ -32,7 +33,7 @@ export default function CampaignStats({ campaign }: CampaignStatsProps) {
               {percentage.toFixed(1)}% of goal
             </p>
           </div>
-          <div className="text-4xl">💰</div>
+          <CurrencyDollar size={40} weight="bold" className="text-green-400" />
         </div>
       </div>
 
@@ -46,7 +47,7 @@ export default function CampaignStats({ campaign }: CampaignStatsProps) {
               Unique contributions
             </p>
           </div>
-          <div className="text-4xl">🎁</div>
+          <Gift size={40} weight="bold" className="text-purple-400" />
         </div>
       </div>
 
@@ -62,7 +63,7 @@ export default function CampaignStats({ campaign }: CampaignStatsProps) {
               Per donation
             </p>
           </div>
-          <div className="text-4xl">📊</div>
+          <ChartBar size={40} weight="bold" className="text-blue-400" />
         </div>
       </div>
 
@@ -80,7 +81,11 @@ export default function CampaignStats({ campaign }: CampaignStatsProps) {
               {percentage >= 100 ? 'Over target' : 'To reach goal'}
             </p>
           </div>
-          <div className="text-4xl">{percentage >= 100 ? '🎉' : '🎯'}</div>
+          {percentage >= 100 ? (
+            <Confetti size={40} weight="bold" className="text-orange-400" />
+          ) : (
+            <Target size={40} weight="bold" className="text-blue-400" />
+          )}
         </div>
       </div>
     </div>

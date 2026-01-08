@@ -13,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Plus } from '@phosphor-icons/react'
 
 type ContactWithStats = {
   id: string
@@ -168,12 +169,13 @@ export default function ContactsTable({ data }: ContactsTableProps) {
                 <p className="text-sm mb-4">Get started by adding your first contact</p>
                 <Link href="/contacts/new">
                   <Button
-                    className="text-white"
+                    className="text-white flex items-center gap-2"
                     style={{
                       background: 'linear-gradient(to right, #764ba2, #ff6b35)'
                     }}
                   >
-                    ➕ Add Contact
+                    <Plus size={18} weight="bold" />
+                    Add Contact
                   </Button>
                 </Link>
               </>

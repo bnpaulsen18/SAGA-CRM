@@ -242,7 +242,7 @@ export default async function ReportsPage() {
         {/* Left Column - Charts & Tables */}
         <div className="lg:col-span-2 space-y-6">
           {/* Monthly Giving Trend */}
-          <SagaCard title="📈 Monthly Giving Trend">
+          <SagaCard title="Monthly Giving Trend">
             {chartData.length > 0 ? (
               <MonthlyGivingChart data={chartData} />
             ) : (
@@ -253,7 +253,7 @@ export default async function ReportsPage() {
           </SagaCard>
 
           {/* Top Donors */}
-          <SagaCard title="🏆 Top Donors (Last 12 Months)">
+          <SagaCard title="Top Donors (Last 12 Months)">
             {topDonors.length > 0 ? (
               <TopDonorsTable donors={topDonors} />
             ) : (
@@ -264,7 +264,7 @@ export default async function ReportsPage() {
           </SagaCard>
 
           {/* Top Campaigns/Funds */}
-          <SagaCard title="💰 Top Campaigns & Funds">
+          <SagaCard title="Top Campaigns & Funds">
             <div className="space-y-3">
               {topFunds.map((fund, i) => (
                 <div key={i} className="flex justify-between items-center">

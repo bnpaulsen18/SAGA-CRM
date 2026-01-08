@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
+import { PencilSimple, CurrencyDollar } from '@phosphor-icons/react/dist/ssr'
 
 export const runtime = 'nodejs'
 
@@ -141,18 +142,20 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
           <Link href={`/contacts/${contact.id}/edit`}>
             <Button
               variant="outline"
-              className="text-white border-white/30 hover:bg-white/10"
+              className="text-white border-white/30 hover:bg-white/10 flex items-center gap-2"
             >
-              ✏️ Edit Contact
+              <PencilSimple size={18} weight="bold" />
+              Edit Contact
             </Button>
           </Link>
           <Button
-            className="text-white"
+            className="text-white flex items-center gap-2"
             style={{
               background: 'linear-gradient(to right, #764ba2, #ff6b35)'
             }}
           >
-            💰 Add Donation
+            <CurrencyDollar size={18} weight="bold" />
+            Add Donation
           </Button>
         </div>
       </div>
@@ -266,12 +269,13 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
               <div className="text-center py-8">
                 <p className="text-white/70 mb-4">No donations yet</p>
                 <Button
-                  className="text-white"
+                  className="text-white flex items-center gap-2"
                   style={{
                     background: 'linear-gradient(to right, #764ba2, #ff6b35)'
                   }}
                 >
-                  💰 Record First Donation
+                  <CurrencyDollar size={18} weight="bold" />
+                  Record First Donation
                 </Button>
               </div>
             ) : (

@@ -1,42 +1,75 @@
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
-import DashboardNav from "@/components/DashboardNav";
+import { requireAuth } from '@/lib/permissions'
+import { getPrismaWithRLS } from '@/lib/prisma-rls'
+import DashboardLayout from '@/components/DashboardLayout'
+import SagaCard from '@/components/ui/saga-card'
+import { Users, CurrencyDollar, ChartBar, TrendUp, Gift } from '@phosphor-icons/react/dist/ssr'
+import Link from 'next/link'
 
 export const runtime = 'nodejs'
 
 export default async function DashboardPage() {
-  const session = await auth();
-
-  if (!session?.user) {
-    redirect("/login");
-  }
+  const session = await requireAuth()
 
   // Platform admins should use the /admin dashboard
   if (session.user.isPlatformAdmin || !session.user.organizationId) {
-    redirect("/admin");
+    const { redirect } = await import('next/navigation')
+    redirect('/admin')
   }
 
-  // Fetch some basic stats for the dashboard
+  const prisma = await getPrismaWithRLS()
+
+  // Fetch dashboard stats and data in parallel
   const [
     totalContacts,
-    totalDonations,
+    activeContacts,
+    totalDonationsCount,
+    totalRevenue,
     totalCampaigns,
+    activeCampaigns,
     recentDonations,
+    topCampaigns,
   ] = await Promise.all([
     prisma.contact.count({
-      where: { organizationId: session.user.organizationId },
+      where: { organizationId: session.user.organizationId || undefined },
+    }),
+    prisma.contact.count({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        status: 'ACTIVE'
+      },
     }),
     prisma.donation.count({
-      where: { organizationId: session.user.organizationId },
+      where: { organizationId: session.user.organizationId || undefined },
+    }),
+    prisma.donation.aggregate({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        status: 'COMPLETED'
+      },
+      _sum: { amount: true },
     }),
     prisma.campaign.count({
-      where: { organizationId: session.user.organizationId },
+      where: { organizationId: session.user.organizationId || undefined },
+    }),
+    prisma.campaign.findMany({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        status: 'ACTIVE'
+      },
+      take: 3,
+      orderBy: { raised: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        goal: true,
+        raised: true,
+        status: true,
+      }
     }),
     prisma.donation.findMany({
-      where: { organizationId: session.user.organizationId },
+      where: { organizationId: session.user.organizationId || undefined },
       take: 5,
-      orderBy: { donatedAt: "desc" },
+      orderBy: { donatedAt: 'desc' },
       include: {
         contact: {
           select: {
@@ -44,194 +77,231 @@ export default async function DashboardPage() {
             lastName: true,
           },
         },
+        campaign: {
+          select: {
+            name: true,
+          }
+        }
       },
     }),
-  ]);
+    prisma.campaign.findMany({
+      where: {
+        organizationId: session.user.organizationId || undefined,
+        status: 'ACTIVE'
+      },
+      take: 5,
+      orderBy: { raised: 'desc' },
+      select: {
+        id: true,
+        name: true,
+        goal: true,
+        raised: true,
+        _count: {
+          select: { donations: true }
+        }
+      }
+    }),
+  ])
+
+  const totalRevenueAmount = totalRevenue._sum.amount || 0
+  const averageDonation = totalDonationsCount > 0 ? totalRevenueAmount / totalDonationsCount : 0
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <DashboardNav userName={session.user.name || "User"} />
-      <div className="py-10">
-        <header className="mb-8">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight text-gray-900">
-              Dashboard
-            </h1>
-            <p className="mt-1 text-sm text-gray-600">
-              Welcome back, {session.user.name}!
-            </p>
-          </div>
-        </header>
-
-        <main>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 mb-8">
-              {/* Total Contacts */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          Total Contacts
-                        </dt>
-                        <dd className="text-3xl font-semibold text-gray-900">
-                          {totalContacts}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Total Donations */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          Total Donations
-                        </dt>
-                        <dd className="text-3xl font-semibold text-gray-900">
-                          {totalDonations}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Total Campaigns */}
-              <div className="bg-white overflow-hidden shadow rounded-lg">
-                <div className="p-5">
-                  <div className="flex items-center">
-                    <div className="flex-shrink-0">
-                      <svg
-                        className="h-6 w-6 text-gray-400"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="ml-5 w-0 flex-1">
-                      <dl>
-                        <dt className="text-sm font-medium text-gray-500 truncate">
-                          Active Campaigns
-                        </dt>
-                        <dd className="text-3xl font-semibold text-gray-900">
-                          {totalCampaigns}
-                        </dd>
-                      </dl>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Recent Donations */}
-            <div className="bg-white shadow rounded-lg">
-              <div className="px-4 py-5 sm:p-6">
-                <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                  Recent Donations
-                </h3>
-                {recentDonations.length === 0 ? (
-                  <p className="text-sm text-gray-500">
-                    No donations yet. Start by adding contacts and creating
-                    campaigns!
-                  </p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-gray-200">
-                      <thead className="bg-gray-50">
-                        <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Donor
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Amount
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Date
-                          </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Status
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody className="bg-white divide-y divide-gray-200">
-                        {recentDonations.map((donation) => (
-                          <tr key={donation.id}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                              {donation.contact.firstName}{" "}
-                              {donation.contact.lastName}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              ${donation.amount.toFixed(2)}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {new Date(donation.donatedAt).toLocaleDateString()}
-                            </td>
-                            <td className="px-6 py-4 whitespace-nowrap">
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                {donation.status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </main>
+    <DashboardLayout
+      userName={session.user.name || session.user.email || 'User'}
+      userRole={session.user.role}
+      searchPlaceholder="Search contacts, donations, campaigns..."
+    >
+      {/* Page Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-white mb-2">Dashboard</h1>
+        <p className="text-white/70">Welcome back, {session.user.name || 'User'}!</p>
       </div>
-    </div>
-  );
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <SagaCard variant="default">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white/70">Total Contacts</h3>
+              <p className="text-3xl font-bold text-white mt-2">{totalContacts}</p>
+              <p className="text-xs text-white/50 mt-1">{activeContacts} active</p>
+            </div>
+            <Users size={40} weight="bold" className="text-blue-400" />
+          </div>
+        </SagaCard>
+
+        <SagaCard variant="purple">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white/70">Total Revenue</h3>
+              <p className="text-3xl font-bold text-white mt-2">
+                ${totalRevenueAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              </p>
+              <p className="text-xs text-white/50 mt-1">All time donations</p>
+            </div>
+            <CurrencyDollar size={40} weight="bold" className="text-green-400" />
+          </div>
+        </SagaCard>
+
+        <SagaCard variant="orange">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white/70">Total Donations</h3>
+              <p className="text-3xl font-bold text-white mt-2">{totalDonationsCount}</p>
+              <p className="text-xs text-white/50 mt-1">
+                ${averageDonation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} avg
+              </p>
+            </div>
+            <Gift size={40} weight="bold" className="text-purple-400" />
+          </div>
+        </SagaCard>
+
+        <SagaCard variant="pink">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-medium text-white/70">Active Campaigns</h3>
+              <p className="text-3xl font-bold text-white mt-2">{activeCampaigns.length}</p>
+              <p className="text-xs text-white/50 mt-1">{totalCampaigns} total campaigns</p>
+            </div>
+            <ChartBar size={40} weight="bold" className="text-orange-400" />
+          </div>
+        </SagaCard>
+      </div>
+
+      {/* Recent Donations & Top Campaigns */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Recent Donations */}
+        <SagaCard title="Recent Donations" subtitle="Latest 5 donations">
+          {recentDonations.length === 0 ? (
+            <div className="text-center py-8">
+              <CurrencyDollar size={48} weight="bold" className="text-white/30 mx-auto mb-3" />
+              <p className="text-white/50 text-sm">
+                No donations yet. Start by adding contacts and creating campaigns!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {recentDonations.map((donation) => {
+                const percentage = donation.status === 'COMPLETED' ? 100 :
+                                   donation.status === 'PENDING' ? 50 : 0
+                return (
+                  <Link
+                    key={donation.id}
+                    href={`/donations/${donation.id}`}
+                    className="block"
+                  >
+                    <div
+                      className="p-4 rounded-lg transition-all hover:bg-white/5"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                      }}
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="text-white font-medium">
+                            {donation.contact.firstName} {donation.contact.lastName}
+                          </p>
+                          <p className="text-white/50 text-sm">
+                            {donation.campaign?.name || 'No campaign'}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-white font-bold">
+                            ${donation.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </p>
+                          <p className="text-white/50 text-xs">
+                            {new Date(donation.donatedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            donation.status === 'COMPLETED'
+                              ? 'bg-green-500/20 text-green-300 border border-green-500/30'
+                              : donation.status === 'PENDING'
+                              ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                              : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                          }`}
+                        >
+                          {donation.status}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </SagaCard>
+
+        {/* Top Campaigns */}
+        <SagaCard title="Top Campaigns" subtitle="Highest performing active campaigns">
+          {topCampaigns.length === 0 ? (
+            <div className="text-center py-8">
+              <ChartBar size={48} weight="bold" className="text-white/30 mx-auto mb-3" />
+              <p className="text-white/50 text-sm">
+                No active campaigns. Create a campaign to start fundraising!
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {topCampaigns.map((campaign) => {
+                const percentage = campaign.goal && campaign.goal > 0 ? (campaign.raised / campaign.goal) * 100 : 0
+                return (
+                  <Link
+                    key={campaign.id}
+                    href={`/campaigns/${campaign.id}`}
+                    className="block"
+                  >
+                    <div
+                      className="p-4 rounded-lg transition-all hover:bg-white/5"
+                      style={{
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                      }}
+                    >
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex-1">
+                          <p className="text-white font-medium mb-1">{campaign.name}</p>
+                          <p className="text-white/50 text-sm">
+                            {campaign._count.donations} donation{campaign._count.donations !== 1 ? 's' : ''}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-green-400 font-bold">
+                            ${campaign.raised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </p>
+                          <p className="text-white/50 text-xs">
+                            of ${(campaign.goal || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </p>
+                        </div>
+                      </div>
+                      {/* Progress Bar */}
+                      <div className="w-full bg-white/10 rounded-full h-2">
+                        <div
+                          className="h-2 rounded-full transition-all"
+                          style={{
+                            width: `${Math.min(percentage, 100)}%`,
+                            background: percentage >= 100
+                              ? 'linear-gradient(to right, #10b981, #34d399)'
+                              : 'linear-gradient(to right, #764ba2, #ff6b35)'
+                          }}
+                        />
+                      </div>
+                      <p className="text-white/50 text-xs mt-1">
+                        {percentage.toFixed(1)}% of goal
+                      </p>
+                    </div>
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </SagaCard>
+      </div>
+    </DashboardLayout>
+  )
 }

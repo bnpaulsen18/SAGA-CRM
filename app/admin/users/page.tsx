@@ -2,6 +2,7 @@ import { requirePlatformAdmin } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import AdminNav from "@/components/AdminNav";
 import Link from "next/link";
+import { Warning } from "@phosphor-icons/react/dist/ssr";
 
 export default async function UsersManagementPage() {
   const user = await requirePlatformAdmin();
@@ -249,7 +250,7 @@ export default async function UsersManagementPage() {
             }}
           >
             <div className="flex items-start gap-3">
-              <div className="text-2xl">⚠️</div>
+              <Warning size={32} weight="bold" className="text-yellow-400" />
               <div>
                 <h3 className="font-semibold text-white mb-1">
                   Users Without Organization

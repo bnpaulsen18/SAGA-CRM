@@ -4,6 +4,7 @@ import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
+import { Gear } from '@phosphor-icons/react'
 import DashboardNavNew from './DashboardNavNew'
 
 interface DashboardLayoutProps {
@@ -103,7 +104,7 @@ export default function DashboardLayout({
                 e.currentTarget.style.boxShadow = '0 2px 8px rgba(118, 75, 162, 0.3)'
               }}
             >
-              <span>⚙️</span>
+              <Gear size={18} weight="bold" />
               <span>{userName}</span>
               <span className="text-white/70">•</span>
               <span>Sign Out</span>

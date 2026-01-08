@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignStats from '@/components/campaigns/CampaignStats';
+import { Check, Gift } from '@phosphor-icons/react/dist/ssr';
 
 export const runtime = 'nodejs'
 
@@ -70,14 +71,16 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
     switch (campaign.status) {
       case 'ACTIVE':
         return (
-          <span className={`${baseClasses} bg-green-500/20 text-green-300 border-green-500/30`}>
-            ✓ Active
+          <span className={`${baseClasses} bg-green-500/20 text-green-300 border-green-500/30 flex items-center gap-1`}>
+            <Check size={14} weight="bold" />
+            Active
           </span>
         );
       case 'COMPLETED':
         return (
-          <span className={`${baseClasses} bg-blue-500/20 text-blue-300 border-blue-500/30`}>
-            ✓ Completed
+          <span className={`${baseClasses} bg-blue-500/20 text-blue-300 border-blue-500/30 flex items-center gap-1`}>
+            <Check size={14} weight="bold" />
+            Completed
           </span>
         );
       case 'DRAFT':
@@ -189,7 +192,9 @@ export default async function CampaignDetailPage({ params }: { params: { id: str
 
           {campaign.donations.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="text-6xl mb-4">🎁</div>
+              <div className="flex justify-center mb-4">
+                <Gift size={64} weight="bold" className="text-purple-400" />
+              </div>
               <h3 className="text-xl font-semibold text-white mb-2">No donations yet</h3>
               <p className="text-white/60">This campaign hasn't received any donations</p>
             </div>

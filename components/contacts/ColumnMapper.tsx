@@ -123,7 +123,7 @@ export default function ColumnMapper({ csvHeaders, onComplete, onBack }: ColumnM
   }
 
   return (
-    <SagaCard title="🗺️ Step 2: Map Columns">
+    <SagaCard title="Step 2: Map Columns">
       <div className="space-y-6">
         <p className="text-white/70">
           Map your CSV columns to contact fields. Required fields are marked with *.

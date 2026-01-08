@@ -1,5 +1,6 @@
 import { requireAuth, canViewContact } from '@/lib/permissions'
 import { getPrismaWithRLS } from '@/lib/prisma-rls'
+import { decryptContactPII } from '@/lib/encryption'
 import DashboardLayout from '@/components/DashboardLayout'
 import SagaCard from '@/components/ui/saga-card'
 import ContactFormEdit from '@/components/contacts/ContactFormEdit'
@@ -37,6 +38,9 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
     notFound()
   }
 
+  // Decrypt PII fields before passing to form
+  const decryptedContact = decryptContactPII(contact)
+
   return (
     <DashboardLayout
       userName={session.user.name || session.user.email || 'User'}
@@ -50,7 +54,7 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
           </Link>
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">
-          Edit Contact: {contact.firstName} {contact.lastName}
+          Edit Contact: {decryptedContact.firstName} {decryptedContact.lastName}
         </h1>
         <p className="text-white/70">Update contact information</p>
       </div>
@@ -58,7 +62,7 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
       {/* Form Card */}
       <div className="max-w-3xl">
         <SagaCard title="Contact Information">
-          <ContactFormEdit contact={contact} />
+          <ContactFormEdit contact={decryptedContact} />
         </SagaCard>
       </div>
     </DashboardLayout>

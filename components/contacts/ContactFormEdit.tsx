@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { updateContact } from '@/app/actions/contacts'
+import { Check } from '@phosphor-icons/react'
 
 type Contact = {
   id: string
@@ -47,12 +47,44 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
 
     const formData = new FormData(event.currentTarget)
 
-    try {
-      const result = await updateContact(contact.id, formData)
+    // Extract form data and convert to JSON
+    const tags = formData.get('tags')
+      ? String(formData.get('tags'))
+          .split(',')
+          .map(tag => tag.trim())
+          .filter(tag => tag.length > 0)
+      : []
 
-      if (result.success) {
+    const data = {
+      firstName: String(formData.get('firstName')),
+      lastName: String(formData.get('lastName')),
+      email: String(formData.get('email')),
+      phone: formData.get('phone') ? String(formData.get('phone')) : null,
+      street: formData.get('street') ? String(formData.get('street')) : null,
+      city: formData.get('city') ? String(formData.get('city')) : null,
+      state: formData.get('state') ? String(formData.get('state')) : null,
+      zip: formData.get('zip') ? String(formData.get('zip')) : null,
+      country: 'USA',
+      type: String(formData.get('type')),
+      status: String(formData.get('status')),
+      tags,
+      notes: formData.get('notes') ? String(formData.get('notes')) : null
+    }
+
+    try {
+      // Call API route with encryption and audit logging
+      const response = await fetch(`/api/contacts/${contact.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+
+      const result = await response.json()
+
+      if (response.ok) {
         // Redirect back to contact detail page
         router.push(`/contacts/${contact.id}`)
+        router.refresh()
       } else {
         setError(result.error || 'Failed to update contact')
       }
@@ -339,7 +371,14 @@ export default function ContactFormEdit({ contact }: ContactFormEditProps) {
             border: 'none'
           }}
         >
-          {isSubmitting ? 'Saving...' : '✓ Save Changes'}
+          {isSubmitting ? (
+            'Saving...'
+          ) : (
+            <span className="flex items-center gap-2">
+              <Check size={18} weight="bold" />
+              Save Changes
+            </span>
+          )}
         </Button>
         <Button
           type="button"

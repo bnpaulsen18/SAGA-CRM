@@ -1,6 +1,7 @@
 import { requirePlatformAdmin, getAllOrganizations } from "@/lib/auth-helpers";
 import Link from "next/link";
 import AdminNav from "@/components/AdminNav";
+import { Plus, Users, ChartBar } from "@phosphor-icons/react/dist/ssr";
 
 export default async function PlatformAdminDashboard() {
   // Require platform admin access
@@ -118,7 +119,9 @@ export default async function PlatformAdminDashboard() {
             href="/admin/organizations/create"
             className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-center border-2 border-dashed hover:scale-105 bg-white/5 border-[#ff6b35]/40 hover:border-[#ff6b35] hover:bg-[#ff6b35]/10"
           >
-            <div className="text-4xl mb-2">➕</div>
+            <div className="flex justify-center mb-2">
+              <Plus size={48} weight="bold" className="text-orange-400" />
+            </div>
             <h3 className="font-semibold text-white">Create Organization</h3>
             <p className="text-sm text-white/70 mt-1">Add a new customer organization</p>
           </Link>
@@ -127,7 +130,9 @@ export default async function PlatformAdminDashboard() {
             href="/admin/users"
             className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-center hover:scale-105 bg-[#764ba2]/15 border border-[#764ba2]/40 hover:bg-[#764ba2]/25"
           >
-            <div className="text-4xl mb-2">👥</div>
+            <div className="flex justify-center mb-2">
+              <Users size={48} weight="bold" className="text-purple-400" />
+            </div>
             <h3 className="font-semibold text-white">Manage Users</h3>
             <p className="text-sm text-white/70 mt-1">View and manage all users</p>
           </Link>
@@ -136,7 +141,9 @@ export default async function PlatformAdminDashboard() {
             href="/admin/reports"
             className="p-6 rounded-lg shadow-lg hover:shadow-xl transition-all text-center hover:scale-105 bg-[#b4154b]/15 border border-[#b4154b]/40 hover:bg-[#b4154b]/25"
           >
-            <div className="text-4xl mb-2">📊</div>
+            <div className="flex justify-center mb-2">
+              <ChartBar size={48} weight="bold" className="text-pink-400" />
+            </div>
             <h3 className="font-semibold text-white">Platform Reports</h3>
             <p className="text-sm text-white/70 mt-1">System-wide analytics</p>
           </Link>

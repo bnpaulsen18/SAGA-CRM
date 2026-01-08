@@ -10,6 +10,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
+import {
+  ChartBar,
+  Users,
+  CurrencyDollar,
+  EnvelopeSimple,
+  TrendUp,
+  Gear
+} from '@phosphor-icons/react'
 
 interface NavItem {
   label: string
@@ -23,11 +31,11 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: '📊' },
+  { label: 'Dashboard', href: '/dashboard', icon: 'ChartBar' },
   {
     label: 'Contacts',
     href: '/contacts',
-    icon: '👥',
+    icon: 'Users',
     dropdown: [
       { label: 'All Contacts', href: '/contacts' },
       { label: 'Segments', href: '/contacts/segments' },
@@ -37,18 +45,28 @@ const navItems: NavItem[] = [
   {
     label: 'Donations',
     href: '/donations',
-    icon: '💰',
+    icon: 'CurrencyDollar',
     dropdown: [
       { label: 'All Donations', href: '/donations' },
       { label: 'Recurring', href: '/donations/recurring' },
       { label: 'Tax Receipts', href: '/donations/receipts' }
     ]
   },
-  { label: 'Campaigns', href: '/campaigns', icon: '📊' },
-  { label: 'Communications', href: '/communications', icon: '📧', badge: 'Coming Soon' },
-  { label: 'Reports', href: '/reports', icon: '📈' },
-  { label: 'Settings', href: '/settings', icon: '⚙️' }
+  { label: 'Campaigns', href: '/campaigns', icon: 'ChartBar' },
+  { label: 'Communications', href: '/communications', icon: 'EnvelopeSimple', badge: 'Coming Soon' },
+  { label: 'Reports', href: '/reports', icon: 'TrendUp' },
+  { label: 'Settings', href: '/settings', icon: 'Gear' }
 ]
+
+// Icon component mapping
+const iconComponents = {
+  ChartBar: ChartBar,
+  Users: Users,
+  CurrencyDollar: CurrencyDollar,
+  EnvelopeSimple: EnvelopeSimple,
+  TrendUp: TrendUp,
+  Gear: Gear
+}
 
 export default function DashboardNavNew() {
   const pathname = usePathname()
@@ -91,7 +109,10 @@ export default function DashboardNavNew() {
                       onMouseEnter={() => setHoveredItem(item.href)}
                       onMouseLeave={() => setHoveredItem(null)}
                     >
-                      {item.icon && <span>{item.icon}</span>}
+                      {item.icon && (() => {
+                        const Icon = iconComponents[item.icon as keyof typeof iconComponents]
+                        return Icon ? <Icon size={20} weight="bold" /> : null
+                      })()}
                       <span>{item.label}</span>
                       <span className="text-xs">▼</span>
                       {item.badge && (
@@ -146,7 +167,10 @@ export default function DashboardNavNew() {
                 onMouseEnter={() => setHoveredItem(item.href)}
                 onMouseLeave={() => setHoveredItem(null)}
               >
-                {item.icon && <span>{item.icon}</span>}
+                {item.icon && (() => {
+                  const Icon = iconComponents[item.icon as keyof typeof iconComponents]
+                  return Icon ? <Icon size={20} weight="bold" /> : null
+                })()}
                 <span>{item.label}</span>
                 {item.badge && (
                   <Badge

@@ -6,6 +6,7 @@ import { analyzeDonorPattern, calculateDonorEngagementScore } from '@/lib/ai/don
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import { PencilSimple, TrendUp, TrendDown, ArrowRight, FileText } from '@phosphor-icons/react/dist/ssr'
 
 export const runtime = 'nodejs'
 
@@ -134,18 +135,20 @@ export default async function DonationDetailPage({ params }: DonationDetailPageP
             </p>
           </div>
           <div className="flex gap-3">
-            <Button variant="outline" className="text-white border-white/30 hover:bg-white/10">
-              📄 Download Receipt
+            <Button variant="outline" className="text-white border-white/30 hover:bg-white/10 flex items-center gap-2">
+              <FileText size={18} weight="bold" />
+              Download Receipt
             </Button>
             <Link href={`/donations/${params.id}/edit`}>
               <Button
-                className="text-white font-semibold"
+                className="text-white font-semibold flex items-center gap-2"
                 style={{
                   background: 'linear-gradient(to right, #764ba2, #ff6b35)',
                   border: 'none'
                 }}
               >
-                ✏️ Edit Donation
+                <PencilSimple size={18} weight="bold" />
+                Edit Donation
               </Button>
             </Link>
           </div>
@@ -156,7 +159,7 @@ export default async function DonationDetailPage({ params }: DonationDetailPageP
         {/* Main Content - 2 columns */}
         <div className="lg:col-span-2 space-y-6">
           {/* Donation Information */}
-          <SagaCard title="💰 Donation Information">
+          <SagaCard title="Donation Information">
             <div className="grid grid-cols-2 gap-6">
               <div>
                 <label className="text-sm font-medium text-white/70">Amount</label>
@@ -288,7 +291,7 @@ export default async function DonationDetailPage({ params }: DonationDetailPageP
         <div className="space-y-6">
           {/* Engagement Score */}
           {engagementScore && (
-            <SagaCard title="🎯 Engagement Score">
+            <SagaCard title="Engagement Score">
               <div className="text-center mb-4">
                 <div
                   className="text-5xl font-bold mb-2"
@@ -348,9 +351,15 @@ export default async function DonationDetailPage({ params }: DonationDetailPageP
                   <label className="text-xs font-medium text-white/70 uppercase">Gift Trend</label>
                   <p className="text-white mt-1 capitalize flex items-center gap-2">
                     {donorIntelligence.averageGiftTrend}
-                    {donorIntelligence.averageGiftTrend === 'increasing' && '📈'}
-                    {donorIntelligence.averageGiftTrend === 'decreasing' && '📉'}
-                    {donorIntelligence.averageGiftTrend === 'stable' && '➡️'}
+                    {donorIntelligence.averageGiftTrend === 'increasing' && (
+                      <TrendUp size={18} weight="bold" className="text-green-400" />
+                    )}
+                    {donorIntelligence.averageGiftTrend === 'decreasing' && (
+                      <TrendDown size={18} weight="bold" className="text-red-400" />
+                    )}
+                    {donorIntelligence.averageGiftTrend === 'stable' && (
+                      <ArrowRight size={18} weight="bold" className="text-blue-400" />
+                    )}
                   </p>
                 </div>
                 <div>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Sparkle, Target, TrendUp, Lightning } from "@phosphor-icons/react/dist/ssr";
 
 export default function Home() {
   return (
@@ -42,7 +43,7 @@ export default function Home() {
         <div className="text-center max-w-6xl">
           {/* Results-Driven Headline */}
           <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#667eea] to-[#764ba2] px-5 py-2.5 rounded-full text-sm font-bold text-white mb-8 shadow-lg">
-            <span>✨</span>
+            <Sparkle size={18} weight="bold" />
             <span>Trusted by 10,000+ Nonprofits</span>
           </div>
 
@@ -117,7 +118,9 @@ export default function Home() {
           {/* Feature Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
             <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="text-4xl mb-4">🎯</div>
+              <div className="mb-4">
+                <Target size={48} weight="bold" className="text-orange-400" />
+              </div>
               <h3 className="text-xl font-bold text-white mb-3">Smart Segmentation</h3>
               <p className="text-white/70 leading-relaxed">
                 AI identifies your most engaged donors and recommends the perfect time to reach out
@@ -125,7 +128,9 @@ export default function Home() {
             </div>
 
             <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="text-4xl mb-4">⚡</div>
+              <div className="mb-4">
+                <Lightning size={48} weight="bold" className="text-yellow-400" />
+              </div>
               <h3 className="text-xl font-bold text-white mb-3">Automated Workflows</h3>
               <p className="text-white/70 leading-relaxed">
                 From thank-you emails to tax receipts - automation that saves 15+ hours per week
@@ -133,7 +138,9 @@ export default function Home() {
             </div>
 
             <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="text-4xl mb-4">📈</div>
+              <div className="mb-4">
+                <TrendUp size={48} weight="bold" className="text-green-400" />
+              </div>
               <h3 className="text-xl font-bold text-white mb-3">Predictive Analytics</h3>
               <p className="text-white/70 leading-relaxed">
                 Forecast campaign performance and donor lifetime value with machine learning

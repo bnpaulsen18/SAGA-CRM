@@ -12,6 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { createContact } from '@/app/actions/contacts'
+import { Check } from '@phosphor-icons/react'
 
 export default function ContactForm() {
   const router = useRouter()
@@ -307,7 +308,14 @@ export default function ContactForm() {
             border: 'none'
           }}
         >
-          {isSubmitting ? 'Creating...' : '✓ Create Contact'}
+          {isSubmitting ? (
+            'Creating...'
+          ) : (
+            <span className="flex items-center gap-2">
+              <Check size={18} weight="bold" />
+              Create Contact
+            </span>
+          )}
         </Button>
         <Button
           type="button"

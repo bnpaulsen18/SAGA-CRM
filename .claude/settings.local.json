@@ -18,7 +18,13 @@
       "Bash(netstat:*)",
       "Bash(findstr:*)",
       "Bash(xargs:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(git checkout:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(find:*)",
+      "Bash(npm run build:*)",
+      "Bash(head:*)"
     ],
     "deny": [],
     "ask": []

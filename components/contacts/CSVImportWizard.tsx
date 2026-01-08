@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import ColumnMapper from './ColumnMapper'
 import ImportPreview from './ImportPreview'
 import { importContacts } from '@/app/actions/contacts'
+import { Check } from '@phosphor-icons/react'
 
 type CSVRow = Record<string, string>
 
@@ -157,7 +158,7 @@ export default function CSVImportWizard() {
 
       {/* Step 1: Upload */}
       {step === 'upload' && (
-        <SagaCard title="📁 Step 1: Upload CSV File">
+        <SagaCard title="Step 1: Upload CSV File">
           <div className="space-y-4">
             <div
               className="border-2 border-dashed rounded-lg p-12 text-center transition-colors"
@@ -306,7 +307,7 @@ function StepIndicator({ label, active, completed }: { label: string; active: bo
           color: 'white'
         }}
       >
-        {completed ? '✓' : label.split('.')[0]}
+        {completed ? <Check size={18} weight="bold" /> : label.split('.')[0]}
       </div>
       <span className="text-xs text-white/70 mt-2 whitespace-nowrap">{label.split('. ')[1]}</span>
     </div>

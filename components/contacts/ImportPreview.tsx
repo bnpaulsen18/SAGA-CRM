@@ -3,6 +3,7 @@
 import { useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import SagaCard from '@/components/ui/saga-card'
+import { Check, Warning } from '@phosphor-icons/react'
 
 interface ImportPreviewProps {
   csvData: Record<string, string>[]
@@ -124,7 +125,10 @@ export default function ImportPreview({
                     <td className="px-3 py-2 text-white/70">{contact.phone || '-'}</td>
                     <td className="px-3 py-2">
                       {contact._isValid ? (
-                        <span className="text-green-400 text-xs">✓ Valid</span>
+                        <span className="text-green-400 text-xs flex items-center gap-1">
+                          <Check size={14} weight="bold" />
+                          Valid
+                        </span>
                       ) : (
                         <span className="text-red-400 text-xs">✗ Invalid</span>
                       )}
@@ -145,8 +149,9 @@ export default function ImportPreview({
               border: '1px solid rgba(234, 179, 8, 0.3)'
             }}
           >
-            <p className="text-yellow-400 text-sm">
-              ⚠️ {validationStats.invalid} row(s) have validation errors and will be skipped during import.
+            <p className="text-yellow-400 text-sm flex items-center gap-2">
+              <Warning size={18} weight="bold" />
+              {validationStats.invalid} row(s) have validation errors and will be skipped during import.
             </p>
           </div>
         )}

@@ -4,6 +4,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import ContactsTable from '@/components/contacts/ContactsTable'
 import SagaCard from '@/components/ui/saga-card'
 import { Button } from '@/components/ui/button'
+import { FolderOpen, Plus } from '@phosphor-icons/react/dist/ssr'
 import Link from 'next/link'
 
 export const runtime = 'nodejs'
@@ -42,10 +43,10 @@ export default async function ContactsPage() {
       phone: contact.phone,
       status: contact.status,
       type: contact.type,
-      donationCount: contact.donations.length,
       lifetimeGiving,
       lastGiftDate: sortedDonations[0]?.donatedAt || null,
       lastGiftAmount: sortedDonations[0]?.amount || null,
+      _count: { donations: contact.donations.length },
       street: contact.street,
       city: contact.city,
       state: contact.state,
@@ -80,20 +81,22 @@ export default async function ContactsPage() {
           <Link href="/contacts/import">
             <Button
               variant="outline"
-              className="text-white border-white/30 hover:bg-white/10 hover:text-white hover:border-white/50"
+              className="text-white border-white/30 hover:bg-white/10 hover:text-white hover:border-white/50 flex items-center gap-2"
             >
-              📁 Import CSV
+              <FolderOpen size={18} weight="bold" />
+              Import CSV
             </Button>
           </Link>
           <Link href="/contacts/new">
             <Button
-              className="text-white font-semibold"
+              className="text-white font-semibold flex items-center gap-2"
               style={{
                 background: 'linear-gradient(to right, #764ba2, #ff6b35)',
                 border: 'none'
               }}
             >
-              ➕ Add Contact
+              <Plus size={18} weight="bold" />
+              Add Contact
             </Button>
           </Link>
         </div>

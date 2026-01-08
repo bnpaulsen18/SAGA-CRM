@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
+import { Warning, Target, CheckCircle, CurrencyDollar, Rocket } from '@phosphor-icons/react/dist/ssr';
 import CampaignCard from '@/components/campaigns/CampaignCard';
 
 export const runtime = 'nodejs'
@@ -17,7 +18,9 @@ export default async function CampaignsPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] flex items-center justify-center p-8">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md text-center">
-          <div className="text-6xl mb-4">⚠️</div>
+          <div className="flex justify-center mb-4">
+            <Warning size={64} weight="bold" className="text-yellow-400" />
+          </div>
           <h1 className="text-2xl font-bold text-white mb-2">No Organization Assigned</h1>
           <p className="text-white/70 mb-6">
             Your account is not associated with an organization.
@@ -81,7 +84,7 @@ export default async function CampaignsPage() {
               <p className="text-white/60 text-sm mb-1">Total Campaigns</p>
               <p className="text-3xl font-bold text-white">{campaigns.length}</p>
             </div>
-            <div className="text-4xl">🎯</div>
+            <Target size={40} weight="bold" className="text-blue-400" />
           </div>
         </div>
 
@@ -91,7 +94,7 @@ export default async function CampaignsPage() {
               <p className="text-white/60 text-sm mb-1">Active Campaigns</p>
               <p className="text-3xl font-bold text-green-400">{activeCampaigns}</p>
             </div>
-            <div className="text-4xl">✅</div>
+            <CheckCircle size={40} weight="bold" className="text-green-400" />
           </div>
         </div>
 
@@ -106,7 +109,7 @@ export default async function CampaignsPage() {
                 of ${totalGoal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} goal
               </p>
             </div>
-            <div className="text-4xl">💰</div>
+            <CurrencyDollar size={40} weight="bold" className="text-green-400" />
           </div>
         </div>
       </div>
@@ -115,7 +118,9 @@ export default async function CampaignsPage() {
       <div className="max-w-7xl mx-auto">
         {campaigns.length === 0 ? (
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-12 text-center">
-            <div className="text-6xl mb-4">🚀</div>
+            <div className="flex justify-center mb-4">
+              <Rocket size={64} weight="bold" className="text-purple-400" />
+            </div>
             <h3 className="text-xl font-semibold text-white mb-2">No campaigns yet</h3>
             <p className="text-white/60 mb-6">Create your first fundraising campaign to get started</p>
             <Link
