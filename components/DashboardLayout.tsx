@@ -23,18 +23,10 @@ export default function DashboardLayout({
   const [searchTerm, setSearchTerm] = useState('')
 
   return (
-    <div className="min-h-screen" style={{
-      background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-    }}>
+    <div className="min-h-screen saga-gradient">
       {/* Header */}
       <header
-        className="sticky top-0 z-[1000]"
-        style={{
-          background: 'linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 25%, #5c1644 50%, #8b1e4b 75%, #b4154b 85%, #ff6b35 100%)',
-          borderBottom: '2px solid rgba(255, 107, 53, 0.3)',
-          height: '75px',
-          boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-        }}
+        className="sticky top-0 z-[1000] saga-header-gradient border-b-2 saga-border-orange h-[75px] shadow-[0_4px_20px_rgba(0,0,0,0.3)]"
       >
         <div className="flex items-center justify-between h-full px-10">
           {/* Logo Section */}
@@ -45,11 +37,7 @@ export default function DashboardLayout({
                 alt="SAGA CRM"
                 width={140}
                 height={55}
-                className="h-[55px] w-auto transition-all duration-300 hover:scale-105"
-                style={{
-                  objectFit: 'contain',
-                  filter: 'drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3))'
-                }}
+                className="h-[55px] w-auto transition-all duration-300 hover:scale-105 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.3)]"
                 priority
               />
               <span className="text-white/85 text-base font-normal tracking-wide">
@@ -66,43 +54,13 @@ export default function DashboardLayout({
               placeholder={searchPlaceholder}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-[300px] px-5 py-2.5 rounded-lg text-white text-[0.95rem] transition-all duration-200"
-              style={{
-                background: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.2)',
-                outline: 'none'
-              }}
-              onFocus={(e) => {
-                e.target.style.borderColor = '#ffa07a'
-                e.target.style.background = 'rgba(255,255,255,0.15)'
-              }}
-              onBlur={(e) => {
-                e.target.style.borderColor = 'rgba(255,255,255,0.2)'
-                e.target.style.background = 'rgba(255,255,255,0.1)'
-              }}
+              className="w-[300px] px-5 py-2.5 rounded-lg text-white text-[0.95rem] transition-all duration-200 bg-white/10 border border-white/20 outline-none focus:border-[#ffa07a] focus:bg-white/15"
             />
 
             {/* Settings/Profile */}
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="px-5 py-2.5 rounded-lg font-semibold text-[0.95rem] text-white flex items-center gap-2 transition-all duration-200"
-              style={{
-                background: '#764ba2',
-                border: '2px solid #764ba2',
-                boxShadow: '0 2px 8px rgba(118, 75, 162, 0.3)'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#8b5fb8'
-                e.currentTarget.style.borderColor = '#8b5fb8'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(118, 75, 162, 0.4)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#764ba2'
-                e.currentTarget.style.borderColor = '#764ba2'
-                e.currentTarget.style.transform = 'translateY(0)'
-                e.currentTarget.style.boxShadow = '0 2px 8px rgba(118, 75, 162, 0.3)'
-              }}
+              className="px-5 py-2.5 rounded-lg font-semibold text-[0.95rem] text-white flex items-center gap-2 transition-all duration-200 bg-[#764ba2] border-2 border-[#764ba2] shadow-[0_2px_8px_rgba(118,75,162,0.3)] hover:-translate-y-px hover:bg-[#8b5fb8] hover:border-[#8b5fb8] hover:shadow-[0_4px_12px_rgba(118,75,162,0.4)]"
             >
               <Gear size={18} weight="bold" />
               <span>{userName}</span>
