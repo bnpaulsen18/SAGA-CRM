@@ -28,8 +28,7 @@ export default function Error({
         <div className="flex gap-3 justify-center">
           <Button
             onClick={reset}
-            className="text-white font-semibold"
-            style={{ background: 'linear-gradient(to right, #764ba2, #ff6b35)' }}
+            className="text-white font-semibold saga-button"
           >
             Try Again
           </Button>

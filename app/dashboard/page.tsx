@@ -276,7 +276,7 @@ export default async function DashboardPage() {
                         <div
                           className={`h-2 rounded-full transition-all ${
                             percentage >= 100
-                              ? 'bg-linear-to-r from-green-500 to-green-400'
+                              ? 'bg-gradient-to-r from-green-500 to-green-400'
                               : 'saga-button'
                           }`}
                           style={{

@@ -42,7 +42,7 @@ export default async function PlatformAdminDashboard() {
         </div>
 
         {/* Organizations List */}
-        <div className="shadow-lg rounded-lg overflow-hidden" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="shadow-lg rounded-lg overflow-hidden saga-glass-dark">
           <div className="px-6 py-4" style={{ borderBottom: '1px solid rgba(255, 107, 107, 0.2)' }}>
             <h2 className="text-lg font-semibold text-white">All Organizations</h2>
           </div>

@@ -153,11 +153,7 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
         </div>
         <Link href="/donations/new">
           <Button
-            className="text-white font-semibold flex items-center gap-2"
-            style={{
-              background: 'linear-gradient(to right, #764ba2, #ff6b35)',
-              border: 'none'
-            }}
+            className="text-white font-semibold flex items-center gap-2 saga-button border-none"
           >
             <Plus size={18} weight="bold" />
             New Donation
@@ -220,11 +216,7 @@ export default async function DonationsPage({ searchParams }: DonationsPageProps
               <p className="text-white/60 mb-6">Get started by recording your first donation</p>
               <Link href="/donations/new">
                 <Button
-                  className="text-white font-semibold"
-                  style={{
-                    background: 'linear-gradient(to right, #764ba2, #ff6b35)',
-                    border: 'none'
-                  }}
+                  className="text-white font-semibold saga-button border-none"
                 >
                   Record First Donation
                 </Button>

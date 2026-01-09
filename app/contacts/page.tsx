@@ -168,11 +168,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
           </Link>
           <Link href="/contacts/new">
             <Button
-              className="text-white font-semibold flex items-center gap-2"
-              style={{
-                background: 'linear-gradient(to right, #764ba2, #ff6b35)',
-                border: 'none'
-              }}
+              className="text-white font-semibold flex items-center gap-2 saga-button border-none"
             >
               <Plus size={18} weight="bold" />
               Add Contact
@@ -197,7 +193,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
 
         <SagaCard variant="orange">
           <h3 className="text-sm font-medium text-white/70">Donors</h3>
-          <p className="text-3xl font-bold" style={{ color: '#ff6b35' }}>
+          <p className="text-3xl font-bold text-[#ff6b35]">
             {donorContacts}
           </p>
           <p className="text-xs text-white/50 mt-1">Contact type: Donor</p>

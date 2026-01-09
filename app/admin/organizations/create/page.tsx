@@ -63,14 +63,10 @@ export default async function CreateOrganizationPage() {
   });
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' }}>
+    <div className="min-h-screen saga-gradient">
       {/* SAGA Header */}
       <header
-        className="shadow-lg border-b-2 sticky top-0 z-50"
-        style={{
-          background: 'linear-gradient(135deg, #1a0a2e 0%, #2d1b3d 25%, #5c1644 50%, #8b1e4b 75%, #b4154b 85%, #ff6b35 100%)',
-          borderBottomColor: 'rgba(255, 107, 53, 0.3)'
-        }}
+        className="shadow-lg border-b-2 sticky top-0 z-50 saga-header-gradient border-b-[rgba(255,107,53,0.3)]"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
@@ -89,12 +85,7 @@ export default async function CreateOrganizationPage() {
             </div>
             <Link
               href="/admin"
-              className="px-4 py-2 rounded-lg font-semibold transition-all"
-              style={{
-                background: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-                color: 'white'
-              }}
+              className="px-4 py-2 rounded-lg font-semibold transition-all saga-glass text-white"
             >
               ← Back to Admin
             </Link>
@@ -106,7 +97,7 @@ export default async function CreateOrganizationPage() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <form action={createOrganization} className="space-y-6">
           {/* Basic Information */}
-          <div className="p-6 rounded-lg shadow-lg" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="p-6 rounded-lg shadow-lg saga-glass-dark">
             <h2 className="text-xl font-bold text-white mb-6" style={{ borderBottom: '2px solid rgba(255, 107, 53, 0.3)', paddingBottom: '0.75rem' }}>
               Basic Information
             </h2>
@@ -114,7 +105,7 @@ export default async function CreateOrganizationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-white/90 mb-2">
-                  Organization Name <span style={{ color: '#ff6b35' }}>*</span>
+                  Organization Name <span className="text-[#ff6b35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -132,7 +123,7 @@ export default async function CreateOrganizationPage() {
 
               <div>
                 <label htmlFor="ein" className="block text-sm font-medium text-white/90 mb-2">
-                  EIN (Tax ID) <span style={{ color: '#ff6b35' }}>*</span>
+                  EIN (Tax ID) <span className="text-[#ff6b35]">*</span>
                 </label>
                 <input
                   type="text"
@@ -151,7 +142,7 @@ export default async function CreateOrganizationPage() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                  Email <span style={{ color: '#ff6b35' }}>*</span>
+                  Email <span className="text-[#ff6b35]">*</span>
                 </label>
                 <input
                   type="email"
@@ -204,7 +195,7 @@ export default async function CreateOrganizationPage() {
           </div>
 
           {/* Organization Type & Tax Status */}
-          <div className="p-6 rounded-lg shadow-lg" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="p-6 rounded-lg shadow-lg saga-glass-dark">
             <h2 className="text-xl font-bold text-white mb-6" style={{ borderBottom: '2px solid rgba(255, 107, 53, 0.3)', paddingBottom: '0.75rem' }}>
               Organization Structure
             </h2>
@@ -212,7 +203,7 @@ export default async function CreateOrganizationPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="organizationType" className="block text-sm font-medium text-white/90 mb-2">
-                  Organization Type <span style={{ color: '#ff6b35' }}>*</span>
+                  Organization Type <span className="text-[#ff6b35]">*</span>
                 </label>
                 <select
                   id="organizationType"
@@ -224,9 +215,9 @@ export default async function CreateOrganizationPage() {
                     border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  <option value="INDEPENDENT" style={{ background: '#1a1a2e' }}>Independent - Standalone nonprofit</option>
-                  <option value="PARENT" style={{ background: '#1a1a2e' }}>Parent - Fiscal sponsor with sub-projects</option>
-                  <option value="PROJECT" style={{ background: '#1a1a2e' }}>Project - Sub-project under parent</option>
+                  <option value="INDEPENDENT">Independent - Standalone nonprofit</option>
+                  <option value="PARENT">Parent - Fiscal sponsor with sub-projects</option>
+                  <option value="PROJECT">Project - Sub-project under parent</option>
                 </select>
               </div>
 
@@ -244,9 +235,9 @@ export default async function CreateOrganizationPage() {
                     border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  <option value="" style={{ background: '#1a1a2e' }}>-- No Parent --</option>
+                  <option value="">-- No Parent --</option>
                   {potentialParents.map((org) => (
-                    <option key={org.id} value={org.id} style={{ background: '#1a1a2e' }}>
+                    <option key={org.id} value={org.id}>
                       {org.name}
                     </option>
                   ))}
@@ -255,7 +246,7 @@ export default async function CreateOrganizationPage() {
 
               <div>
                 <label htmlFor="taxExemptStatus" className="block text-sm font-medium text-white/90 mb-2">
-                  Tax Exempt Status <span style={{ color: '#ff6b35' }}>*</span>
+                  Tax Exempt Status <span className="text-[#ff6b35]">*</span>
                 </label>
                 <select
                   id="taxExemptStatus"
@@ -267,13 +258,13 @@ export default async function CreateOrganizationPage() {
                     border: '1px solid rgba(255, 255, 255, 0.2)'
                   }}
                 >
-                  <option value="EXEMPT_501C3" style={{ background: '#1a1a2e' }}>501(c)(3) - Public Charity</option>
-                  <option value="EXEMPT_501C4" style={{ background: '#1a1a2e' }}>501(c)(4) - Social Welfare</option>
-                  <option value="EXEMPT_501C6" style={{ background: '#1a1a2e' }}>501(c)(6) - Business League</option>
-                  <option value="EXEMPT_501C7" style={{ background: '#1a1a2e' }}>501(c)(7) - Social Club</option>
-                  <option value="EXEMPT_OTHER" style={{ background: '#1a1a2e' }}>Other Tax-Exempt</option>
-                  <option value="FOR_PROFIT" style={{ background: '#1a1a2e' }}>For-Profit</option>
-                  <option value="PENDING" style={{ background: '#1a1a2e' }}>Pending</option>
+                  <option value="EXEMPT_501C3">501(c)(3) - Public Charity</option>
+                  <option value="EXEMPT_501C4">501(c)(4) - Social Welfare</option>
+                  <option value="EXEMPT_501C6">501(c)(6) - Business League</option>
+                  <option value="EXEMPT_501C7">501(c)(7) - Social Club</option>
+                  <option value="EXEMPT_OTHER">Other Tax-Exempt</option>
+                  <option value="FOR_PROFIT">For-Profit</option>
+                  <option value="PENDING">Pending</option>
                 </select>
               </div>
 
@@ -315,7 +306,7 @@ export default async function CreateOrganizationPage() {
           </div>
 
           {/* Mission & Programs */}
-          <div className="p-6 rounded-lg shadow-lg" style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+          <div className="p-6 rounded-lg shadow-lg saga-glass-dark">
             <h2 className="text-xl font-bold text-white mb-6" style={{ borderBottom: '2px solid rgba(255, 107, 53, 0.3)', paddingBottom: '0.75rem' }}>
               Mission & Programs
             </h2>
