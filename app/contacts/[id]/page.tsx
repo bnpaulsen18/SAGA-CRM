@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { PencilSimple, CurrencyDollar } from '@phosphor-icons/react/dist/ssr'
+import DeleteContactButton from './DeleteContactButton'
 
 export const runtime = 'nodejs'
 
@@ -120,6 +121,10 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
               Edit Contact
             </Button>
           </Link>
+          <DeleteContactButton
+            contactId={contact.id}
+            contactName={`${contact.firstName} ${contact.lastName}`}
+          />
           <Button className="saga-button text-white flex items-center gap-2 border-none">
             <CurrencyDollar size={18} weight="bold" />
             Add Donation
