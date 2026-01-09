@@ -1,0 +1,35 @@
+[
+  {
+    "agentName": "frontend-developer",
+    "task": "Create a reusable button component with primary and secondary variants",
+    "context": {
+      "componentType": "component",
+      "name": "Button",
+      "requirements": "Support primary, secondary, and ghost variants. Include loading state. Use Phosphor icons. Match SAGA design system (purple/orange gradient)."
+    }
+  },
+  {
+    "agentName": "backend-architect",
+    "task": "Design a secure API endpoint for user profile updates",
+    "context": {
+      "taskType": "api-endpoint",
+      "description": "Users should be able to update their profile information (name, email, phone). Include proper validation, authentication checks, and audit logging.",
+      "requirements": [
+        "Zod validation for all inputs",
+        "Email uniqueness check",
+        "Audit log on profile changes",
+        "Rate limiting (5 updates per hour)",
+        "CSRF protection"
+      ]
+    }
+  },
+  {
+    "agentName": "frontend-developer",
+    "task": "Create a data table component with sorting and pagination",
+    "context": {
+      "componentType": "component",
+      "name": "DataTable",
+      "requirements": "Generic table component that accepts column definitions and data. Support client-side sorting, pagination, and row selection. Use Tailwind for styling. Integrate with shadcn/ui Table component."
+    }
+  }
+]

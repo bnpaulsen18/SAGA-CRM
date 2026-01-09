@@ -12,7 +12,11 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:studio": "prisma studio",
-    "db:seed": "tsx scripts/seed-test-data.ts"
+    "db:seed": "tsx scripts/seed-test-data.ts",
+    "agent": "tsx scripts/agents/cli.ts",
+    "agent:list": "tsx scripts/agents/cli.ts list",
+    "agent:run": "tsx scripts/agents/cli.ts run",
+    "agent:batch": "tsx scripts/agents/batch-agents.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
@@ -33,6 +37,7 @@
     "bcryptjs": "^3.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "commander": "^14.0.2",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.554.0",
     "next": "16.0.10",
