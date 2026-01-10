@@ -20,8 +20,13 @@ interface SearchResult {
   firstName: string
   lastName: string
   email: string
+  phone: string | null
   type: string
   status: string
+  lifetimeGiving: number
+  _count: {
+    donations: number
+  }
 }
 
 export default function DashboardLayout({
@@ -45,7 +50,7 @@ export default function DashboardLayout({
         try {
           const response = await fetch(`/api/contacts/search?q=${encodeURIComponent(searchTerm)}`)
           const data = await response.json()
-          setSearchResults(data.results || [])
+          setSearchResults(data || [])
           setShowResults(true)
         } catch (error) {
           console.error('Search error:', error)
@@ -147,6 +152,11 @@ export default function DashboardLayout({
                               {result.firstName} {result.lastName}
                             </p>
                             <p className="text-white/50 text-sm truncate">{result.email}</p>
+                            {result.lifetimeGiving > 0 && (
+                              <p className="text-green-400 text-xs mt-0.5">
+                                ${result.lifetimeGiving.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} • {result._count.donations} gift{result._count.donations !== 1 ? 's' : ''}
+                              </p>
+                            )}
                           </div>
                           <div className="flex items-center gap-2">
                             <span className="px-2 py-1 rounded text-xs bg-[#764ba2]/20 text-white/70 border border-[#764ba2]/30">

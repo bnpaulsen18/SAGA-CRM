@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
 import { requireAuth } from '@/lib/permissions'
 import { getPrismaWithRLS } from '@/lib/prisma-rls'
-import { decryptContactPII } from '@/lib/encryption'
 
 export const runtime = 'nodejs'
 
-// GET /api/contacts/search?q=query - Global search for contacts
+/**
+ * GET /api/contacts/search?q=search-term
+ * Global search for contacts by name, email, or phone
+ * Returns max 10 results for autocomplete dropdown
+ */
 export async function GET(req: Request) {
   try {
     const session = await requireAuth()
@@ -14,12 +17,11 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url)
     const query = searchParams.get('q')
 
-    if (!query || query.trim().length < 2) {
-      return NextResponse.json({ results: [] })
+    if (!query || query.trim().length === 0) {
+      return NextResponse.json([])
     }
 
-    // Search contacts by name, email (case-insensitive)
-    // Limit to 10 results for quick suggestions
+    // Search contacts by name, email, or phone (case-insensitive)
     const contacts = await prisma.contact.findMany({
       where: {
         organizationId: session.user.organizationId || undefined,
@@ -41,6 +43,12 @@ export async function GET(req: Request) {
               contains: query,
               mode: 'insensitive'
             }
+          },
+          {
+            phone: {
+              contains: query,
+              mode: 'insensitive'
+            }
           }
         ]
       },
@@ -49,27 +57,41 @@ export async function GET(req: Request) {
         firstName: true,
         lastName: true,
         email: true,
+        phone: true,
         type: true,
-        status: true
+        status: true,
+        _count: {
+          select: {
+            donations: true
+          }
+        }
       },
-      take: 10,
-      orderBy: [
-        { status: 'asc' }, // ACTIVE first
-        { lastName: 'asc' }
-      ]
+      orderBy: {
+        lastName: 'asc'
+      },
+      take: 10
     })
 
-    // Decrypt PII fields before returning
-    const decryptedContacts = contacts.map((contact) => decryptContactPII(contact))
+    // Calculate lifetime giving for each contact
+    const contactsWithGiving = await Promise.all(
+      contacts.map(async (contact) => {
+        const donations = await prisma.donation.aggregate({
+          where: { contactId: contact.id },
+          _sum: { amount: true }
+        })
 
-    return NextResponse.json({
-      results: decryptedContacts,
-      count: decryptedContacts.length
-    })
+        return {
+          ...contact,
+          lifetimeGiving: donations._sum.amount || 0
+        }
+      })
+    )
+
+    return NextResponse.json(contactsWithGiving)
   } catch (error) {
     console.error('GET /api/contacts/search error:', error)
     return NextResponse.json(
-      { error: 'Failed to search contacts' },
+      { error: 'Search failed' },
       { status: 500 }
     )
   }
