@@ -94,7 +94,7 @@ export default function FeaturesAlternating() {
             return (
               <div
                 key={index}
-                className={`grid grid-cols-1 lg:grid-cols-2 gap-12 items-center ${
+                className={`grid grid-cols-1 md:grid-cols-2 gap-12 items-center ${
                   isEven ? '' : 'lg:grid-flow-dense'
                 }`}
               >
@@ -123,9 +123,10 @@ export default function FeaturesAlternating() {
                     {feature.benefits.map((benefit, i) => (
                       <li key={i} className="flex items-start gap-3">
                         <svg
-                          className="w-6 h-6 text-[#06A77D] flex-shrink-0 mt-0.5"
+                          className="w-6 h-6 text-[#FF6B35] flex-shrink-0 mt-0.5"
                           fill="currentColor"
                           viewBox="0 0 20 20"
+                          aria-hidden="true"
                         >
                           <path
                             fillRule="evenodd"

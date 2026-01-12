@@ -3,7 +3,7 @@
  * Video-style testimonials with rich storytelling
  */
 
-import { Play, Quotes } from '@phosphor-icons/react/dist/ssr'
+import { Play, Quotes, Target } from '@phosphor-icons/react/dist/ssr'
 
 const testimonials = [
   {
@@ -58,18 +58,16 @@ export default function TestimonialsVideo() {
         </div>
 
         {/* Testimonials grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="group cursor-pointer"
-            >
+            <div key={index}>
               {/* Video thumbnail */}
-              <div
-                className="aspect-video rounded-2xl mb-6 relative overflow-hidden shadow-xl group-hover:shadow-2xl transition-shadow duration-350"
+              <button
+                className="w-full aspect-video rounded-2xl mb-6 relative overflow-hidden shadow-xl hover:shadow-2xl transition-shadow duration-350 group focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/30"
                 style={{
                   background: 'linear-gradient(135deg, #4A1942 0%, #E63946 50%, #FF6B35 100%)',
                 }}
+                aria-label={`Play video testimonial from ${testimonial.author}`}
               >
                 {/* Play button overlay */}
                 <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/10 transition-colors">
@@ -87,7 +85,7 @@ export default function TestimonialsVideo() {
                     {testimonial.role}, {testimonial.organization}
                   </p>
                 </div>
-              </div>
+              </button>
 
               {/* Quote */}
               <div className="mb-4">
@@ -106,7 +104,8 @@ export default function TestimonialsVideo() {
                   color: '#4A1942'
                 }}
               >
-                🎯 {testimonial.impact}
+                <Target size={16} weight="bold" className="text-[#4A1942]" />
+                {testimonial.impact}
               </div>
             </div>
           ))}

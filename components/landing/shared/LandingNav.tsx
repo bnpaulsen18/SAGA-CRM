@@ -21,7 +21,7 @@ export default function LandingNav({ variant = 'light' }: LandingNavProps) {
 
   return (
     <nav className={`sticky top-0 z-50 ${isDark ? 'bg-[#0F1419] border-white/10' : 'bg-white border-gray-200'} border-b backdrop-blur-sm`}>
-      <div className="max-w-[1200px] mx-auto px-8 py-4">
+      <div className="max-w-[1400px] mx-auto px-10 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -64,7 +64,7 @@ export default function LandingNav({ variant = 'light' }: LandingNavProps) {
 
             <Link
               href="/login"
-              className="px-6 py-2.5 bg-gradient-to-r from-[#764ba2] to-[#FF6B6B] text-white text-sm font-semibold rounded-lg shadow hover:shadow-lg transition-all duration-250 flex items-center gap-2"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#4A1942] to-[#FF6B35] text-white text-sm font-semibold rounded-lg shadow hover:shadow-lg transition-all duration-250 flex items-center gap-2 focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/30"
             >
               Get Started Free
               <ArrowRight size={16} weight="bold" />
@@ -135,7 +135,7 @@ export default function LandingNav({ variant = 'light' }: LandingNavProps) {
               </Link>
               <Link
                 href="/login"
-                className="px-6 py-2.5 bg-gradient-to-r from-[#764ba2] to-[#FF6B6B] text-white text-sm font-semibold rounded-lg shadow text-center"
+                className="px-6 py-2.5 bg-gradient-to-r from-[#4A1942] to-[#FF6B35] text-white text-sm font-semibold rounded-lg shadow text-center focus:outline-none focus:ring-4 focus:ring-[#FF6B35]/30"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Get Started Free
