@@ -4,6 +4,7 @@
  */
 
 import { ArrowRight, Sparkle } from '@phosphor-icons/react/dist/ssr'
+import Link from 'next/link'
 
 export default function HeroEmotional() {
   return (
@@ -33,7 +34,7 @@ export default function HeroEmotional() {
 
           {/* Headline - Extra large and bold */}
           <h1
-            className="text-6xl md:text-[5rem] font-extrabold text-white leading-none mb-8"
+            className="text-5xl md:text-[5rem] font-extrabold text-white leading-[1.1] mb-8"
             style={{ letterSpacing: '-0.03em' }}
           >
             Every donor.{' '}
@@ -50,43 +51,48 @@ export default function HeroEmotional() {
 
           {/* CTA Buttons - Larger, more prominent */}
           <div className="flex flex-col sm:flex-row gap-4 mb-12">
-            <button
-              className="px-10 py-5 bg-white text-[#4A1942] text-lg font-bold rounded-xl shadow-2xl hover:shadow-[0_0_40px_rgba(255,107,53,0.3)] transition-all duration-350 flex items-center justify-center gap-3"
+            <Link
+              href="/register"
+              className="px-10 py-5 bg-white text-[#4A1942] text-lg font-bold rounded-xl shadow-2xl hover:shadow-[0_0_40px_rgba(255,107,53,0.3)] transition-all duration-350 flex items-center justify-center gap-3 focus:outline-none focus:ring-4 focus:ring-white/30"
             >
               Start Your Free Trial
               <ArrowRight size={24} weight="bold" />
-            </button>
+            </Link>
 
-            <button className="px-10 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white text-lg font-bold rounded-xl hover:bg-white/20 transition-all duration-350">
+            <button
+              type="button"
+              className="px-10 py-5 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white text-lg font-bold rounded-xl hover:bg-white/20 transition-all duration-350 focus:outline-none focus:ring-4 focus:ring-white/30"
+            >
               Watch Demo
             </button>
           </div>
 
           {/* Social proof - Animated metrics */}
-          <div className="grid grid-cols-3 gap-8 max-w-2xl">
-            <div className="text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl">
+            <div className="text-center py-2">
               <p className="text-4xl md:text-5xl font-bold text-white mb-2">500+</p>
-              <p className="text-sm text-white/70">Nonprofits</p>
+              <p className="text-sm text-white/80">Nonprofits</p>
             </div>
-            <div className="text-center border-l border-r border-white/20">
+            <div className="text-center py-2 border-l border-white/20 sm:border-r">
               <p className="text-4xl md:text-5xl font-bold text-white mb-2">$2M+</p>
-              <p className="text-sm text-white/70">Raised Monthly</p>
+              <p className="text-sm text-white/80">Raised Monthly</p>
             </div>
-            <div className="text-center">
+            <div className="text-center py-2 col-span-2 sm:col-span-1">
               <p className="text-4xl md:text-5xl font-bold text-white mb-2">98%</p>
-              <p className="text-sm text-white/70">Satisfaction</p>
+              <p className="text-sm text-white/80">Satisfaction</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Decorative wave at bottom */}
-      <div className="absolute bottom-0 left-0 right-0">
+      <div className="absolute bottom-0 left-0 right-0" aria-hidden="true">
         <svg
           viewBox="0 0 1440 120"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           className="w-full h-auto"
+          role="presentation"
         >
           <path
             d="M0 0L60 10C120 20 240 40 360 46.7C480 53 600 47 720 43.3C840 40 960 40 1080 46.7C1200 53 1320 67 1380 73.3L1440 80V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0V0Z"
