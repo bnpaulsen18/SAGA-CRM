@@ -6,6 +6,7 @@ import { generateExecutiveSummary } from '@/lib/ai/donation-insights'
 import { Button } from '@/components/ui/button'
 import MonthlyGivingChart from '@/components/reports/MonthlyGivingChart'
 import TopDonorsTable from '@/components/reports/TopDonorsTable'
+import Link from 'next/link'
 
 export const runtime = 'nodejs'
 
@@ -190,12 +191,22 @@ export default async function ReportsPage() {
               Performance analysis for the last 12 months
             </p>
           </div>
-          <Button
-            variant="outline"
-            className="text-white border-white/30 hover:bg-white/10"
-          >
-            📄 Export PDF
-          </Button>
+          <div className="flex gap-3">
+            <Link href="/reports/analytics">
+              <Button
+                className="text-white"
+                style={{ background: 'linear-gradient(to right, #764ba2, #ff6b35)' }}
+              >
+                📊 Advanced Analytics
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              className="text-white border-white/30 hover:bg-white/10"
+            >
+              📄 Export PDF
+            </Button>
+          </div>
         </div>
       </div>
 
