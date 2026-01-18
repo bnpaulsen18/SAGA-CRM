@@ -1,154 +1,325 @@
-import Link from "next/link";
-import Image from "next/image";
-import { Sparkle, Target, TrendUp, Lightning } from "@phosphor-icons/react/dist/ssr";
+/**
+ * SAGA CRM - Main Landing Page
+ * Emotional Impact design with full SEO optimization
+ */
 
-export default function Home() {
+import LandingNav from '@/components/landing/shared/LandingNav'
+import HeroEmotional from '@/components/landing/option-2/HeroEmotional'
+import FeaturesAlternating from '@/components/landing/option-2/FeaturesAlternating'
+import TestimonialsVideo from '@/components/landing/option-2/TestimonialsVideo'
+import CTABold from '@/components/landing/option-2/CTABold'
+import EmailCaptureForm from '@/components/landing/shared/EmailCaptureForm'
+import SmoothScroll from '@/components/landing/shared/SmoothScroll'
+
+export const metadata = {
+  title: 'SAGA CRM - Transform Your Nonprofit Fundraising',
+  description: 'Every donor. Every gift. Every impact. Stop losing donors to spreadsheets and start building relationships that last with SAGA CRM.',
+  keywords: [
+    'nonprofit CRM',
+    'donor management',
+    'fundraising software',
+    'nonprofit software',
+    'donor retention',
+    'donation tracking',
+    'nonprofit technology',
+    'CRM for nonprofits',
+    'donor database',
+    'fundraising CRM',
+  ],
+  authors: [{ name: 'SAGA CRM' }],
+  creator: 'SAGA CRM',
+  publisher: 'SAGA CRM',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'en_US',
+    url: 'https://sagacrm.io',
+    siteName: 'SAGA CRM',
+    title: 'SAGA CRM - Transform Your Nonprofit Fundraising',
+    description: 'Every donor. Every gift. Every impact. Stop losing donors to spreadsheets and start building relationships that last with SAGA CRM.',
+    images: [
+      {
+        url: '/SAGA_Logo_final.png',
+        width: 1200,
+        height: 630,
+        alt: 'SAGA CRM - Nonprofit Fundraising Software',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'SAGA CRM - Transform Your Nonprofit Fundraising',
+    description: 'Every donor. Every gift. Every impact. Stop losing donors to spreadsheets and start building relationships that last.',
+    images: ['/SAGA_Logo_final.png'],
+    creator: '@sagacrm',
+  },
+  alternates: {
+    canonical: 'https://sagacrm.io',
+  },
+  other: {
+    'msapplication-TileColor': '#4A1942',
+    'theme-color': '#4A1942',
+  },
+}
+
+export default function HomePage() {
+  // JSON-LD structured data for SEO
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://sagacrm.io/#organization',
+        name: 'SAGA CRM',
+        url: 'https://sagacrm.io',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://sagacrm.io/SAGA_Logo_final.png',
+          width: 1200,
+          height: 630,
+        },
+        description: 'Nonprofit CRM and fundraising software built to help organizations raise more, retain donors longer, and make a bigger impact.',
+        sameAs: [
+          'https://twitter.com/sagacrm',
+          'https://www.linkedin.com/company/sagacrm',
+          'https://github.com/sagacrm',
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://sagacrm.io/#website',
+        url: 'https://sagacrm.io',
+        name: 'SAGA CRM',
+        publisher: {
+          '@id': 'https://sagacrm.io/#organization',
+        },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://sagacrm.io/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: 'SAGA CRM',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web Browser',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          priceValidUntil: '2026-12-31',
+          description: 'Free 14-day trial, no credit card required',
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          ratingCount: '500',
+          bestRating: '5',
+          worstRating: '1',
+        },
+      },
+    ],
+  }
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460]">
-      {/* Header with Logo */}
-      <header className="bg-gradient-to-r from-[#1a0a2e] via-[#2d1b3d] via-[#5c1644] via-[#8b1e4b] via-[#b4154b] to-[#ff6b35] border-b-2 border-[rgba(255,107,53,0.3)] p-4 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <img
-              src="/SAGA_Logo_final.png"
-              alt="SAGA"
-              style={{
-                height: '80px',
-                width: 'auto',
-                display: 'block',
-                filter: 'drop-shadow(0 6px 16px rgba(255, 107, 107, 0.4)) brightness(1.1) contrast(1.15) saturate(1.08)',
-                opacity: '0.98'
-              }}
+    <div className="min-h-screen bg-white">
+      {/* JSON-LD Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Smooth Scroll for Hash Links */}
+      <SmoothScroll />
+
+      <LandingNav variant="dark" />
+
+      <HeroEmotional />
+
+      <div id="features">
+        <FeaturesAlternating />
+      </div>
+
+      <div id="testimonials">
+        <TestimonialsVideo />
+      </div>
+
+      <div id="cta">
+        <CTABold />
+      </div>
+
+      {/* Footer - Gradient version */}
+      <footer
+        className="text-white/70 py-16"
+        style={{
+          background: 'linear-gradient(to bottom, #1D3557, #0F1419)',
+        }}
+      >
+        <div className="max-w-[1400px] mx-auto px-10">
+          {/* Newsletter Section */}
+          <div className="max-w-2xl mx-auto mb-16 text-center">
+            <h3 className="text-3xl font-bold text-white mb-4">
+              Stay Updated
+            </h3>
+            <p className="text-white/80 text-lg mb-8">
+              Get nonprofit fundraising tips, product updates, and success stories delivered to your inbox.
+            </p>
+            <EmailCaptureForm
+              variant="gradient"
+              size="large"
+              source="homepage_footer"
             />
           </div>
-          <div className="flex gap-4">
-            <Link
-              href="/login"
-              className="px-6 py-2 text-white hover:text-[#ffa07a] transition-colors font-medium"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/register"
-              className="px-6 py-2 bg-[#764ba2] text-white rounded-lg hover:bg-[#8b5fb8] transition-all shadow-[0_2px_8px_rgba(118,75,162,0.3)] hover:shadow-[0_4px_12px_rgba(118,75,162,0.4)] hover:-translate-y-0.5 font-semibold"
-            >
-              Get Started
-            </Link>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+            {/* Company */}
+            <div>
+              <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">
+                Company
+              </h4>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    About Us
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Our Mission
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Careers
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Contact
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Product */}
+            <div>
+              <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">
+                Product
+              </h4>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <a href="#features" className="hover:text-white transition-colors">
+                    Features
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Pricing
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Integrations
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Security
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">
+                Resources
+              </h4>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Documentation
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Help Center
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Blog
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Case Studies
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">
+                Legal
+              </h4>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    Cookie Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="#" className="hover:text-white transition-colors">
+                    GDPR
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p className="text-sm">
+              © 2026 SAGA CRM. Built with love for nonprofits making a difference.
+            </p>
+            <div className="flex gap-8">
+              <a href="#" className="hover:text-white transition-colors text-sm">
+                Twitter
+              </a>
+              <a href="#" className="hover:text-white transition-colors text-sm">
+                LinkedIn
+              </a>
+              <a href="#" className="hover:text-white transition-colors text-sm">
+                Instagram
+              </a>
+              <a href="#" className="hover:text-white transition-colors text-sm">
+                GitHub
+              </a>
+            </div>
           </div>
         </div>
-      </header>
-
-      {/* Hero */}
-      <div className="flex min-h-[calc(100vh-88px)] flex-col items-center justify-center p-8">
-        <div className="text-center max-w-6xl">
-          {/* Results-Driven Headline */}
-          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[#667eea] to-[#764ba2] px-5 py-2.5 rounded-full text-sm font-bold text-white mb-8 shadow-lg">
-            <Sparkle size={18} weight="bold" />
-            <span>Trusted by 10,000+ Nonprofits</span>
-          </div>
-
-          <h1 className="text-6xl font-bold mb-6 text-white leading-tight">
-            Raise More.
-            <br />
-            <span className="bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent">
-              Manage Smarter.
-            </span>
-          </h1>
-
-          <p className="text-2xl text-white/90 mb-4 font-medium">
-            The AI-powered CRM helping nonprofits raise $500M+ and counting
-          </p>
-
-          <p className="text-lg text-white/70 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of mission-driven organizations using SAGA to build stronger donor relationships,
-            automate workflows, and maximize every fundraising campaign.
-          </p>
-
-          {/* Dual CTA */}
-          <div className="flex gap-6 justify-center mb-16">
-            <Link
-              href="/register"
-              className="px-10 py-4 bg-gradient-to-r from-[#ff6b6b] to-[#ffa07a] text-white font-bold rounded-xl shadow-lg hover:shadow-[0_6px_20px_rgba(255,107,107,0.4)] hover:-translate-y-0.5 transition-all text-lg"
-            >
-              Start Free Trial →
-            </Link>
-            <Link
-              href="/demo"
-              className="px-10 py-4 bg-white/10 backdrop-blur-sm text-white font-semibold rounded-xl shadow-lg hover:bg-white/20 transition-all text-lg border border-white/20"
-            >
-              Watch Demo
-            </Link>
-          </div>
-
-          {/* Big Stats Showcase */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-20 max-w-5xl mx-auto">
-            <div className="bg-[rgba(26,26,46,0.7)] backdrop-blur-sm border border-[rgba(255,107,107,0.3)] rounded-2xl p-8 hover:border-[rgba(255,107,107,0.5)] transition-all">
-              <div className="text-5xl font-black bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-3">
-                $500M+
-              </div>
-              <div className="text-white/80 font-medium">Total Raised</div>
-              <div className="text-white/50 text-sm mt-1">by SAGA nonprofits</div>
-            </div>
-
-            <div className="bg-[rgba(26,26,46,0.7)] backdrop-blur-sm border border-[rgba(255,107,107,0.3)] rounded-2xl p-8 hover:border-[rgba(255,107,107,0.5)] transition-all">
-              <div className="text-5xl font-black bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-3">
-                10K+
-              </div>
-              <div className="text-white/80 font-medium">Active Orgs</div>
-              <div className="text-white/50 text-sm mt-1">and growing daily</div>
-            </div>
-
-            <div className="bg-[rgba(26,26,46,0.7)] backdrop-blur-sm border border-[rgba(255,107,107,0.3)] rounded-2xl p-8 hover:border-[rgba(255,107,107,0.5)] transition-all">
-              <div className="text-5xl font-black bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-3">
-                98%
-              </div>
-              <div className="text-white/80 font-medium">Satisfaction</div>
-              <div className="text-white/50 text-sm mt-1">customer rating</div>
-            </div>
-
-            <div className="bg-[rgba(26,26,46,0.7)] backdrop-blur-sm border border-[rgba(255,107,107,0.3)] rounded-2xl p-8 hover:border-[rgba(255,107,107,0.5)] transition-all">
-              <div className="text-5xl font-black bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-3">
-                35%
-              </div>
-              <div className="text-white/80 font-medium">Avg Increase</div>
-              <div className="text-white/50 text-sm mt-1">in donor retention</div>
-            </div>
-          </div>
-
-          {/* Feature Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-20">
-            <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="mb-4">
-                <Target size={48} weight="bold" className="text-orange-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Smart Segmentation</h3>
-              <p className="text-white/70 leading-relaxed">
-                AI identifies your most engaged donors and recommends the perfect time to reach out
-              </p>
-            </div>
-
-            <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="mb-4">
-                <Lightning size={48} weight="bold" className="text-yellow-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Automated Workflows</h3>
-              <p className="text-white/70 leading-relaxed">
-                From thank-you emails to tax receipts - automation that saves 15+ hours per week
-              </p>
-            </div>
-
-            <div className="bg-[rgba(26,26,46,0.5)] backdrop-blur-sm border border-[rgba(255,107,107,0.2)] rounded-xl p-8 text-left hover:border-[rgba(255,107,107,0.4)] hover:-translate-y-1 transition-all">
-              <div className="mb-4">
-                <TrendUp size={48} weight="bold" className="text-green-400" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Predictive Analytics</h3>
-              <p className="text-white/70 leading-relaxed">
-                Forecast campaign performance and donor lifetime value with machine learning
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
+      </footer>
+    </div>
+  )
 }
