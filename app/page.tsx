@@ -111,13 +111,32 @@ export default function HomePage() {
         name: 'SAGA CRM',
         applicationCategory: 'BusinessApplication',
         operatingSystem: 'Web Browser',
-        offers: {
-          '@type': 'Offer',
-          price: '0',
-          priceCurrency: 'USD',
-          priceValidUntil: '2026-12-31',
-          description: 'Free 14-day trial, no credit card required',
-        },
+        offers: [
+          {
+            '@type': 'Offer',
+            name: 'Free Plan',
+            price: '0',
+            priceCurrency: 'USD',
+            priceValidUntil: '2026-12-31',
+            description: 'Up to 500 contacts, manual donation tracking',
+          },
+          {
+            '@type': 'Offer',
+            name: 'Pro Plan',
+            price: '99',
+            priceCurrency: 'USD',
+            priceValidUntil: '2026-12-31',
+            description: 'Unlimited contacts, online donation processing, email campaigns. Plus 2% of donations processed. 30% nonprofit discount available.',
+          },
+          {
+            '@type': 'Offer',
+            name: 'Enterprise Plan',
+            price: '199',
+            priceCurrency: 'USD',
+            priceValidUntil: '2026-12-31',
+            description: 'All Pro features plus QuickBooks integration, Zapier, custom reporting, dedicated support. Plus 2% of donations processed. 30% nonprofit discount available.',
+          },
+        ],
         aggregateRating: {
           '@type': 'AggregateRating',
           ratingValue: '4.9',
@@ -214,7 +233,7 @@ export default function HomePage() {
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-white/70 hover:text-white transition font-medium">Features</a>
             <a href="#testimonials" className="text-white/70 hover:text-white transition font-medium">Testimonials</a>
-            <a href="#pricing" className="text-white/70 hover:text-white transition font-medium">Pricing</a>
+            <Link href="/pricing" className="text-white/70 hover:text-white transition font-medium">Pricing</Link>
           </div>
 
           <div className="flex items-center gap-4">
@@ -425,7 +444,7 @@ export default function HomePage() {
               </h4>
               <ul className="space-y-3 text-sm">
                 <li><a href="#features" className="text-white/50 hover:text-white transition-colors">Features</a></li>
-                <li><a href="#pricing" className="text-white/50 hover:text-white transition-colors">Pricing</a></li>
+                <li><Link href="/pricing" className="text-white/50 hover:text-white transition-colors">Pricing</Link></li>
                 <li><a href="#" className="text-white/50 hover:text-white transition-colors">Integrations</a></li>
                 <li><a href="#" className="text-white/50 hover:text-white transition-colors">Security</a></li>
               </ul>
