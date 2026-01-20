@@ -203,7 +203,8 @@ export async function POST(req: Request) {
     const idempotencyKey = `don_${session.user.organizationId}_${Date.now()}_${randomBytes(8).toString('hex')}`;
 
     // Check if idempotency key already exists (shouldn't happen, but safety check)
-    const existingDonation = await prisma.donation.findUnique({
+    // Note: Using findFirst because idempotencyKey is nullable (Prisma doesn't allow nullable unique fields in findUnique)
+    const existingDonation = await prisma.donation.findFirst({
       where: { idempotencyKey },
     });
 
