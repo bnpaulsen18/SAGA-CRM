@@ -36,6 +36,17 @@ model Organization {
   // Settings
   allowSubProjects   Boolean          @default(false) // Can this org create sub-projects?
 
+  // Stripe Connect for payment processing
+  stripeConnectAccountId String? @unique // Stripe Connect account ID for receiving donations
+  stripeConnectStatus    StripeConnectStatus @default(NOT_CONNECTED)
+  stripeConnectError     String? // Error message if connection failed
+
+  // Subscription & Billing
+  subscriptionTier       SubscriptionTier @default(FREE)
+  subscriptionStatus     SubscriptionStatus @default(ACTIVE)
+  stripeCustomerId       String? @unique // Platform subscription billing (not Connect)
+  trialEndsAt            DateTime? // Pro/Enterprise free trial expiration
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -73,6 +84,28 @@ enum TaxExemptStatus {
   EXEMPT_OTHER       // Other tax-exempt
   FOR_PROFIT         // Not tax-exempt (rare but possible for projects)
   PENDING            // Application pending
+}
+
+enum StripeConnectStatus {
+  NOT_CONNECTED      // No Stripe account connected
+  PENDING            // OAuth started but not completed
+  CONNECTED          // Successfully connected and verified
+  ERROR              // Connection failed or disconnected
+  RESTRICTED         // Stripe flagged account (needs review)
+}
+
+enum SubscriptionTier {
+  FREE               // Up to 500 contacts, manual donations only
+  PRO                // $99/mo + 2% donations, unlimited features
+  ENTERPRISE         // $199/mo + 2% donations, advanced features
+}
+
+enum SubscriptionStatus {
+  ACTIVE             // Subscription active and paid
+  TRIAL              // In free trial period
+  PAST_DUE           // Payment failed, grace period
+  CANCELED           // Subscription canceled
+  PAUSED             // Temporarily paused
 }
 
 model User {
