@@ -193,6 +193,7 @@ model Donation {
   // Payment Info
   transactionId String?
   receiptNumber String? @unique
+  idempotencyKey String? @unique // Prevents duplicate charges (Stripe best practice)
 
   // Tax Receipt
   taxDeductible Boolean   @default(true)
@@ -207,6 +208,13 @@ model Donation {
   // Fiscal Sponsorship Tracking
   passedThroughToProject Boolean @default(false) // Has parent org disbursed to project?
   disbursedAt            DateTime?               // When funds were passed through
+
+  // Fraud Detection & Risk Assessment
+  fraudScore         Int?     @default(0)   // 0-100 risk score (0=safe, 100=high risk)
+  fraudFlags         String[] @default([])  // Array of risk factors detected
+  reviewStatus       ReviewStatus @default(APPROVED) // Manual review status
+  reviewedAt         DateTime?
+  reviewedBy         String?  // User ID who reviewed
 
   // Metadata
   notes              String?
@@ -230,6 +238,9 @@ model Donation {
   @@index([donatedAt])
   @@index([designatedProjectId])
   @@index([fundRestriction])
+  @@index([reviewStatus])
+  @@index([fraudScore])
+  @@index([idempotencyKey])
   @@map("donations")
 }
 
@@ -268,6 +279,13 @@ enum DonationStatus {
   FAILED
   REFUNDED
   CANCELLED
+}
+
+enum ReviewStatus {
+  APPROVED       // Donation passed all fraud checks
+  PENDING_REVIEW // Flagged for manual review
+  REJECTED       // Marked as fraudulent
+  REFUNDED       // Was valid but refunded
 }
 
 // ========================================
@@ -580,4 +598,44 @@ model AuditLog {
   @@index([createdAt])
   @@index([action])
   @@map("audit_logs")
+}
+
+// ========================================
+// EMAIL NEWSLETTER SUBSCRIBERS
+// ========================================
+
+model EmailSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  source    String   @default("landing_page") // landing_page, footer, popup, etc.
+  status    SubscriberStatus @default(PENDING)
+
+  // Verification
+  verificationToken String?  @unique
+  verifiedAt        DateTime?
+
+  // Preferences
+  unsubscribedAt    DateTime?
+  unsubscribeToken  String?   @unique
+
+  // Metadata
+  ipAddress         String?
+  userAgent         String?
+  referrer          String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("email_subscribers")
+}
+
+enum SubscriberStatus {
+  PENDING      // Email submitted, awaiting verification
+  ACTIVE       // Verified and subscribed
+  UNSUBSCRIBED // Opted out
+  BOUNCED      // Email bounced
+  COMPLAINED   // Marked as spam
 }
