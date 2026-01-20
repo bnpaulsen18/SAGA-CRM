@@ -6,7 +6,9 @@ import CampaignProgress from '@/components/campaigns/CampaignProgress';
 import CampaignStats from '@/components/campaigns/CampaignStats';
 import { Check, Gift } from '@phosphor-icons/react/dist/ssr';
 
-export const runtime = 'nodejs'
+export const runtime = 'nodejs';
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
 
 export default async function CampaignDetailPage({ params }: { params: { id: string } }) {
   const session = await auth();

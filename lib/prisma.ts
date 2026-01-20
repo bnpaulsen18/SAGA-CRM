@@ -6,11 +6,18 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-const initPrisma = (): PrismaClient => {
+/**
+ * Lazy-initialized Prisma client that doesn't throw during build time.
+ * This fixes Vercel deployment failures where Next.js evaluates server
+ * components during build but environment variables aren't available.
+ */
+const initPrisma = (): PrismaClient | null => {
+  // Don't throw during build time - return null and defer error to runtime
   if (!process.env.DATABASE_URL && !process.env.DIRECT_URL) {
-    throw new Error(
-      '[Prisma] DATABASE_URL or DIRECT_URL must be configured. The application cannot function without a database connection.'
-    );
+    // During build, we may not have env vars - that's okay
+    // The error will be thrown at runtime when prisma is actually used
+    console.warn('[Prisma] DATABASE_URL not configured - deferring to runtime');
+    return null;
   }
 
   // Check if using PgBouncer (Supabase pooler)
@@ -39,7 +46,23 @@ const initPrisma = (): PrismaClient => {
   });
 };
 
-export const prisma =
-  globalForPrisma.prisma ?? initPrisma();
+// Initialize prisma - may be null during build time
+const _prisma = globalForPrisma.prisma ?? initPrisma();
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Export a proxy that throws a helpful error if used without proper config
+export const prisma = new Proxy(_prisma as PrismaClient, {
+  get(target, prop) {
+    if (target === null) {
+      throw new Error(
+        '[Prisma] DATABASE_URL or DIRECT_URL must be configured. ' +
+        'The application cannot function without a database connection. ' +
+        'Please set these environment variables in your Vercel project settings.'
+      );
+    }
+    return Reflect.get(target, prop);
+  }
+});
+
+if (process.env.NODE_ENV !== 'production' && _prisma) {
+  globalForPrisma.prisma = _prisma;
+}

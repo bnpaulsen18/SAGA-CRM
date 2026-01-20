@@ -4,6 +4,9 @@ import AdminNav from "@/components/AdminNav";
 import Link from "next/link";
 import { Warning } from "@phosphor-icons/react/dist/ssr";
 
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
+
 export default async function UsersManagementPage() {
   const user = await requirePlatformAdmin();
 

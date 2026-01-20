@@ -4,6 +4,9 @@ import { notFound } from "next/navigation";
 import AdminNav from "@/components/AdminNav";
 import Link from "next/link";
 
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
+
 interface OrganizationDetailPageProps {
   params: Promise<{
     id: string;

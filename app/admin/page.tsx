@@ -3,6 +3,9 @@ import Link from "next/link";
 import AdminNav from "@/components/AdminNav";
 import { Plus, Users, ChartBar } from "@phosphor-icons/react/dist/ssr";
 
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
+
 export default async function PlatformAdminDashboard() {
   // Require platform admin access
   const user = await requirePlatformAdmin();

@@ -2,6 +2,9 @@ import { requirePlatformAdmin } from "@/lib/auth-helpers";
 import { prisma } from "@/lib/prisma";
 import AdminNav from "@/components/AdminNav";
 
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
+
 export default async function PlatformReportsPage() {
   const user = await requirePlatformAdmin();
 

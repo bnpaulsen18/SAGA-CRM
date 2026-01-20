@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+// Force dynamic rendering - prevents build-time database queries
+export const dynamic = 'force-dynamic';
+
 export default async function CreateOrganizationPage() {
   await requirePlatformAdmin();
 
