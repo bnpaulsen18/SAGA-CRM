@@ -47,6 +47,10 @@ model Organization {
   stripeCustomerId       String? @unique // Platform subscription billing (not Connect)
   trialEndsAt            DateTime? // Pro/Enterprise free trial expiration
 
+  // Onboarding Progress
+  onboardingCompleted Boolean @default(false) // Has completed 5-step wizard
+  onboardingStep      Int     @default(0) // Current step: 0=not started, 1-5=steps
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
