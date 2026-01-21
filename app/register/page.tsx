@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import PasswordStrength, { validatePassword } from "@/components/PasswordStrength";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -42,8 +43,10 @@ export default function RegisterPage() {
       return;
     }
 
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters");
+    // Validate password strength
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      setError("Password does not meet security requirements. Please choose a stronger password.");
       setLoading(false);
       return;
     }
@@ -167,7 +170,7 @@ export default function RegisterPage() {
                 />
               </div>
 
-              <div>
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="password"
                   className="block text-sm font-medium text-gray-700"
@@ -184,9 +187,10 @@ export default function RegisterPage() {
                   onChange={handleChange}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                 />
+                <PasswordStrength password={formData.password} />
               </div>
 
-              <div>
+              <div className="sm:col-span-2">
                 <label
                   htmlFor="confirmPassword"
                   className="block text-sm font-medium text-gray-700"

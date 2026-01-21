@@ -10,6 +10,8 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const registered = searchParams.get("registered");
+  const verified = searchParams.get("verified");
+  const reset = searchParams.get("reset");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -170,11 +172,27 @@ function LoginForm() {
 
           {/* Login Card */}
           <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
-            {/* Success Message */}
+            {/* Success Messages */}
             {registered && (
               <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
                 <p className="text-green-200 text-sm">
-                  Registration successful! Please sign in with your credentials.
+                  Registration successful! Please check your email to verify your account before signing in.
+                </p>
+              </div>
+            )}
+
+            {verified && (
+              <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
+                <p className="text-green-200 text-sm">
+                  Email verified successfully! You can now sign in with your credentials.
+                </p>
+              </div>
+            )}
+
+            {reset === "success" && (
+              <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
+                <p className="text-green-200 text-sm">
+                  Password reset successful! You can now sign in with your new password.
                 </p>
               </div>
             )}
