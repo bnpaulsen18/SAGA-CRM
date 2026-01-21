@@ -43,6 +43,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           throw new Error("Invalid credentials");
         }
 
+        // Check if email is verified (required for non-platform admins)
+        if (!user.emailVerified && !user.isPlatformAdmin) {
+          throw new Error("Please verify your email before logging in. Check your inbox for the verification link.");
+        }
+
         return {
           id: user.id,
           email: user.email,

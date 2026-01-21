@@ -128,6 +128,19 @@ model User {
   // Platform Admin Settings
   isPlatformAdmin Boolean @default(false) // Redundant with role, but useful for quick checks
 
+  // Email Verification
+  emailVerificationToken String? @unique
+  emailVerificationExpiry DateTime?
+
+  // Password Reset
+  passwordResetToken String? @unique
+  passwordResetExpiry DateTime?
+
+  // Two-Factor Authentication (Optional)
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret String? // TOTP secret for authenticator apps
+  twoFactorBackupCodes String? // JSON array of backup codes
+
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
