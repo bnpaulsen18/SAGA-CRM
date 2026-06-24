@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+.sentryclirc
 
 # debug
 npm-debug.log*
@@ -42,3 +43,26 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# impeccable design skill — full source repo vendored here for `git pull` updates.
+# The actually-used skill is installed at .claude/skills/impeccable (kept in git).
+/.impeccable
+
+# awesome-ux-skills installer clone — skills are copied to ~/.claude/skills (global),
+# so this clone is only kept for re-running ./install.sh; safe to delete.
+/awesome-ux-skills
+
+# voice cofounder tool — its own isolated dependency
+/voice/node_modules
+# talk-back mute toggle (local; delete the file to mute spoken replies)
+/voice/voice-out.on
+
+# shell-redirect junk + dev/audit artifacts (these kept recurring at the repo root)
+_ul
+_ul-*
+*.log
+lighthouse-report.*
+
+# stray local HTML mockups / asset bundles at the repo root (real assets live in public/)
+/*.html
+/*.zip
