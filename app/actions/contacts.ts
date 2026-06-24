@@ -123,7 +123,7 @@ export async function updateContact(contactId: string, formData: FormData) {
     const contact = await prisma.contact.update({
       where: {
         id: contactId,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       data: validated
     })
@@ -178,7 +178,7 @@ export async function deleteContact(contactId: string) {
     await prisma.contact.delete({
       where: {
         id: contactId,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       }
     })
 
@@ -230,7 +230,7 @@ export async function importContacts(contacts: any[]) {
     // Get existing emails to check for duplicates
     const existingContacts = await prisma.contact.findMany({
       where: {
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       select: { email: true }
     })

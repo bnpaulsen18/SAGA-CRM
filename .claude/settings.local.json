@@ -38,12 +38,62 @@
       "Bash(for path in \"contacts/[id]\" \"donations/[id]\" \"campaigns/[id]\")",
       "Bash([ -f \"app/$path/loading.tsx\" ])",
       "Bash([ -f \"app/$path/error.tsx\" ])",
-      "Bash(for path in \"contacts/[id]/edit\" \"donations/[id]/edit\" \"campaigns/[id]/edit\")"
+      "Bash(for path in \"contacts/[id]/edit\" \"donations/[id]/edit\" \"campaigns/[id]/edit\")",
+      "Bash(curl:*)",
+      "Bash(gh --version)",
+      "Bash(gh auth *)",
+      "Bash(git clone *)",
+      "PowerShell(foreach \\($c in 'node','npm','npx','bun'\\) { $cmd = Get-Command $c -ErrorAction SilentlyContinue; if \\($cmd\\) { \"{0}: {1}\" -f $c, \\(& $c --version 2>$null\\) } else { \"{0}: NOT found\" -f $c } })",
+      "Read(//c/Users/BeauP/.claude/skills/**)",
+      "Read(//c/Users/BeauP/.claude/skills/README/**)",
+      "Bash(chmod +x install.sh)",
+      "Bash(./install.sh --force)",
+      "Bash(./install.sh)",
+      "PowerShell($zip = \"C:\\\\Users\\\\BeauP\\\\Downloads\\\\SAGA_Final_Demo_and_Brand_Assets_FIXED.zip\"; if \\(Test-Path $zip\\) { Add-Type -AssemblyName System.IO.Compression.FileSystem; $z = [System.IO.Compression.ZipFile]::OpenRead\\($zip\\); $z.Entries | Select-Object FullName, @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}} | Format-Table -AutoSize; $z.Dispose\\(\\) } else { \"ZIP not found at $zip\" })",
+      "Bash(node \"C:/Users/BeauP/OneDrive/Desktop/Saga/SAGA-CRM/voice/server.mjs\")",
+      "Skill(update-config)",
+      "Skill(update-config:*)",
+      "PowerShell(try { $j = Get-Content \"C:\\\\Users\\\\BeauP\\\\OneDrive\\\\Desktop\\\\Saga\\\\SAGA-CRM\\\\.claude\\\\settings.local.json\" -Raw | ConvertFrom-Json; \"JSON valid. voice.enabled=$\\($j.voice.enabled\\), voice.mode=$\\($j.voice.mode\\); permissions.allow entries=$\\($j.permissions.allow.Count\\); plugin still set=$\\($null -ne $j.enabledPlugins.'frontend-design@claude-code-plugins'\\)\" } catch { \"INVALID JSON: $\\($_.Exception.Message\\)\" })",
+      "WebFetch(domain:github.com)",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue; if \\($c\\) { $c.OwningProcess | Select-Object -Unique | ForEach-Object { try { Stop-Process -Id $_ -Force; \"stopped PID $_\" } catch {} } } else { \"nothing listening on 3000\" })",
+      "Bash(git ls-tree *)",
+      "Bash(grep -iE '\\\\.\\(html|zip|png|jpg|jpeg|log|tsbuildinfo\\)$')",
+      "Bash(grep -iE '\\\\.md$')",
+      "Bash(git check-ignore *)",
+      "Bash(ls lib/agents/*.md)",
+      "Bash(ls scripts/agents/)"
     ],
     "deny": [],
     "ask": []
   },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"C:/Users/BeauP/OneDrive/Desktop/Saga/SAGA-CRM/voice/speak-response.ps1\"",
+            "timeout": 120,
+            "async": true
+          }
+        ]
+      }
+    ]
+  },
   "enabledPlugins": {
-    "frontend-design@claude-code-plugins": true
+    "frontend-design@claude-code-plugins": true,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": true
+  },
+  "extraKnownMarketplaces": {
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  },
+  "voice": {
+    "enabled": true,
+    "mode": "tap"
   }
 }

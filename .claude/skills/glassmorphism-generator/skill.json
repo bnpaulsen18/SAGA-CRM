@@ -1,0 +1,13 @@
+{
+  "name": "glassmorphism-generator",
+  "version": "1.0.0",
+  "description": "Generate glassmorphic UI components with backdrop blur, subtle borders, and layered depth effects",
+  "author": "SAGA CRM Team",
+  "tags": ["design", "glassmorphism", "components", "ui", "modern"],
+  "usage": "/glassmorphism --type <component> [--blur <px>] [--opacity <value>]",
+  "examples": [
+    "/glassmorphism --type card",
+    "/glassmorphism --type modal --blur 16px --opacity 0.05",
+    "/glassmorphism --type navigation --style convergent"
+  ]
+}

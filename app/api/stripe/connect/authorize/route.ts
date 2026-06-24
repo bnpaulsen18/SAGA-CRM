@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 import { getConnectOAuthUrl } from '@/lib/stripe/connect';
@@ -42,12 +43,22 @@ export async function POST(req: Request) {
       );
     }
 
-    // Generate OAuth URL
+    // Generate OAuth URL with an unguessable CSRF state nonce, stored in an httpOnly
+    // cookie and verified in the callback. Never expose the raw org id as state.
     const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
     const redirectUri = `${baseUrl}/api/stripe/connect/callback`;
 
+    const state = crypto.randomUUID();
+    (await cookies()).set('stripe_connect_state', state, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 600,
+      path: '/',
+    });
+
     const oauthUrl = getConnectOAuthUrl({
-      state: organizationId, // State = orgId for verification
+      state,
       redirectUri,
     });
 

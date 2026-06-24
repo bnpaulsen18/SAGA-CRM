@@ -49,20 +49,20 @@ export default function DonationRowActions({ donationId }: DonationRowActionsPro
       <button
         onClick={handleResendReceipt}
         disabled={sending}
-        className="px-3 py-1 bg-[#764ba2]/20 border border-[#764ba2]/30 rounded-lg text-[#764ba2] hover:bg-[#764ba2]/30 transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        className="px-3 py-1 bg-[#EEE9F5] border border-[#DDD3EC] rounded-lg text-[#5B4B8A] hover:bg-[#E3DBF0] transition-colors text-xs font-medium disabled:opacity-50 disabled:cursor-not-allowed"
         title="Resend email receipt"
       >
         {sending ? 'Sending...' : '📧 Resend'}
       </button>
       <button
         onClick={handleDownloadPDF}
-        className="px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 hover:bg-green-500/30 transition-colors text-xs font-medium"
+        className="px-3 py-1 bg-[#E6F3EE] border border-[#CDE9DD] rounded-lg text-[#2E7D5B] hover:bg-[#D8ECE2] transition-colors text-xs font-medium"
         title="Download PDF receipt"
       >
         📄 PDF
       </button>
       {message && (
-        <span className={`text-xs ${message.includes('sent') ? 'text-green-400' : 'text-red-400'}`}>
+        <span className={`text-xs ${message.includes('sent') ? 'text-[#2E7D5B]' : 'text-[#C0573F]'}`}>
           {message}
         </span>
       )}

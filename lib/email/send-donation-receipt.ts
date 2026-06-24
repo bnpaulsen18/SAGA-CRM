@@ -22,7 +22,7 @@ export async function sendDonationReceipt({ donationId, recipientEmail }: SendDo
     const donation = await prisma.donation.findFirst({
       where: {
         id: donationId,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       include: {
         contact: {

@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       // Export donations
       const donations = await prisma.donation.findMany({
         where: {
-          organizationId: session.user.organizationId || undefined,
+          organizationId: session.user.organizationId ?? '__no_such_org__',
           donatedAt: {
             gte: startDate,
             lte: endDate,
@@ -90,7 +90,7 @@ export async function GET(req: Request) {
       // Export contacts with donation summaries
       const contacts = await prisma.contact.findMany({
         where: {
-          organizationId: session.user.organizationId || undefined,
+          organizationId: session.user.organizationId ?? '__no_such_org__',
         },
         include: {
           donations: {

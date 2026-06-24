@@ -1,35 +1,22 @@
-import SagaCard from '@/components/ui/saga-card'
-
 export default function Loading() {
   return (
-    <div className="min-h-screen saga-gradient p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header Skeleton */}
-        <div className="mb-8">
-          <div className="h-6 w-32 bg-white/10 rounded-lg mb-4 animate-pulse" />
-          <div className="h-10 w-64 bg-white/10 rounded-lg mb-2 animate-pulse" />
-          <div className="h-6 w-96 bg-white/10 rounded-lg animate-pulse" />
-        </div>
-
-        {/* Wizard Steps Skeleton */}
-        <div className="flex justify-between mb-8">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="flex-1">
-              <div className="h-2 bg-white/10 rounded-full mb-2 animate-pulse" />
-              <div className="h-4 w-32 bg-white/10 rounded animate-pulse mx-auto" />
+    <div className="min-h-screen bg-[var(--paper)] p-8">
+      <div className="max-w-7xl mx-auto animate-pulse">
+        <div className="h-9 w-56 bg-[var(--surface-2)] rounded-lg mb-3" />
+        <div className="h-5 w-80 bg-[var(--surface-2)] rounded-lg mb-8" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
+              <div className="h-5 w-28 bg-[var(--surface-2)] rounded mb-3" />
+              <div className="h-8 w-24 bg-[var(--surface-2)] rounded" />
             </div>
           ))}
         </div>
-
-        {/* Upload Area Skeleton */}
-        <SagaCard>
-          <div className="py-12 text-center">
-            <div className="h-16 w-16 bg-white/10 rounded-full mx-auto mb-4 animate-pulse" />
-            <div className="h-6 w-64 bg-white/10 rounded mx-auto mb-2 animate-pulse" />
-            <div className="h-4 w-80 bg-white/10 rounded mx-auto mb-6 animate-pulse" />
-            <div className="h-10 w-40 bg-white/10 rounded mx-auto animate-pulse" />
-          </div>
-        </SagaCard>
+        <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 space-y-4">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-10 bg-[var(--surface-2)] rounded" />
+          ))}
+        </div>
       </div>
     </div>
   )

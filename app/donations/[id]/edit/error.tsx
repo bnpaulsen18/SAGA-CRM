@@ -3,7 +3,6 @@
 import { Warning } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
 
 export default function Error({
   error,
@@ -12,29 +11,23 @@ export default function Error({
   error: Error & { digest?: string }
   reset: () => void
 }) {
-  const params = useParams()
-  const donationId = params.id as string
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] flex items-center justify-center p-8">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 max-w-md text-center">
+    <div className="min-h-screen bg-[var(--paper)] flex items-center justify-center p-8">
+      <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-8 max-w-md text-center">
         <div className="flex justify-center mb-4">
-          <Warning size={64} weight="bold" className="text-yellow-400" />
+          <Warning size={56} weight="bold" className="text-[#E8A33D]" />
         </div>
-        <h1 className="text-2xl font-bold text-white mb-2">Edit Error</h1>
-        <p className="text-white/70 mb-6">
-          {error.message || 'Failed to load donation edit form. Please try again.'}
-        </p>
+        <h1 className="text-2xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>
+          Something went wrong
+        </h1>
+        <p className="text-[var(--ink-soft)] mb-6">{error.message || 'Please try again.'}</p>
         <div className="flex gap-3 justify-center">
-          <Button
-            onClick={reset}
-            className="text-white font-semibold saga-button"
-          >
+          <Button onClick={reset} className="text-white font-semibold saga-button">
             Try Again
           </Button>
-          <Link href={donationId ? `/donations/${donationId}` : '/donations'}>
-            <Button variant="outline" className="text-white border-white/30 hover:bg-white/10">
-              {donationId ? 'Back to Donation' : 'Back to Donations'}
+          <Link href="/dashboard">
+            <Button variant="outline" className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)]">
+              Go to Dashboard
             </Button>
           </Link>
         </div>

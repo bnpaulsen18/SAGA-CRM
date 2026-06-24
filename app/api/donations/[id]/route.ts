@@ -12,6 +12,15 @@ export async function PUT(
   try {
     const { id } = await params
     const session = await requireAuth()
+
+    // Donations are financial records — VIEWERs may read but not edit.
+    if (session.user.role === 'VIEWER' && !session.user.isPlatformAdmin) {
+      return NextResponse.json(
+        { error: 'Forbidden: editing donations requires member or admin access' },
+        { status: 403 }
+      )
+    }
+
     const prisma = await getPrismaWithRLS()
 
     const body = await req.json()
@@ -46,7 +55,7 @@ export async function PUT(
     const existingDonation = await prisma.donation.findFirst({
       where: {
         id,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       }
     })
 
@@ -61,7 +70,7 @@ export async function PUT(
     const contact = await prisma.contact.findFirst({
       where: {
         id: contactId,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       }
     })
 
@@ -125,7 +134,7 @@ export async function GET(
     const donation = await prisma.donation.findFirst({
       where: {
         id,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       include: {
         contact: {

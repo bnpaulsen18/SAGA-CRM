@@ -32,7 +32,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
 
   // Build dynamic where clause based on filters
   const baseWhere: any = {
-    organizationId: session.user.organizationId || undefined
+    organizationId: session.user.organizationId ?? '__no_such_org__'
   }
 
   // Apply filters to base where clause
@@ -65,7 +65,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
     }),
     prisma.donation.aggregate({
       where: {
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       _sum: {
         amount: true
@@ -153,14 +153,14 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       {/* Page Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Contacts</h1>
-          <p className="text-white/70">Manage your donor relationships</p>
+          <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Donors</h1>
+          <p className="text-[var(--ink-soft)]">Manage your donor relationships</p>
         </div>
         <div className="flex gap-3">
           <Link href="/contacts/import">
             <Button
               variant="outline"
-              className="text-white border-white/30 hover:bg-white/10 hover:text-white hover:border-white/50 flex items-center gap-2"
+              className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)] flex items-center gap-2"
             >
               <FolderOpen size={18} weight="bold" />
               Import CSV
@@ -180,31 +180,31 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <SagaCard variant="default">
-          <h3 className="text-sm font-medium text-white/70">Total Contacts</h3>
-          <p className="text-3xl font-bold text-white mt-2">{totalContacts}</p>
-          <p className="text-xs text-white/50 mt-1">All contact records</p>
+          <h3 className="text-sm font-medium text-[var(--ink-soft)]">Total Contacts</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">{totalContacts}</p>
+          <p className="text-xs text-[var(--ink-faint)] mt-1">All contact records</p>
         </SagaCard>
 
         <SagaCard variant="purple">
-          <h3 className="text-sm font-medium text-white/70">Active Contacts</h3>
-          <p className="text-3xl font-bold text-white mt-2">{activeContacts}</p>
-          <p className="text-xs text-white/50 mt-1">Can be contacted</p>
+          <h3 className="text-sm font-medium text-[var(--ink-soft)]">Active Contacts</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">{activeContacts}</p>
+          <p className="text-xs text-[var(--ink-faint)] mt-1">Can be contacted</p>
         </SagaCard>
 
         <SagaCard variant="orange">
-          <h3 className="text-sm font-medium text-white/70">Donors</h3>
-          <p className="text-3xl font-bold text-[#ff6b35]">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)]">Donors</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">
             {donorContacts}
           </p>
-          <p className="text-xs text-white/50 mt-1">Contact type: Donor</p>
+          <p className="text-xs text-[var(--ink-faint)] mt-1">Contact type: Donor</p>
         </SagaCard>
 
         <SagaCard variant="pink">
-          <h3 className="text-sm font-medium text-white/70">Lifetime Giving</h3>
-          <p className="text-3xl font-bold text-white mt-2">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)]">Lifetime Giving</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">
             ${totalLifetimeGiving.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </p>
-          <p className="text-xs text-white/50 mt-1">Total donations received</p>
+          <p className="text-xs text-[var(--ink-faint)] mt-1">Total donations received</p>
         </SagaCard>
       </div>
 

@@ -2,11 +2,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { generateToken, sendVerificationEmail } from "@/lib/auth-email";
+import { checkRateLimit, RATE_LIMITS, getClientIdentifier, createRateLimitHeaders } from "@/lib/security/rate-limiter";
+import { validatePassword } from "@/components/PasswordStrength";
 
 export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit signups per IP to prevent automated org/account creation.
+    const rl = await checkRateLimit(
+      `register:${getClientIdentifier(req)}`,
+      RATE_LIMITS.AUTH.maxRequests,
+      RATE_LIMITS.AUTH.windowMs
+    );
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: "Too many sign-up attempts. Please try again later." },
+        { status: 429, headers: createRateLimitHeaders(rl) }
+      );
+    }
+
     const body = await req.json();
     const {
       email,
@@ -31,6 +46,14 @@ export async function POST(req: NextRequest) {
     ) {
       return NextResponse.json(
         { error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    // Enforce password strength (8+ chars, upper, lower, number) — was previously unchecked.
+    if (!validatePassword(password).isValid) {
+      return NextResponse.json(
+        { error: "Password must be at least 8 characters and include uppercase, lowercase, and a number." },
         { status: 400 }
       );
     }

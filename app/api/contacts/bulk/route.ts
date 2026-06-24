@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     const contacts = await prisma.contact.findMany({
       where: {
         id: { in: contactIds },
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       select: { id: true, firstName: true, lastName: true, email: true, status: true }
     })
@@ -113,7 +113,7 @@ export async function POST(req: Request) {
         const fullContacts = await prisma.contact.findMany({
           where: {
             id: { in: contactIds },
-            organizationId: session.user.organizationId || undefined
+            organizationId: session.user.organizationId ?? '__no_such_org__'
           },
           include: {
             donations: {

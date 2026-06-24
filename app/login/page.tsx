@@ -4,7 +4,6 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 
 function LoginForm() {
   const router = useRouter();
@@ -46,7 +45,6 @@ function LoginForm() {
         return;
       }
 
-      // Successful login, redirect to dashboard
       router.push("/dashboard");
       router.refresh();
     } catch (err) {
@@ -55,235 +53,177 @@ function LoginForm() {
     }
   };
 
+  const bricolage = { fontFamily: "var(--font-bricolage), sans-serif" } as const;
+  const sunset = "linear-gradient(135deg,#F97A5E,#E0507A 60%,#5B4B8A)";
+
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side - Brand Story (Tablet/Desktop Only - Hidden on Mobile) */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] p-12 flex-col justify-between relative overflow-hidden">
-        {/* Decorative Circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#764ba2] opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#ff6b6b] opacity-10 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-[#ffa07a] opacity-5 rounded-full blur-3xl"></div>
+    <div className="min-h-screen flex bg-[#FAF6EF] text-[#2A2433]">
+      {/* Left — Brand (desktop/tablet only) */}
+      <div className="hidden md:flex md:w-1/2 bg-[#F4EFE6] border-r border-[#E8E1D7] p-12 flex-col justify-between relative overflow-hidden">
+        {/* single subtle sunset accent */}
+        <div
+          className="absolute -top-24 -right-24 w-96 h-96 rounded-full opacity-[0.12] blur-3xl"
+          style={{ background: sunset }}
+        />
 
         <div className="relative z-10">
           {/* Logo */}
-          <div className="mb-16">
-            <img
-              src="/SAGA_Logo_final.png"
-              alt="SAGA CRM"
-              style={{
-                height: '100px',
-                width: 'auto',
-                display: 'block',
-                filter: 'drop-shadow(0 8px 24px rgba(118, 75, 162, 0.4)) drop-shadow(0 4px 12px rgba(255, 107, 107, 0.35)) brightness(1.12) contrast(1.16) saturate(1.08)',
-                opacity: '0.98'
-              }}
-            />
+          <div className="flex items-center gap-3 mb-16">
+            <img src="/SAGA_mark.png" alt="SAGA" style={{ height: 44, width: "auto", display: "block" }} />
+            <span style={bricolage} className="text-2xl font-bold tracking-tight text-[#2A2433]">
+              SAGA
+            </span>
           </div>
 
-          {/* Mission Statement */}
+          {/* Mission */}
           <div className="max-w-lg">
-            <h2 className="text-4xl font-bold text-white mb-6 leading-tight">
+            <h2 style={bricolage} className="text-4xl font-bold mb-6 leading-tight text-[#2A2433]">
               Every donor has a story.
               <br />
-              <span className="bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent">
+              <span
+                style={{
+                  background: "linear-gradient(105deg,#F97A5E,#E0507A 60%,#5B4B8A)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
                 Every story matters.
               </span>
             </h2>
-            <p className="text-white/80 text-lg leading-relaxed mb-8">
-              Join 10,000+ nonprofits using SAGA to build meaningful relationships,
-              automate workflows, and amplify their impact with AI-powered insights.
+            <p className="text-[#6B6475] text-lg leading-relaxed mb-10">
+              The AI-native CRM that helps nonprofits build deeper donor relationships,
+              automate the busywork, and amplify their mission.
             </p>
 
-            {/* Stats - Glassmorphic Cards */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
-                <div className="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">
-                  $500M+
-                </div>
-                <div className="text-white/70 text-sm">Raised</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
-                <div className="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">
-                  10K+
-                </div>
-                <div className="text-white/70 text-sm">Nonprofits</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
-                <div className="text-3xl font-bold bg-gradient-to-r from-[#ffa07a] to-[#ff6b6b] bg-clip-text text-transparent mb-1">
-                  98%
-                </div>
-                <div className="text-white/70 text-sm">Satisfaction</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Testimonial */}
-        <div className="relative z-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 hover:bg-white/15 transition-all">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-gradient-to-r from-[#ff6b6b] to-[#ffa07a] rounded-full flex items-center justify-center text-2xl shadow-lg">
-                💙
-              </div>
-            </div>
-            <div>
-              <p className="text-white/90 mb-3 italic leading-relaxed">
-                "SAGA transformed how we connect with our donors. We've increased retention by 35% in just 6 months."
-              </p>
-              <p className="text-white/70 text-sm font-medium">
-                — Sarah Chen, Hope Foundation
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Login Form (Full width on mobile, half width on tablet/desktop) */}
-      <div className="w-full md:w-1/2 bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f3460] md:from-[#0f1419] md:via-[#1a1a2e] md:to-[#16213e] flex items-center justify-center p-8 relative overflow-hidden">
-        {/* Decorative element */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#764ba2] opacity-10 rounded-full blur-3xl md:opacity-5"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#ff6b6b] opacity-10 rounded-full blur-3xl md:hidden"></div>
-
-        <div className="w-full max-w-md relative z-10">
-          {/* Mobile Logo (Hidden on tablet/desktop) */}
-          <div className="md:hidden mb-8 flex justify-center">
-            <img
-              src="/SAGA_Logo_final.png"
-              alt="SAGA CRM"
-              style={{
-                height: '80px',
-                width: 'auto',
-                display: 'block',
-                filter: 'drop-shadow(0 8px 24px rgba(118, 75, 162, 0.4)) drop-shadow(0 4px 12px rgba(255, 107, 107, 0.35)) brightness(1.12) contrast(1.16) saturate(1.08)',
-                opacity: '0.98'
-              }}
-            />
-          </div>
-
-          {/* Welcome Text */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-white/60">
-              Sign in to continue to your dashboard
-            </p>
-          </div>
-
-          {/* Login Card */}
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
-            {/* Success Messages */}
-            {registered && (
-              <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
-                <p className="text-green-200 text-sm">
-                  Registration successful! Please check your email to verify your account before signing in.
-                </p>
-              </div>
-            )}
-
-            {verified && (
-              <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
-                <p className="text-green-200 text-sm">
-                  Email verified successfully! You can now sign in with your credentials.
-                </p>
-              </div>
-            )}
-
-            {reset === "success" && (
-              <div className="mb-6 bg-green-500/20 border border-green-500/50 rounded-lg p-4">
-                <p className="text-green-200 text-sm">
-                  Password reset successful! You can now sign in with your new password.
-                </p>
-              </div>
-            )}
-
-            {/* Error Message */}
-            {error && (
-              <div className="mb-6 bg-red-500/20 border border-red-500/50 rounded-lg p-4">
-                <div className="flex items-center gap-3">
-                  <svg className="h-5 w-5 text-red-300" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-red-200 text-sm">{error}</p>
-                </div>
-              </div>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email Field */}
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-white/90 mb-2">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-white/40" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+            {/* Honest value props (no fabricated numbers) */}
+            <div className="space-y-3">
+              {[
+                ["AI-powered donor insights", "See who to thank, re-engage, and ask next."],
+                ["Automated gifts & receipts", "Tax receipts and workflows handled for you."],
+                ["Bank-grade security", "Encryption, audit trails, and role-based access."],
+              ].map(([title, desc]) => (
+                <div key={title} className="flex items-start gap-3 bg-white border border-[#E8E1D7] rounded-xl p-4">
+                  <div className="mt-0.5 w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 bg-[#F6EBE6]">
+                    <svg className="w-4 h-4 text-[#E0507A]" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.704 5.29a1 1 0 010 1.42l-7.5 7.5a1 1 0 01-1.42 0l-3.5-3.5a1 1 0 111.42-1.42l2.79 2.79 6.79-6.79a1 1 0 011.42 0z" clipRule="evenodd" />
                     </svg>
                   </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all"
-                    placeholder="you@organization.org"
-                  />
+                  <div>
+                    <p className="font-semibold text-[#2A2433] text-sm">{title}</p>
+                    <p className="text-[#6B6475] text-sm">{desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <p className="relative z-10 text-[#9A93A3] text-sm">
+          © {new Date().getFullYear()} SAGA. Built for nonprofits.
+        </p>
+      </div>
+
+      {/* Right — Form */}
+      <div className="w-full md:w-1/2 flex items-center justify-center p-8 bg-[#FAF6EF]">
+        <div className="w-full max-w-md">
+          {/* Mobile logo */}
+          <div className="md:hidden mb-8 flex items-center justify-center gap-3">
+            <img src="/SAGA_mark.png" alt="SAGA" style={{ height: 40, width: "auto" }} />
+            <span style={bricolage} className="text-2xl font-bold tracking-tight">SAGA</span>
+          </div>
+
+          <div className="mb-8">
+            <h1 style={bricolage} className="text-3xl font-bold mb-2 text-[#2A2433]">Welcome back</h1>
+            <p className="text-[#6B6475]">Sign in to continue to your dashboard</p>
+          </div>
+
+          <div className="bg-white border border-[#E8E1D7] rounded-2xl p-8">
+            {registered && (
+              <div className="mb-6 rounded-lg p-4 bg-[#E6F3EE] border border-[#CDE9DD]">
+                <p className="text-[#2E7D5B] text-sm">
+                  Registration successful! Check your email to verify your account before signing in.
+                </p>
+              </div>
+            )}
+            {verified && (
+              <div className="mb-6 rounded-lg p-4 bg-[#E6F3EE] border border-[#CDE9DD]">
+                <p className="text-[#2E7D5B] text-sm">Email verified! You can now sign in.</p>
+              </div>
+            )}
+            {reset === "success" && (
+              <div className="mb-6 rounded-lg p-4 bg-[#E6F3EE] border border-[#CDE9DD]">
+                <p className="text-[#2E7D5B] text-sm">Password reset successful! Sign in with your new password.</p>
+              </div>
+            )}
+            {error && (
+              <div className="mb-6 rounded-lg p-4 bg-[#F6EBE6] border border-[#EAD3C8]">
+                <div className="flex items-center gap-3">
+                  <svg className="h-5 w-5 text-[#C0573F]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-[#C0573F] text-sm">{error}</p>
                 </div>
               </div>
+            )}
 
-              {/* Password Field */}
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-[#2A2433] mb-2">
+                  Email address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#FAF6EF] border border-[#E8E1D7] rounded-lg text-[#2A2433] placeholder-[#9A93A3] focus:outline-none focus:ring-2 focus:ring-[#5B4B8A] focus:border-transparent transition-all"
+                  placeholder="you@organization.org"
+                />
+              </div>
+
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="password" className="block text-sm font-medium text-white/90">
+                  <label htmlFor="password" className="block text-sm font-medium text-[#2A2433]">
                     Password
                   </label>
-                  <Link href="/forgot-password" className="text-sm text-[#ffa07a] hover:text-[#ff6b6b] transition-colors font-medium">
+                  <Link href="/forgot-password" className="text-sm font-medium text-[#5B4B8A] hover:text-[#E0507A] transition-colors">
                     Forgot?
                   </Link>
                 </div>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg className="h-5 w-5 text-white/40" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="current-password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:border-transparent transition-all"
-                    placeholder="Enter your password"
-                  />
-                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-[#FAF6EF] border border-[#E8E1D7] rounded-lg text-[#2A2433] placeholder-[#9A93A3] focus:outline-none focus:ring-2 focus:ring-[#5B4B8A] focus:border-transparent transition-all"
+                  placeholder="Enter your password"
+                />
               </div>
 
-              {/* Remember Me */}
               <div className="flex items-center">
                 <input
                   id="remember"
                   name="remember"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-white/20 bg-white/5 text-[#764ba2] focus:ring-[#764ba2] focus:ring-offset-[#1a1a2e]"
+                  className="h-4 w-4 rounded border-[#E8E1D7] text-[#5B4B8A] focus:ring-[#5B4B8A]"
                 />
-                <label htmlFor="remember" className="ml-2 block text-sm text-white/70">
+                <label htmlFor="remember" className="ml-2 block text-sm text-[#6B6475]">
                   Remember me for 30 days
                 </label>
               </div>
 
-              {/* Submit Button */}
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 bg-gradient-to-r from-[#764ba2] via-[#667eea] to-[#667eea] text-white font-semibold rounded-lg hover:from-[#8b5fb8] hover:via-[#7d8ff5] hover:to-[#7d8ff5] focus:outline-none focus:ring-2 focus:ring-[#764ba2] focus:ring-offset-2 focus:ring-offset-[#1a1a2e] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:shadow-[#764ba2]/30 hover:-translate-y-0.5"
+                className="w-full py-3 px-4 text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:opacity-95"
+                style={{ background: sunset }}
               >
                 {loading ? (
                   <span className="flex items-center justify-center">
@@ -294,38 +234,61 @@ function LoginForm() {
                     Signing in...
                   </span>
                 ) : (
-                  "Sign In"
+                  "Sign in"
                 )}
               </button>
             </form>
 
-            {/* Sign Up Link */}
-            <div className="mt-6">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-white/10"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-transparent text-white/50">New to SAGA?</span>
-                </div>
+            <div className="mt-6 relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-[#E8E1D7]"></div>
               </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-4 bg-white text-[#9A93A3]">Or continue with</span>
+              </div>
+            </div>
 
-              <div className="mt-6 text-center">
-                <Link
-                  href="/register"
-                  className="text-sm text-white/70 hover:text-white transition-colors"
-                >
-                  Create your free account{" "}
-                  <span className="text-[#ffa07a] hover:text-[#ff6b6b] font-semibold">→</span>
-                </Link>
-              </div>
+            <div className="mt-6 grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-[#FAF6EF] border border-[#E8E1D7] rounded-lg text-[#2A2433] text-sm font-medium transition-all"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Google
+              </button>
+
+              <button
+                type="button"
+                onClick={() => signIn("azure-ad", { callbackUrl: "/dashboard" })}
+                className="flex items-center justify-center gap-2 px-4 py-3 bg-white hover:bg-[#FAF6EF] border border-[#E8E1D7] rounded-lg text-[#2A2433] text-sm font-medium transition-all"
+              >
+                <svg className="w-5 h-5" viewBox="0 0 23 23">
+                  <path fill="#f35325" d="M1 1h10v10H1z" />
+                  <path fill="#81bc06" d="M12 1h10v10H12z" />
+                  <path fill="#05a6f0" d="M1 12h10v10H1z" />
+                  <path fill="#ffba08" d="M12 12h10v10H12z" />
+                </svg>
+                Microsoft
+              </button>
+            </div>
+
+            <div className="mt-6 text-center">
+              <span className="text-sm text-[#6B6475]">New to SAGA? </span>
+              <Link href="/register" className="text-sm font-semibold text-[#5B4B8A] hover:text-[#E0507A] transition-colors">
+                Create your free account →
+              </Link>
             </div>
           </div>
 
-          {/* Security Badge */}
           <div className="mt-8 text-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm rounded-full text-xs text-white/50 border border-white/10">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full text-xs text-[#6B6475] border border-[#E8E1D7]">
+              <svg className="w-4 h-4 text-[#2E9D78]" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               Protected by enterprise-grade security
@@ -339,7 +302,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-[#FAF6EF]" />}>
       <LoginForm />
     </Suspense>
   );

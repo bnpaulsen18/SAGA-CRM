@@ -1,0 +1,13 @@
+{
+  "name": "saga-cofounder-voice",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "description": "Voice interface for the SAGA AI cofounder (Web Speech API in the browser + Claude as the brain).",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.104.2"
+  }
+}

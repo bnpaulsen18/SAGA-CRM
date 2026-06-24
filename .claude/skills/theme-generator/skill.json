@@ -1,0 +1,12 @@
+{
+  "name": "theme-generator",
+  "version": "1.0.0",
+  "description": "Extract design systems from reference websites and generate Tailwind/CSS theme configurations",
+  "author": "SAGA CRM Team",
+  "tags": ["design", "theme", "tailwind", "css", "ui"],
+  "usage": "/theme-generator --reference <url> [--output <path>]",
+  "examples": [
+    "/theme-generator --reference https://www.convergent.org/",
+    "/theme-generator --reference https://stripe.com --output lib/theme.ts"
+  ]
+}

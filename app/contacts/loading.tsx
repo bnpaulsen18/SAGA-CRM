@@ -1,29 +1,22 @@
-import SagaCard from '@/components/ui/saga-card'
-
-export default function ContactsLoading() {
+export default function Loading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] p-8">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <div className="h-10 w-64 bg-white/10 rounded-lg mb-2 animate-pulse" />
-          <div className="h-6 w-96 bg-white/10 rounded-lg animate-pulse" />
-        </div>
+    <div className="min-h-screen bg-[var(--paper)] p-8">
+      <div className="max-w-7xl mx-auto animate-pulse">
+        <div className="h-9 w-56 bg-[var(--surface-2)] rounded-lg mb-3" />
+        <div className="h-5 w-80 bg-[var(--surface-2)] rounded-lg mb-8" />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {[1, 2, 3].map((i) => (
-            <SagaCard key={i}>
-              <div className="h-6 w-32 bg-white/10 rounded mb-3 animate-pulse" />
-              <div className="h-8 w-24 bg-white/10 rounded mb-2 animate-pulse" />
-              <div className="h-4 w-20 bg-white/10 rounded animate-pulse" />
-            </SagaCard>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6">
+              <div className="h-5 w-28 bg-[var(--surface-2)] rounded mb-3" />
+              <div className="h-8 w-24 bg-[var(--surface-2)] rounded" />
+            </div>
           ))}
         </div>
-        <SagaCard>
-          <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="h-12 bg-white/10 rounded animate-pulse" />
-            ))}
-          </div>
-        </SagaCard>
+        <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 space-y-4">
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="h-10 bg-[var(--surface-2)] rounded" />
+          ))}
+        </div>
       </div>
     </div>
   )

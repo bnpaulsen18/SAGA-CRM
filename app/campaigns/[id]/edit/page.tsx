@@ -1,22 +1,25 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import DashboardLayout from '@/components/DashboardLayout';
 import CampaignForm from '@/components/campaigns/CampaignForm';
+import { ArrowLeft } from '@phosphor-icons/react';
 
-export default function EditCampaignPage({ params }: { params: { id: string } }) {
+export default function EditCampaignPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const router = useRouter();
+  const { data: session } = useSession();
   const [campaign, setCampaign] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchCampaign() {
       try {
-        const response = await fetch(`/api/campaigns/${params.id}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch campaign');
-        }
+        const response = await fetch(`/api/campaigns/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch campaign');
         const data = await response.json();
         setCampaign(data);
       } catch (error) {
@@ -27,17 +30,14 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
         setLoading(false);
       }
     }
-
     fetchCampaign();
-  }, [params.id, router]);
+  }, [id, router]);
 
   const handleSubmit = async (data: any) => {
     try {
-      const response = await fetch(`/api/campaigns/${params.id}`, {
+      const response = await fetch(`/api/campaigns/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: data.name,
           description: data.description,
@@ -47,12 +47,8 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
           status: data.status,
         }),
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to update campaign');
-      }
-
-      router.push(`/campaigns/${params.id}`);
+      if (!response.ok) throw new Error('Failed to update campaign');
+      router.push(`/campaigns/${id}`);
     } catch (error) {
       console.error('Error updating campaign:', error);
       alert('Failed to update campaign. Please try again.');
@@ -60,19 +56,9 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this campaign? This action cannot be undone.')) {
-      return;
-    }
-
     try {
-      const response = await fetch(`/api/campaigns/${params.id}`, {
-        method: 'DELETE',
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to delete campaign');
-      }
-
+      const response = await fetch(`/api/campaigns/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Failed to delete campaign');
       router.push('/campaigns');
     } catch (error) {
       console.error('Error deleting campaign:', error);
@@ -80,34 +66,33 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
     }
   };
 
+  const layoutProps = {
+    userName: session?.user?.name || session?.user?.email || 'User',
+    userRole: (session?.user as { role?: string } | undefined)?.role,
+    searchPlaceholder: 'Search campaigns...',
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
+      <DashboardLayout {...layoutProps}>
+        <div className="flex items-center justify-center py-20 text-[var(--ink-soft)]">Loading…</div>
+      </DashboardLayout>
     );
   }
 
-  if (!campaign) {
-    return null;
-  }
+  if (!campaign) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] p-8">
+    <DashboardLayout {...layoutProps}>
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
-          <Link
-            href={`/campaigns/${params.id}`}
-            className="inline-flex items-center text-white/60 hover:text-white mb-4 transition-colors"
-          >
-            ← Back to Campaign
+          <Link href={`/campaigns/${id}`} className="inline-flex items-center gap-1 text-[var(--ink-soft)] hover:text-[var(--ink)] mb-4 transition-colors text-sm">
+            <ArrowLeft size={16} weight="bold" /> Back to Campaign
           </Link>
-          <h1 className="text-4xl font-bold text-white mb-2">Edit Campaign</h1>
-          <p className="text-white/60">Update campaign details</p>
+          <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Edit Campaign</h1>
+          <p className="text-[var(--ink-soft)]">Update campaign details</p>
         </div>
 
-        {/* Form */}
         <CampaignForm
           initialData={{
             name: campaign.name,
@@ -123,6 +108,6 @@ export default function EditCampaignPage({ params }: { params: { id: string } })
           isEdit={true}
         />
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

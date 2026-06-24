@@ -10,10 +10,7 @@ interface DeleteContactButtonProps {
   contactName: string
 }
 
-export default function DeleteContactButton({
-  contactId,
-  contactName
-}: DeleteContactButtonProps) {
+export default function DeleteContactButton({ contactId }: DeleteContactButtonProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
@@ -21,17 +18,11 @@ export default function DeleteContactButton({
   const handleDelete = async () => {
     try {
       setIsDeleting(true)
-
-      const response = await fetch(`/api/contacts/${contactId}`, {
-        method: 'DELETE',
-      })
-
+      const response = await fetch(`/api/contacts/${contactId}`, { method: 'DELETE' })
       if (!response.ok) {
         const error = await response.json()
         throw new Error(error.error || 'Failed to delete contact')
       }
-
-      // Redirect to contacts list after successful deletion
       router.push('/contacts')
       router.refresh()
     } catch (error) {
@@ -48,7 +39,7 @@ export default function DeleteContactButton({
         <Button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="bg-red-600 hover:bg-red-700 text-white border-none flex items-center gap-2"
+          className="bg-[#C0573F] hover:bg-[#A8492F] text-white border-none flex items-center gap-2"
         >
           <Trash size={18} weight="bold" />
           {isDeleting ? 'Deleting...' : 'Confirm Delete'}
@@ -56,7 +47,7 @@ export default function DeleteContactButton({
         <Button
           onClick={() => setShowConfirm(false)}
           variant="outline"
-          className="text-white border-white/30 hover:bg-white/10"
+          className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)]"
         >
           Cancel
         </Button>
@@ -68,7 +59,7 @@ export default function DeleteContactButton({
     <Button
       onClick={() => setShowConfirm(true)}
       variant="outline"
-      className="text-red-400 border-red-400/30 hover:bg-red-400/10 flex items-center gap-2"
+      className="text-[#C0573F] border-[#EAD3C8] hover:bg-[#F6EBE6] flex items-center gap-2"
     >
       <Trash size={18} weight="bold" />
       Delete Contact

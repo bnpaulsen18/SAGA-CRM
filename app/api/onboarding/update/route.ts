@@ -17,6 +17,14 @@ export async function POST(req: Request) {
       );
     }
 
+    // Onboarding configures the organization — admin-only.
+    if (session.user.role !== 'ADMIN' && !session.user.isPlatformAdmin) {
+      return NextResponse.json(
+        { error: 'Forbidden: admin access required' },
+        { status: 403 }
+      );
+    }
+
     const { step, data } = await req.json();
 
     // Validate step number

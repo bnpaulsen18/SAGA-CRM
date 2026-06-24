@@ -26,7 +26,6 @@ export default function DonationsFilters({ campaigns }: DonationsFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  // Initialize filter state from URL
   const [status, setStatus] = useState(searchParams.get('status') || 'all')
   const [campaignId, setCampaignId] = useState(searchParams.get('campaignId') || 'all')
   const [startDate, setStartDate] = useState(searchParams.get('startDate') || '')
@@ -36,47 +35,19 @@ export default function DonationsFilters({ campaigns }: DonationsFiltersProps) {
 
   const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams.toString())
-
-    // Reset to page 1 when applying filters
     params.set('page', '1')
-
-    // Apply filters
-    if (status && status !== 'all') {
-      params.set('status', status)
-    } else {
-      params.delete('status')
-    }
-
-    if (campaignId && campaignId !== 'all') {
-      params.set('campaignId', campaignId)
-    } else {
-      params.delete('campaignId')
-    }
-
-    if (startDate) {
-      params.set('startDate', startDate)
-    } else {
-      params.delete('startDate')
-    }
-
-    if (endDate) {
-      params.set('endDate', endDate)
-    } else {
-      params.delete('endDate')
-    }
-
-    if (minAmount) {
-      params.set('minAmount', minAmount)
-    } else {
-      params.delete('minAmount')
-    }
-
-    if (maxAmount) {
-      params.set('maxAmount', maxAmount)
-    } else {
-      params.delete('maxAmount')
-    }
-
+    if (status && status !== 'all') params.set('status', status)
+    else params.delete('status')
+    if (campaignId && campaignId !== 'all') params.set('campaignId', campaignId)
+    else params.delete('campaignId')
+    if (startDate) params.set('startDate', startDate)
+    else params.delete('startDate')
+    if (endDate) params.set('endDate', endDate)
+    else params.delete('endDate')
+    if (minAmount) params.set('minAmount', minAmount)
+    else params.delete('minAmount')
+    if (maxAmount) params.set('maxAmount', maxAmount)
+    else params.delete('maxAmount')
     router.push(`?${params.toString()}`)
   }
 
@@ -91,26 +62,26 @@ export default function DonationsFilters({ campaigns }: DonationsFiltersProps) {
   }
 
   const hasActiveFilters =
-    (status && status !== 'all') ||
-    (campaignId && campaignId !== 'all') ||
-    startDate ||
-    endDate ||
-    minAmount ||
-    maxAmount
+    (status && status !== 'all') || (campaignId && campaignId !== 'all') || startDate || endDate || minAmount || maxAmount
+
+  const selectTrigger = 'bg-[var(--paper)] border border-[var(--line)] text-[var(--ink)]'
+  const selectContent = 'bg-[var(--surface)] border border-[var(--line)]'
+  const selectItem = 'text-[var(--ink)] focus:bg-[var(--surface-2)] hover:bg-[var(--surface-2)] cursor-pointer'
+  const inputCls = 'bg-[var(--paper)] border border-[var(--line)] text-[var(--ink)] placeholder:text-[var(--ink-faint)]'
 
   return (
-    <div className="bg-white/5 backdrop-blur-md border border-white/20 rounded-lg p-6 mb-6">
+    <div className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Funnel size={20} weight="bold" className="text-white/70" />
-          <h3 className="text-lg font-semibold text-white">Filters</h3>
+          <Funnel size={20} weight="bold" className="text-[var(--ink-faint)]" />
+          <h3 className="text-lg font-semibold text-[var(--ink)]">Filters</h3>
         </div>
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={handleClearFilters}
-            className="text-white/70 hover:text-white hover:bg-white/10 flex items-center gap-1"
+            className="text-[var(--ink-soft)] hover:text-[var(--ink)] hover:bg-[var(--surface-2)] flex items-center gap-1"
           >
             <X size={16} weight="bold" />
             Clear All
@@ -119,39 +90,33 @@ export default function DonationsFilters({ campaigns }: DonationsFiltersProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Status Filter */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            Status
-          </label>
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">Status</label>
           <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="saga-input">
+            <SelectTrigger className={selectTrigger}>
               <SelectValue placeholder="All statuses" />
             </SelectTrigger>
-            <SelectContent className="bg-[#1a0a2e]/98 saga-border-orange">
-              <SelectItem value="all" className="text-white hover:bg-white/10">All Statuses</SelectItem>
-              <SelectItem value="COMPLETED" className="text-white hover:bg-white/10">Completed</SelectItem>
-              <SelectItem value="PENDING" className="text-white hover:bg-white/10">Pending</SelectItem>
-              <SelectItem value="FAILED" className="text-white hover:bg-white/10">Failed</SelectItem>
-              <SelectItem value="REFUNDED" className="text-white hover:bg-white/10">Refunded</SelectItem>
-              <SelectItem value="CANCELLED" className="text-white hover:bg-white/10">Cancelled</SelectItem>
+            <SelectContent className={selectContent}>
+              <SelectItem value="all" className={selectItem}>All Statuses</SelectItem>
+              <SelectItem value="COMPLETED" className={selectItem}>Completed</SelectItem>
+              <SelectItem value="PENDING" className={selectItem}>Pending</SelectItem>
+              <SelectItem value="FAILED" className={selectItem}>Failed</SelectItem>
+              <SelectItem value="REFUNDED" className={selectItem}>Refunded</SelectItem>
+              <SelectItem value="CANCELLED" className={selectItem}>Cancelled</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Campaign Filter */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            Campaign
-          </label>
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">Campaign</label>
           <Select value={campaignId} onValueChange={setCampaignId}>
-            <SelectTrigger className="saga-input">
+            <SelectTrigger className={selectTrigger}>
               <SelectValue placeholder="All campaigns" />
             </SelectTrigger>
-            <SelectContent className="bg-[#1a0a2e]/98 saga-border-orange">
-              <SelectItem value="all" className="text-white hover:bg-white/10">All Campaigns</SelectItem>
+            <SelectContent className={selectContent}>
+              <SelectItem value="all" className={selectItem}>All Campaigns</SelectItem>
               {campaigns.map((campaign) => (
-                <SelectItem key={campaign.id} value={campaign.id} className="text-white hover:bg-white/10">
+                <SelectItem key={campaign.id} value={campaign.id} className={selectItem}>
                   {campaign.name}
                 </SelectItem>
               ))}
@@ -159,92 +124,57 @@ export default function DonationsFilters({ campaigns }: DonationsFiltersProps) {
           </Select>
         </div>
 
-        {/* Min Amount */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            Min Amount (USD)
-          </label>
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">Min Amount (USD)</label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5 text-white/60">$</span>
+            <span className="absolute left-3 top-2.5 text-[var(--ink-faint)]">$</span>
             <Input
-              type="number"
-              min="0"
-              step="0.01"
+              type="number" min="0" step="0.01"
               value={minAmount}
               onChange={(e) => setMinAmount(e.target.value)}
               placeholder="0.00"
-              className="saga-input pl-7"
+              className={`${inputCls} pl-7`}
             />
           </div>
         </div>
 
-        {/* Max Amount */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            Max Amount (USD)
-          </label>
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">Max Amount (USD)</label>
           <div className="relative">
-            <span className="absolute left-3 top-2.5 text-white/60">$</span>
+            <span className="absolute left-3 top-2.5 text-[var(--ink-faint)]">$</span>
             <Input
-              type="number"
-              min="0"
-              step="0.01"
+              type="number" min="0" step="0.01"
               value={maxAmount}
               onChange={(e) => setMaxAmount(e.target.value)}
               placeholder="10000.00"
-              className="saga-input pl-7"
+              className={`${inputCls} pl-7`}
             />
           </div>
         </div>
 
-        {/* Start Date */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            Start Date
-          </label>
-          <Input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="saga-input"
-          />
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">Start Date</label>
+          <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className={inputCls} />
         </div>
 
-        {/* End Date */}
         <div>
-          <label className="block text-sm font-medium text-white/70 mb-2">
-            End Date
-          </label>
-          <Input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="saga-input"
-          />
+          <label className="block text-sm font-medium text-[var(--ink-soft)] mb-2">End Date</label>
+          <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className={inputCls} />
         </div>
       </div>
 
-      {/* Apply Filters Button */}
       <div className="mt-4 flex justify-end">
-        <Button
-          onClick={handleApplyFilters}
-          className="saga-button text-white font-semibold border-none flex items-center gap-2"
-        >
+        <Button onClick={handleApplyFilters} className="saga-button text-white font-semibold border-none flex items-center gap-2">
           <Funnel size={18} weight="bold" />
           Apply Filters
         </Button>
       </div>
 
-      {/* Validation Messages */}
       {startDate && endDate && new Date(endDate) < new Date(startDate) && (
-        <p className="text-red-400 text-sm mt-2">
-          End date must be after start date
-        </p>
+        <p className="text-[#C0573F] text-sm mt-2">End date must be after start date</p>
       )}
       {minAmount && maxAmount && parseFloat(maxAmount) < parseFloat(minAmount) && (
-        <p className="text-red-400 text-sm mt-2">
-          Max amount must be greater than min amount
-        </p>
+        <p className="text-[#C0573F] text-sm mt-2">Max amount must be greater than min amount</p>
       )}
     </div>
   )

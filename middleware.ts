@@ -14,9 +14,6 @@ export default auth((req) => {
     "/",
     "/login",
     "/register",
-    "/preview/v1",
-    "/preview/v2",
-    "/preview/v3",
   ];
 
   // Check if the current path is a public route

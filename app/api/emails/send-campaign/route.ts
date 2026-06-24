@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
 
     // Get organization details
     const organization = await prisma.organization.findFirst({
-      where: { id: session.user.organizationId || undefined },
+      where: { id: session.user.organizationId ?? '__no_such_org__' },
       select: { id: true, name: true }
     })
 

@@ -4,6 +4,7 @@ import Stripe from 'stripe';
 import { stripe, isStripeAvailable, STRIPE_WEBHOOK_SECRET } from '@/lib/stripe/client';
 import { prisma } from '@/lib/prisma';
 import { sendAutomatedThankYou } from '@/lib/email/send-donation-receipt';
+import { calculateFraudScore } from '@/lib/security/fraud-detector';
 
 export const runtime = 'nodejs'
 
@@ -71,6 +72,60 @@ export async function POST(req: Request) {
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
   const metadata = session.metadata!;
 
+  // Check idempotency key first (most reliable duplicate detection)
+  const idempotencyKey = metadata.idempotencyKey;
+  if (idempotencyKey) {
+    const existingByIdempotency = await prisma.donation.findUnique({
+      where: { idempotencyKey },
+    });
+
+    if (existingByIdempotency) {
+      console.warn('[Stripe Webhook] Duplicate detected via idempotency key:', {
+        idempotencyKey,
+        sessionId: session.id,
+        existingDonationId: existingByIdempotency.id,
+      });
+      return; // Skip creating duplicate donation
+    }
+  }
+
+  // Duplicate transaction detection - prevent webhook replay attacks
+  const transactionId = session.payment_intent as string || session.subscription as string;
+  if (transactionId) {
+    const existingDonation = await prisma.donation.findFirst({
+      where: {
+        transactionId,
+        organizationId: metadata.organizationId,
+      },
+    });
+
+    if (existingDonation) {
+      console.warn('[Stripe Webhook] Duplicate transaction detected (transactionId):', {
+        transactionId,
+        sessionId: session.id,
+        existingDonationId: existingDonation.id,
+      });
+      return; // Skip creating duplicate donation
+    }
+  }
+
+  // Calculate fraud score for Stripe donations
+  const fraudCheck = await calculateFraudScore({
+    organizationId: metadata.organizationId,
+    contactId: metadata.contactId,
+    amount: (session.amount_total || 0) / 100,
+    method: metadata.method || 'CREDIT_CARD',
+  });
+
+  // Log high-risk Stripe donations
+  if (fraudCheck.fraudScore >= 40) {
+    console.warn('[Stripe Webhook] High-risk donation detected:', {
+      sessionId: session.id,
+      fraudScore: fraudCheck.fraudScore,
+      flags: fraudCheck.fraudFlags,
+    });
+  }
+
   // Create donation record
   const donation = await prisma.donation.create({
     data: {
@@ -87,6 +142,11 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       receiptNumber: `STRIPE-${Date.now()}`,
       taxDeductible: true,
       donatedAt: new Date(),
+      // Fraud detection fields
+      idempotencyKey: idempotencyKey || null,
+      fraudScore: fraudCheck.fraudScore,
+      fraudFlags: fraudCheck.fraudFlags,
+      reviewStatus: fraudCheck.reviewStatus,
     },
   });
 
@@ -118,6 +178,24 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
   if (invoiceWithSubscription.subscription && invoice.metadata && Object.keys(invoice.metadata).length > 0) {
     const metadata = invoice.metadata;
 
+    // Duplicate transaction detection - prevent webhook replay attacks
+    const transactionId = invoice.id;
+    const existingDonation = await prisma.donation.findFirst({
+      where: {
+        transactionId,
+        organizationId: metadata.organizationId,
+      },
+    });
+
+    if (existingDonation) {
+      console.warn('[Stripe Webhook] Duplicate recurring transaction detected:', {
+        transactionId,
+        invoiceId: invoice.id,
+        existingDonationId: existingDonation.id,
+      });
+      return; // Skip creating duplicate donation
+    }
+
     await prisma.donation.create({
       data: {
         organizationId: metadata.organizationId,
@@ -139,7 +217,65 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  // Log subscription cancellation
   console.log(`Subscription deleted: ${subscription.id}`);
-  // TODO: Update contact record to mark recurring donation as cancelled
+
+  const metadata = subscription.metadata as {
+    organizationId?: string;
+    contactId?: string;
+    campaignId?: string;
+    fundRestriction?: string;
+  };
+
+  if (!metadata.organizationId || !metadata.contactId) {
+    console.error('Missing metadata in subscription deletion webhook');
+    return;
+  }
+
+  try {
+    // Find all MONTHLY donations for this contact/subscription
+    // Note: We don't store subscription ID on donations, so we'll mark the most recent MONTHLY donation as cancelled
+    const recentMonthlyDonation = await prisma.donation.findFirst({
+      where: {
+        organizationId: metadata.organizationId,
+        contactId: metadata.contactId,
+        type: 'MONTHLY',
+        status: {
+          in: ['COMPLETED', 'PENDING']
+        }
+      },
+      orderBy: {
+        donatedAt: 'desc'
+      }
+    });
+
+    if (recentMonthlyDonation) {
+      // Update donation status to CANCELLED
+      await prisma.donation.update({
+        where: { id: recentMonthlyDonation.id },
+        data: {
+          status: 'CANCELLED',
+          notes: `Recurring subscription cancelled on ${new Date().toISOString()}`
+        }
+      });
+
+      // Create an interaction record for the cancellation
+      await prisma.interaction.create({
+        data: {
+          organizationId: metadata.organizationId,
+          contactId: metadata.contactId,
+          userId: metadata.organizationId, // System user
+          type: 'NOTE',
+          subject: 'Recurring Donation Cancelled',
+          notes: `Stripe subscription ${subscription.id} was cancelled. Monthly donations have been stopped.`,
+          occurredAt: new Date()
+        }
+      });
+
+      console.log(`Marked recurring donation ${recentMonthlyDonation.id} as cancelled for contact ${metadata.contactId}`);
+    } else {
+      console.warn(`No active monthly donations found for contact ${metadata.contactId}`);
+    }
+  } catch (error) {
+    console.error('Error handling subscription deletion:', error);
+  }
 }

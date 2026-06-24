@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { sendDonationReceipt } from '@/lib/email/send-donation-receipt';
+import { auth } from '@/lib/auth';
+import { canViewDonation } from '@/lib/permissions';
 
 export const runtime = 'nodejs'
 
@@ -9,6 +11,16 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
+
+    // Require an authenticated user who owns this donation's org.
+    // Prevents anyone from emailing donors / enumerating donations via guessed IDs.
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!(await canViewDonation(id))) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 });
+    }
 
     // Send the receipt
     const result = await sendDonationReceipt({ donationId: id });

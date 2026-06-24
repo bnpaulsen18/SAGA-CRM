@@ -24,7 +24,7 @@ export async function GET(req: Request) {
     // Search contacts by name, email, or phone (case-insensitive)
     const contacts = await prisma.contact.findMany({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        organizationId: session.user.organizationId ?? '__no_such_org__',
         OR: [
           {
             firstName: {

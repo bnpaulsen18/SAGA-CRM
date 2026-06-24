@@ -6,44 +6,31 @@ interface CampaignProgressProps {
 
 export default function CampaignProgress({ raised, goal, className = '' }: CampaignProgressProps) {
   const percentage = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
-
-  // Color based on progress
-  let progressColor = 'bg-yellow-500'; // 0-50%
-  let progressGlow = 'shadow-yellow-500/50';
-
-  if (percentage >= 100) {
-    progressColor = 'bg-gradient-to-r from-yellow-400 to-orange-500'; // 100%+
-    progressGlow = 'shadow-orange-500/50';
-  } else if (percentage >= 90) {
-    progressColor = 'bg-green-500'; // 90-100%
-    progressGlow = 'shadow-green-500/50';
-  } else if (percentage >= 50) {
-    progressColor = 'bg-blue-500'; // 50-90%
-    progressGlow = 'shadow-blue-500/50';
-  }
+  const complete = percentage >= 100;
+  const fill = complete ? '#4A8C6F' : 'linear-gradient(135deg,#F97A5E,#E0507A 60%,#5B4B8A)';
 
   return (
     <div className={className}>
       {/* Progress Bar */}
-      <div className="relative w-full h-3 bg-white/10 rounded-full overflow-hidden border border-white/20">
+      <div className="relative w-full h-3 bg-[var(--surface-2)] rounded-full overflow-hidden border border-[var(--line)]">
         <div
-          className={`absolute top-0 left-0 h-full ${progressColor} ${progressGlow} shadow-lg transition-all duration-500 ease-out`}
-          style={{ width: `${percentage}%` }}
+          className="absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${percentage}%`, background: fill }}
         />
       </div>
 
       {/* Stats */}
       <div className="flex justify-between items-center mt-3">
-        <div className="text-sm text-white/70">
-          <span className="font-semibold text-white">
+        <div className="text-sm text-[var(--ink-soft)]">
+          <span className="font-semibold text-[var(--ink)] tabular-nums">
             ${raised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
           {' raised of '}
-          <span className="font-semibold text-white/80">
+          <span className="font-semibold text-[var(--ink-soft)] tabular-nums">
             ${goal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
           </span>
         </div>
-        <div className={`text-sm font-bold ${percentage >= 100 ? 'text-orange-400' : 'text-white'}`}>
+        <div className={`text-sm font-bold tabular-nums ${complete ? 'text-[#4A8C6F]' : 'text-[var(--ink)]'}`}>
           {percentage.toFixed(1)}%
         </div>
       </div>

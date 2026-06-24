@@ -17,6 +17,14 @@ export async function PATCH(req: Request) {
       );
     }
 
+    // Org settings (name, EIN, email) are admin-only — a VIEWER/MEMBER must not rewrite legal/tax info.
+    if (session.user.role !== 'ADMIN' && !session.user.isPlatformAdmin) {
+      return NextResponse.json(
+        { error: 'Forbidden: admin access required' },
+        { status: 403 }
+      );
+    }
+
     const data = await req.json();
 
     // Validate required fields

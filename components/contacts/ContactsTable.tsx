@@ -47,7 +47,7 @@ export default function ContactsTable({
   totalCount = 0,
   startRecord = 0,
   endRecord = 0,
-  limit = 50
+  limit = 50,
 }: ContactsTableProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -62,7 +62,6 @@ export default function ContactsTable({
     router.push(`?${params.toString()}`)
   }
 
-  // Filter contacts by search term
   const filteredData = data.filter((contact) => {
     const search = searchTerm.toLowerCase()
     return (
@@ -74,37 +73,24 @@ export default function ContactsTable({
     )
   })
 
-  // Sort contacts
   const sortedData = [...filteredData].sort((a, b) => {
     let aValue = a[sortField]
     let bValue = b[sortField]
-
-    // Handle null values
     if (aValue === null) return 1
     if (bValue === null) return -1
-
-    // Handle nested objects
     if (sortField === '_count') {
-      aValue = a._count.donations as any
-      bValue = b._count.donations as any
+      aValue = a._count.donations as never
+      bValue = b._count.donations as never
     }
-
     if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return sortDirection === 'asc'
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue)
+      return sortDirection === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue)
     }
-
     if (typeof aValue === 'number' && typeof bValue === 'number') {
       return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
     }
-
     if (aValue instanceof Date && bValue instanceof Date) {
-      return sortDirection === 'asc'
-        ? aValue.getTime() - bValue.getTime()
-        : bValue.getTime() - aValue.getTime()
+      return sortDirection === 'asc' ? aValue.getTime() - bValue.getTime() : bValue.getTime() - aValue.getTime()
     }
-
     return 0
   })
 
@@ -120,60 +106,29 @@ export default function ContactsTable({
   const getStatusBadgeStyle = (status: string) => {
     switch (status) {
       case 'ACTIVE':
-        return {
-          background: 'rgba(34, 197, 94, 0.2)',
-          border: '1px solid rgba(34, 197, 94, 0.4)',
-          color: '#4ade80'
-        }
+        return { background: '#E6F3EE', border: '1px solid #CDE9DD', color: '#2E7D5B' }
       case 'INACTIVE':
-        return {
-          background: 'rgba(156, 163, 175, 0.2)',
-          border: '1px solid rgba(156, 163, 175, 0.4)',
-          color: '#9ca3af'
-        }
+        return { background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--ink-soft)' }
       case 'DECEASED':
-        return {
-          background: 'rgba(239, 68, 68, 0.2)',
-          border: '1px solid rgba(239, 68, 68, 0.4)',
-          color: '#ef4444'
-        }
+        return { background: '#F6EBE6', border: '1px solid #EAD3C8', color: '#C0573F' }
       case 'DO_NOT_CONTACT':
-        return {
-          background: 'rgba(234, 179, 8, 0.2)',
-          border: '1px solid rgba(234, 179, 8, 0.4)',
-          color: '#eab308'
-        }
+        return { background: '#F7EFD9', border: '1px solid #ECD9A8', color: '#B7791F' }
       default:
-        return {
-          background: 'rgba(255, 255, 255, 0.1)',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          color: '#ffffff'
-        }
+        return { background: 'var(--surface-2)', border: '1px solid var(--line)', color: 'var(--ink-soft)' }
     }
   }
 
   return (
-    <div
-      className="rounded-lg overflow-hidden"
-      style={{
-        background: 'rgba(255, 255, 255, 0.05)',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.2)'
-      }}
-    >
+    <div className="rounded-2xl overflow-hidden bg-[var(--surface)] border border-[var(--line)]">
       {/* Search Bar */}
-      <div className="p-4 border-b" style={{ borderBottomColor: 'rgba(255, 107, 107, 0.2)' }}>
+      <div className="p-4 border-b border-[var(--line)]">
         <Input
           placeholder="Search contacts by name, email, or phone..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="max-w-md text-white placeholder:text-white/50"
-          style={{
-            background: 'rgba(255,255,255,0.1)',
-            border: '1px solid rgba(255,255,255,0.2)'
-          }}
+          className="max-w-md bg-[var(--paper)] border border-[var(--line)] text-[var(--ink)] placeholder:text-[var(--ink-faint)]"
         />
-        <p className="text-xs text-white/50 mt-2">
+        <p className="text-xs text-[var(--ink-faint)] mt-2">
           Showing {sortedData.length} of {data.length} contacts on this page • {totalCount.toLocaleString()} total
         </p>
       </div>
@@ -181,23 +136,18 @@ export default function ContactsTable({
       {/* Table */}
       <div className="overflow-x-auto">
         {sortedData.length === 0 ? (
-          <div className="px-6 py-12 text-center text-white/70">
+          <div className="px-6 py-12 text-center text-[var(--ink-soft)]">
             {searchTerm ? (
               <>
-                <p className="text-lg mb-2">No contacts found</p>
+                <p className="text-lg mb-2 text-[var(--ink)]">No contacts found</p>
                 <p className="text-sm">Try adjusting your search</p>
               </>
             ) : (
               <>
-                <p className="text-lg mb-2">No contacts yet</p>
+                <p className="text-lg mb-2 text-[var(--ink)]">No contacts yet</p>
                 <p className="text-sm mb-4">Get started by adding your first contact</p>
                 <Link href="/contacts/new">
-                  <Button
-                    className="text-white flex items-center gap-2"
-                    style={{
-                      background: 'linear-gradient(to right, #764ba2, #ff6b35)'
-                    }}
-                  >
+                  <Button className="saga-button text-white flex items-center gap-2 border-none">
                     <Plus size={18} weight="bold" />
                     Add Contact
                   </Button>
@@ -207,89 +157,57 @@ export default function ContactsTable({
           </div>
         ) : (
           <Table>
-            <TableHeader style={{ background: 'rgba(255, 255, 255, 0.05)' }}>
-              <TableRow style={{ borderBottomColor: 'rgba(255, 255, 255, 0.05)' }}>
-                <TableHead
-                  className="text-white/70 cursor-pointer hover:text-white"
-                  onClick={() => handleSort('lastName')}
-                >
+            <TableHeader className="bg-[var(--paper)]">
+              <TableRow className="border-b border-[var(--line)] hover:bg-transparent">
+                <TableHead className="text-[var(--ink-soft)] cursor-pointer hover:text-[var(--ink)]" onClick={() => handleSort('lastName')}>
                   Name {sortField === 'lastName' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
-                <TableHead className="text-white/70">Email</TableHead>
-                <TableHead className="text-white/70">Phone</TableHead>
-                <TableHead className="text-white/70">Type</TableHead>
-                <TableHead className="text-white/70">Status</TableHead>
-                <TableHead
-                  className="text-white/70 cursor-pointer hover:text-white"
-                  onClick={() => handleSort('lifetimeGiving')}
-                >
+                <TableHead className="text-[var(--ink-soft)]">Email</TableHead>
+                <TableHead className="text-[var(--ink-soft)]">Phone</TableHead>
+                <TableHead className="text-[var(--ink-soft)]">Type</TableHead>
+                <TableHead className="text-[var(--ink-soft)]">Status</TableHead>
+                <TableHead className="text-[var(--ink-soft)] cursor-pointer hover:text-[var(--ink)] text-right" onClick={() => handleSort('lifetimeGiving')}>
                   Lifetime Giving {sortField === 'lifetimeGiving' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
-                <TableHead
-                  className="text-white/70 cursor-pointer hover:text-white"
-                  onClick={() => handleSort('_count')}
-                >
+                <TableHead className="text-[var(--ink-soft)] cursor-pointer hover:text-[var(--ink)]" onClick={() => handleSort('_count')}>
                   Gifts {sortField === '_count' && (sortDirection === 'asc' ? '↑' : '↓')}
                 </TableHead>
-                <TableHead className="text-white/70">Last Gift</TableHead>
-                <TableHead className="text-white/70">Actions</TableHead>
+                <TableHead className="text-[var(--ink-soft)]">Last Gift</TableHead>
+                <TableHead className="text-[var(--ink-soft)]">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sortedData.map((contact) => (
-                <TableRow
-                  key={contact.id}
-                  className="hover:bg-white/5 transition-colors"
-                  style={{ borderBottomColor: 'rgba(255, 255, 255, 0.05)' }}
-                >
+                <TableRow key={contact.id} className="border-b border-[var(--line)] hover:bg-[var(--paper)] transition-colors">
                   <TableCell>
-                    <Link
-                      href={`/contacts/${contact.id}`}
-                      className="font-medium text-white hover:text-orange-400 transition-colors"
-                    >
+                    <Link href={`/contacts/${contact.id}`} className="font-medium text-[var(--ink)] hover:text-[#5B4B8A] transition-colors">
                       {contact.firstName} {contact.lastName}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-white/80">{contact.email}</TableCell>
-                  <TableCell className="text-white/80">{contact.phone || '-'}</TableCell>
+                  <TableCell className="text-[var(--ink-soft)]">{contact.email}</TableCell>
+                  <TableCell className="text-[var(--ink-soft)]">{contact.phone || '-'}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className="text-xs"
-                      style={{
-                        background: 'rgba(118, 75, 162, 0.2)',
-                        border: '1px solid rgba(118, 75, 162, 0.4)',
-                        color: 'white'
-                      }}
-                    >
+                    <Badge variant="outline" className="text-xs" style={{ background: '#EEE9F5', border: '1px solid #DDD3EC', color: '#5B4B8A' }}>
                       {contact.type}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className="text-xs"
-                      style={getStatusBadgeStyle(contact.status)}
-                    >
+                    <Badge variant="outline" className="text-xs" style={getStatusBadgeStyle(contact.status)}>
                       {contact.status}
                     </Badge>
                   </TableCell>
-                  <TableCell className="font-semibold text-green-400">
+                  <TableCell className="font-semibold text-[#4A8C6F] text-right tabular-nums">
                     ${contact.lifetimeGiving.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </TableCell>
-                  <TableCell className="text-white">{contact._count.donations}</TableCell>
-                  <TableCell className="text-white/70">
+                  <TableCell className="text-[var(--ink)] tabular-nums">{contact._count.donations}</TableCell>
+                  <TableCell className="text-[var(--ink-soft)]">
                     {contact.lastGiftDate
                       ? new Date(contact.lastGiftDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                       : 'Never'}
                   </TableCell>
                   <TableCell>
                     <Link href={`/contacts/${contact.id}`}>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-orange-400 hover:text-orange-500 hover:bg-white/10"
-                      >
+                      <Button variant="ghost" size="sm" className="text-[#5B4B8A] hover:text-[#E0507A] hover:bg-[var(--surface-2)]">
                         View →
                       </Button>
                     </Link>
@@ -303,24 +221,19 @@ export default function ContactsTable({
 
       {/* Pagination */}
       {totalCount > 0 && (
-        <div
-          className="p-4 border-t flex items-center justify-between"
-          style={{ borderTopColor: 'rgba(255, 107, 107, 0.2)' }}
-        >
-          <span className="text-white/70 text-sm">
+        <div className="p-4 border-t border-[var(--line)] flex items-center justify-between">
+          <span className="text-[var(--ink-soft)] text-sm">
             Showing {startRecord.toLocaleString()}-{endRecord.toLocaleString()} of {totalCount.toLocaleString()} contacts
           </span>
           <div className="flex items-center gap-3">
-            <span className="text-white/60 text-sm">
-              Page {currentPage} of {totalPages}
-            </span>
+            <span className="text-[var(--ink-faint)] text-sm">Page {currentPage} of {totalPages}</span>
             <div className="flex gap-2">
               <Button
                 variant="outline"
                 size="sm"
                 disabled={currentPage <= 1}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 <CaretLeft size={16} weight="bold" />
                 Previous
@@ -330,7 +243,7 @@ export default function ContactsTable({
                 size="sm"
                 disabled={currentPage >= totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="text-white border-white/30 hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 Next
                 <CaretRight size={16} weight="bold" />

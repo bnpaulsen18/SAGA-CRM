@@ -22,7 +22,7 @@ export default async function ReportsPage() {
   // Fetch donations for the period
   const donations = await prisma.donation.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: startDate,
         lte: endDate
@@ -60,7 +60,7 @@ export default async function ReportsPage() {
   // Calculate new donors (first donation in this period)
   const allDonations = await prisma.donation.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       status: 'COMPLETED'
     },
     select: {
@@ -160,7 +160,7 @@ export default async function ReportsPage() {
 
   const prevDonations = await prisma.donation.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: prevStartDate,
         lt: prevEndDate
@@ -186,8 +186,8 @@ export default async function ReportsPage() {
       <div className="mb-8">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Fundraising Reports</h1>
-            <p className="text-white/70">
+            <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Fundraising Reports</h1>
+            <p className="text-[var(--ink-soft)]">
               Performance analysis for the last 12 months
             </p>
           </div>
@@ -195,14 +195,14 @@ export default async function ReportsPage() {
             <Link href="/reports/analytics">
               <Button
                 className="text-white"
-                style={{ background: 'linear-gradient(to right, #764ba2, #ff6b35)' }}
+                style={{ background: 'linear-gradient(135deg,#F97A5E,#E0507A 60%,#5B4B8A)' }}
               >
                 📊 Advanced Analytics
               </Button>
             </Link>
             <Button
               variant="outline"
-              className="text-white border-white/30 hover:bg-white/10"
+              className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)]"
             >
               📄 Export PDF
             </Button>
@@ -213,37 +213,37 @@ export default async function ReportsPage() {
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <SagaCard>
-          <h3 className="text-sm font-medium text-white/70 mb-2">Total Raised</h3>
-          <p className="text-3xl font-bold text-green-400">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)] mb-2">Total Raised</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">
             ${totalRaised.toLocaleString()}
           </p>
           {growthRate !== 0 && (
-            <p className={`text-sm mt-2 ${growthRate > 0 ? 'text-green-400' : 'text-red-400'}`}>
+            <p className={`text-sm mt-2 ${growthRate > 0 ? 'text-[#4A8C6F]' : 'text-[#C0573F]'}`}>
               {growthRate > 0 ? '↑' : '↓'} {Math.abs(growthRate).toFixed(1)}% vs. last year
             </p>
           )}
         </SagaCard>
 
         <SagaCard>
-          <h3 className="text-sm font-medium text-white/70 mb-2">Total Donations</h3>
-          <p className="text-3xl font-bold text-white">{donationCount}</p>
-          <p className="text-sm text-white/60 mt-2">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)] mb-2">Total Donations</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">{donationCount}</p>
+          <p className="text-sm text-[var(--ink-faint)] mt-2">
             From {donorCount} donor{donorCount === 1 ? '' : 's'}
           </p>
         </SagaCard>
 
         <SagaCard>
-          <h3 className="text-sm font-medium text-white/70 mb-2">Average Gift</h3>
-          <p className="text-3xl font-bold text-white">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)] mb-2">Average Gift</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">
             ${averageGift.toFixed(2)}
           </p>
-          <p className="text-sm text-white/60 mt-2">Per donation</p>
+          <p className="text-sm text-[var(--ink-faint)] mt-2">Per donation</p>
         </SagaCard>
 
         <SagaCard>
-          <h3 className="text-sm font-medium text-white/70 mb-2">New Donors</h3>
-          <p className="text-3xl font-bold text-orange-400">{newDonors}</p>
-          <p className="text-sm text-white/60 mt-2">
+          <h3 className="text-sm font-medium text-[var(--ink-soft)] mb-2">New Donors</h3>
+          <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">{newDonors}</p>
+          <p className="text-sm text-[var(--ink-faint)] mt-2">
             {donorCount > 0 ? ((newDonors / donorCount) * 100).toFixed(0) : 0}% of total donors
           </p>
         </SagaCard>
@@ -257,7 +257,7 @@ export default async function ReportsPage() {
             {chartData.length > 0 ? (
               <MonthlyGivingChart data={chartData} />
             ) : (
-              <p className="text-white/60 text-center py-8">
+              <p className="text-[var(--ink-faint)] text-center py-8">
                 No donation data available for this period
               </p>
             )}
@@ -268,7 +268,7 @@ export default async function ReportsPage() {
             {topDonors.length > 0 ? (
               <TopDonorsTable donors={topDonors} />
             ) : (
-              <p className="text-white/60 text-center py-8">
+              <p className="text-[var(--ink-faint)] text-center py-8">
                 No donors yet
               </p>
             )}
@@ -280,16 +280,16 @@ export default async function ReportsPage() {
               {topFunds.map((fund, i) => (
                 <div key={i} className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl font-bold text-white/40">#{i + 1}</span>
-                    <span className="text-white">{fund.name}</span>
+                    <span className="text-2xl font-bold text-[var(--ink-faint)] tabular-nums">#{i + 1}</span>
+                    <span className="text-[var(--ink)]">{fund.name}</span>
                   </div>
-                  <span className="text-lg font-bold text-green-400">
+                  <span className="text-lg font-bold text-[#4A8C6F] tabular-nums">
                     ${fund.amount.toLocaleString()}
                   </span>
                 </div>
               ))}
               {topFunds.length === 0 && (
-                <p className="text-white/60 text-center py-4">No campaigns yet</p>
+                <p className="text-[var(--ink-faint)] text-center py-4">No campaigns yet</p>
               )}
             </div>
           </SagaCard>
@@ -300,14 +300,14 @@ export default async function ReportsPage() {
           <SagaCard title="🤖 AI Executive Summary">
             {executiveSummary ? (
               <div
-                className="prose prose-invert prose-sm max-w-none"
-                style={{ color: 'rgba(255, 255, 255, 0.8)' }}
+                className="prose prose-sm max-w-none text-[var(--ink)]"
+                style={{ color: 'var(--ink)' }}
                 dangerouslySetInnerHTML={{
                   __html: executiveSummary.replace(/\n/g, '<br>')
                 }}
               />
             ) : (
-              <p className="text-white/60 text-sm">
+              <p className="text-[var(--ink-soft)] text-sm">
                 {donations.length === 0
                   ? 'No donation data available to analyze'
                   : 'AI summary unavailable at this time'}

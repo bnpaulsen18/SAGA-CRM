@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     const session = await requireAuth()
 
     // Only allow admins to execute agents (for now)
-    if (session.user.role !== 'PLATFORM_ADMIN' && session.user.role !== 'ORG_ADMIN') {
+    if (session.user.role !== 'PLATFORM_ADMIN' && session.user.role !== 'ADMIN') {
       return NextResponse.json(
         { error: 'Insufficient permissions. Only administrators can execute agents.' },
         { status: 403 }

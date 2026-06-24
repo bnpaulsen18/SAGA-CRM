@@ -17,26 +17,26 @@ export default async function ContactImportPage() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <Link href="/contacts" className="text-white/70 hover:text-white">
-            ← Back to Contacts
+          <Link href="/contacts" className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm transition-colors">
+            ← Back to Donors
           </Link>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Import Contacts from CSV</h1>
-        <p className="text-white/70">Upload a CSV file to bulk import contacts into your CRM</p>
+        <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Import Contacts from CSV</h1>
+        <p className="text-[var(--ink-soft)]">Upload a CSV file to bulk import contacts into your CRM</p>
       </div>
 
       {/* Instructions Card */}
       <div className="mb-6">
         <SagaCard title="📋 CSV Format Requirements">
-          <div className="space-y-3 text-white/80">
+          <div className="space-y-3 text-[var(--ink-soft)]">
             <p>Your CSV file should include the following columns (case-insensitive):</p>
             <ul className="list-disc list-inside space-y-1 ml-4">
-              <li><strong>Required:</strong> First Name, Last Name, Email</li>
-              <li><strong>Optional:</strong> Phone, Street, City, State, ZIP, Type, Status, Tags, Notes</li>
+              <li><strong className="text-[var(--ink)]">Required:</strong> First Name, Last Name, Email</li>
+              <li><strong className="text-[var(--ink)]">Optional:</strong> Phone, Street, City, State, ZIP, Type, Status, Tags, Notes</li>
             </ul>
-            <p className="text-sm text-white/60 mt-4">
+            <p className="text-sm text-[var(--ink-faint)] mt-4">
               💡 Tip: Download a{' '}
-              <a href="/sample-contacts.csv" className="text-orange-400 hover:text-orange-500 underline">
+              <a href="/sample-contacts.csv" className="text-[#5B4B8A] hover:text-[#E0507A] underline">
                 sample CSV template
               </a>
               {' '}to see the correct format.

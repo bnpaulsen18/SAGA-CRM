@@ -25,17 +25,17 @@ export default function SagaCard({
 
   return (
     <div
-      className={`rounded-lg shadow-lg backdrop-blur-md ${variantClasses[variant]} ${className}`}
+      className={`rounded-xl ${variantClasses[variant]} ${className}`}
     >
       {(title || subtitle) && (
         <div
-          className="px-6 py-4 border-b border-white/20"
+          className="px-6 py-4 border-b border-[var(--line)]"
         >
           {title && (
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
+            <h2 className="text-lg font-semibold text-[var(--ink)]">{title}</h2>
           )}
           {subtitle && (
-            <p className="text-sm text-white/70 mt-1">{subtitle}</p>
+            <p className="text-sm text-[var(--ink-soft)] mt-1">{subtitle}</p>
           )}
         </div>
       )}

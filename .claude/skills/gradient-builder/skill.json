@@ -1,0 +1,13 @@
+{
+  "name": "gradient-builder",
+  "version": "1.0.0",
+  "description": "Create sophisticated gradient combinations for backgrounds, text, borders, and overlays",
+  "author": "SAGA CRM Team",
+  "tags": ["design", "gradients", "css", "tailwind", "ui"],
+  "usage": "/gradient-builder --style <style> --colors <colors> [--type <type>]",
+  "examples": [
+    "/gradient-builder --style tech-modern --colors blue,magenta,black",
+    "/gradient-builder --style glassmorphic --colors purple,pink --type overlay",
+    "/gradient-builder --style convergent --colors #003bff,#bf00ff"
+  ]
+}

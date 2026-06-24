@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { hash } from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { validatePassword } from '@/components/PasswordStrength';
+import { checkRateLimit, RATE_LIMITS, getClientIdentifier, createRateLimitHeaders } from '@/lib/security/rate-limiter';
 
 /**
  * POST /api/auth/reset-password
@@ -9,6 +10,19 @@ import { validatePassword } from '@/components/PasswordStrength';
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit per IP to prevent reset-token brute force.
+    const rl = await checkRateLimit(
+      `reset:${getClientIdentifier(req)}`,
+      RATE_LIMITS.AUTH.maxRequests,
+      RATE_LIMITS.AUTH.windowMs
+    );
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429, headers: createRateLimitHeaders(rl) }
+      );
+    }
+
     const { token, password } = await req.json();
 
     if (!token || !password) {

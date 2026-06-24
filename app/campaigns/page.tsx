@@ -16,7 +16,7 @@ export default async function CampaignsPage() {
   // Fetch campaigns for the user's organization
   const campaigns = await prisma.campaign.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
     },
     include: {
       _count: {
@@ -44,8 +44,8 @@ export default async function CampaignsPage() {
       {/* Page Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-white mb-2">Campaigns</h1>
-          <p className="text-white/70">Manage your fundraising campaigns</p>
+          <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Campaigns</h1>
+          <p className="text-[var(--ink-soft)]">Manage your fundraising campaigns</p>
         </div>
         <Link href="/campaigns/new">
           <Button
@@ -62,37 +62,37 @@ export default async function CampaignsPage() {
         <SagaCard variant="default">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-white/70">Total Campaigns</h3>
-              <p className="text-3xl font-bold text-white mt-2">{campaigns.length}</p>
-              <p className="text-xs text-white/50 mt-1">All campaigns</p>
+              <h3 className="text-sm font-medium text-[var(--ink-soft)]">Total Campaigns</h3>
+              <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">{campaigns.length}</p>
+              <p className="text-xs text-[var(--ink-faint)] mt-1">All campaigns</p>
             </div>
-            <Target size={40} weight="bold" className="text-blue-400" />
+            <Target size={40} weight="bold" className="text-[var(--ink-faint)]" />
           </div>
         </SagaCard>
 
         <SagaCard variant="purple">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-white/70">Active Campaigns</h3>
-              <p className="text-3xl font-bold text-green-400 mt-2">{activeCampaigns}</p>
-              <p className="text-xs text-white/50 mt-1">Currently fundraising</p>
+              <h3 className="text-sm font-medium text-[var(--ink-soft)]">Active Campaigns</h3>
+              <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">{activeCampaigns}</p>
+              <p className="text-xs text-[var(--ink-faint)] mt-1">Currently fundraising</p>
             </div>
-            <CheckCircle size={40} weight="bold" className="text-green-400" />
+            <CheckCircle size={40} weight="bold" className="text-[#4A8C6F]" />
           </div>
         </SagaCard>
 
         <SagaCard variant="orange">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-white/70">Total Raised</h3>
-              <p className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-sm font-medium text-[var(--ink-soft)]">Total Raised</h3>
+              <p className="text-3xl font-bold text-[var(--ink)] mt-2 tabular-nums">
                 ${totalRaised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
-              <p className="text-xs text-white/50 mt-1">
+              <p className="text-xs text-[var(--ink-faint)] mt-1">
                 of ${totalGoal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} goal
               </p>
             </div>
-            <CurrencyDollar size={40} weight="bold" className="text-green-400" />
+            <CurrencyDollar size={40} weight="bold" className="text-[#4A8C6F]" />
           </div>
         </SagaCard>
       </div>
@@ -102,10 +102,10 @@ export default async function CampaignsPage() {
         <SagaCard>
           <div className="p-12 text-center">
             <div className="flex justify-center mb-4">
-              <Rocket size={64} weight="bold" className="text-purple-400" />
+              <Rocket size={64} weight="bold" className="text-[var(--ink-faint)]" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No campaigns yet</h3>
-            <p className="text-white/60 mb-6">Create your first fundraising campaign to get started</p>
+            <h3 className="text-xl font-semibold text-[var(--ink)] mb-2">No campaigns yet</h3>
+            <p className="text-[var(--ink-soft)] mb-6">Create your first fundraising campaign to get started</p>
             <Link href="/campaigns/new">
               <Button
                 className="text-white font-semibold saga-button border-none"

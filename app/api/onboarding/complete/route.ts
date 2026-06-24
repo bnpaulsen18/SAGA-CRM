@@ -17,6 +17,14 @@ export async function POST() {
       );
     }
 
+    // Onboarding configures the organization — admin-only.
+    if (session.user.role !== 'ADMIN' && !session.user.isPlatformAdmin) {
+      return NextResponse.json(
+        { error: 'Forbidden: admin access required' },
+        { status: 403 }
+      );
+    }
+
     // Mark onboarding as complete
     await prisma.organization.update({
       where: { id: session.user.organizationId },

@@ -18,73 +18,60 @@ export default function CampaignStats({ campaign }: CampaignStatsProps) {
   const goal = campaign.goal || 0;
   const remaining = Math.max(goal - totalRaised, 0);
   const percentage = goal > 0 ? (totalRaised / goal) * 100 : 0;
+  const exceeded = percentage >= 100;
+  const overOrRemaining = exceeded ? totalRaised - goal : remaining;
+
+  const card = 'bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-6';
+  const money = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {/* Total Raised */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      <div className={card}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/60 text-sm mb-1">Total Raised</p>
-            <p className="text-3xl font-bold text-green-400">
-              ${totalRaised.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p className="text-xs text-white/50 mt-1">
-              {percentage.toFixed(1)}% of goal
-            </p>
+            <p className="text-[var(--ink-soft)] text-sm mb-1">Total Raised</p>
+            <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">{money(totalRaised)}</p>
+            <p className="text-xs text-[var(--ink-faint)] mt-1">{percentage.toFixed(1)}% of goal</p>
           </div>
-          <CurrencyDollar size={40} weight="bold" className="text-green-400" />
+          <CurrencyDollar size={40} weight="bold" className="text-[#4A8C6F]" />
         </div>
       </div>
 
-      {/* Donors */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      <div className={card}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/60 text-sm mb-1">Total Donors</p>
-            <p className="text-3xl font-bold text-white">{donorCount}</p>
-            <p className="text-xs text-white/50 mt-1">
-              Unique contributions
-            </p>
+            <p className="text-[var(--ink-soft)] text-sm mb-1">Total Donors</p>
+            <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">{donorCount}</p>
+            <p className="text-xs text-[var(--ink-faint)] mt-1">Unique contributions</p>
           </div>
-          <Gift size={40} weight="bold" className="text-purple-400" />
+          <Gift size={40} weight="bold" className="text-[var(--ink-faint)]" />
         </div>
       </div>
 
-      {/* Average Donation */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      <div className={card}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/60 text-sm mb-1">Average Gift</p>
-            <p className="text-3xl font-bold text-blue-400">
-              ${averageDonation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p className="text-xs text-white/50 mt-1">
-              Per donation
-            </p>
+            <p className="text-[var(--ink-soft)] text-sm mb-1">Average Gift</p>
+            <p className="text-3xl font-bold text-[var(--ink)] tabular-nums">{money(averageDonation)}</p>
+            <p className="text-xs text-[var(--ink-faint)] mt-1">Per donation</p>
           </div>
-          <ChartBar size={40} weight="bold" className="text-blue-400" />
+          <ChartBar size={40} weight="bold" className="text-[var(--ink-faint)]" />
         </div>
       </div>
 
-      {/* Remaining */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+      <div className={card}>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/60 text-sm mb-1">
-              {percentage >= 100 ? 'Exceeded Goal By' : 'Remaining'}
+            <p className="text-[var(--ink-soft)] text-sm mb-1">{exceeded ? 'Exceeded Goal By' : 'Remaining'}</p>
+            <p className="text-3xl font-bold tabular-nums" style={{ color: exceeded ? '#E0507A' : 'var(--ink)' }}>
+              {money(overOrRemaining)}
             </p>
-            <p className={`text-3xl font-bold ${percentage >= 100 ? 'text-orange-400' : 'text-white'}`}>
-              ${Math.abs(remaining).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            </p>
-            <p className="text-xs text-white/50 mt-1">
-              {percentage >= 100 ? 'Over target' : 'To reach goal'}
-            </p>
+            <p className="text-xs text-[var(--ink-faint)] mt-1">{exceeded ? 'Over target' : 'To reach goal'}</p>
           </div>
-          {percentage >= 100 ? (
-            <Confetti size={40} weight="bold" className="text-orange-400" />
+          {exceeded ? (
+            <Confetti size={40} weight="bold" className="text-[#E0507A]" />
           ) : (
-            <Target size={40} weight="bold" className="text-blue-400" />
+            <Target size={40} weight="bold" className="text-[var(--ink-faint)]" />
           )}
         </div>
       </div>

@@ -21,7 +21,7 @@ export async function GET(
     const contact = await prisma.contact.findFirst({
       where: {
         id,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       },
       include: {
         donations: {
@@ -90,7 +90,7 @@ export async function PUT(
     const existingContact = await prisma.contact.findFirst({
       where: {
         id,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       }
     })
 
@@ -146,7 +146,7 @@ export async function DELETE(
     const existingContact = await prisma.contact.findFirst({
       where: {
         id,
-        organizationId: session.user.organizationId || undefined
+        organizationId: session.user.organizationId ?? '__no_such_org__'
       }
     })
 

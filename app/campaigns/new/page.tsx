@@ -1,19 +1,21 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import DashboardLayout from '@/components/DashboardLayout';
 import CampaignForm from '@/components/campaigns/CampaignForm';
+import { ArrowLeft } from '@phosphor-icons/react';
 
 export default function NewCampaignPage() {
   const router = useRouter();
+  const { data: session } = useSession();
 
   const handleSubmit = async (data: any) => {
     try {
       const response = await fetch('/api/campaigns', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: data.name,
           description: data.description,
@@ -24,9 +26,7 @@ export default function NewCampaignPage() {
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to create campaign');
-      }
+      if (!response.ok) throw new Error('Failed to create campaign');
 
       const campaign = await response.json();
       router.push(`/campaigns/${campaign.id}`);
@@ -37,23 +37,22 @@ export default function NewCampaignPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f1419] via-[#1a1a2e] to-[#16213e] p-8">
+    <DashboardLayout
+      userName={session?.user?.name || session?.user?.email || 'User'}
+      userRole={(session?.user as { role?: string } | undefined)?.role}
+      searchPlaceholder="Search campaigns..."
+    >
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
         <div className="mb-8">
-          <Link
-            href="/campaigns"
-            className="inline-flex items-center text-white/60 hover:text-white mb-4 transition-colors"
-          >
-            ← Back to Campaigns
+          <Link href="/campaigns" className="inline-flex items-center gap-1 text-[var(--ink-soft)] hover:text-[var(--ink)] mb-4 transition-colors text-sm">
+            <ArrowLeft size={16} weight="bold" /> Back to Campaigns
           </Link>
-          <h1 className="text-4xl font-bold text-white mb-2">Create New Campaign</h1>
-          <p className="text-white/60">Set up a new fundraising campaign</p>
+          <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Create New Campaign</h1>
+          <p className="text-[var(--ink-soft)]">Set up a new fundraising campaign</p>
         </div>
 
-        {/* Form */}
         <CampaignForm onSubmit={handleSubmit} submitLabel="Create Campaign" />
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

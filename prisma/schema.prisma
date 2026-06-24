@@ -18,7 +18,7 @@ datasource db {
 model Organization {
   id        String   @id @default(cuid())
   name      String
-  ein       String   @unique
+  ein       String?  @unique
   email     String
   phone     String?
   website   String?
@@ -115,7 +115,7 @@ enum SubscriptionStatus {
 model User {
   id             String   @id @default(cuid())
   email          String   @unique
-  password       String
+  password       String?
   firstName      String
   lastName       String
   role           UserRole @default(MEMBER)

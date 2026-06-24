@@ -8,6 +8,14 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Convergent-style colors */
+  --color-electric-blue: #003bff;
+  --color-cyan: #0094ff;
+  --color-magenta: #bf00ff;
+  --color-dark-base: #0e0f11;
+  --color-light-accent: #f5f5f5;
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -37,6 +45,10 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* Glass effect border radius */
+  --radius-glass-sm: 15px;
+  --radius-glass-lg: 27px;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -45,8 +57,8 @@
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: #FAF6EF;
+  --foreground: #2A2433;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -118,71 +130,118 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-inter), var(--font-geist-sans), system-ui, sans-serif;
+  }
+  h1, h2, h3 {
+    font-family: var(--font-bricolage), var(--font-geist-sans), system-ui, sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 
-/* SAGA Theme Variables */
+/* SAGA Theme Variables — warm identity (reskin; locked tokens from saga-design) */
 :root {
-  --saga-purple: #764ba2;
-  --saga-orange: #ff6b35;
-  --saga-orange-light: #ffa07a;
-  --saga-pink: #b4154b;
-  --saga-dark-bg: #0f1419;
-  --saga-dark-secondary: #1a1a2e;
-  --saga-dark-tertiary: #16213e;
+  --paper: #FAF6EF;
+  --surface: #FFFFFF;
+  --surface-2: #F4EFE6;
+  --ink: #2A2433;
+  --ink-soft: #6B6475;
+  --ink-faint: #9A93A3;
+  --line: #E8E1D7;
+  --line-2: #DCD3C6;
+  --coral: #F97A5E;
+  --rose: #E0507A;
+  --twilight: #5B4B8A;
+  --twilight-700: #4A3B6B;
+  --sunset: linear-gradient(135deg, #F97A5E, #E0507A, #5B4B8A);
+  /* legacy aliases repointed to warm so old class names stop reading dark */
+  --saga-purple: #5B4B8A;
+  --saga-orange: #F97A5E;
+  --saga-orange-light: #F0997B;
+  --saga-pink: #E0507A;
+  --saga-dark-bg: #FAF6EF;
+  --saga-dark-secondary: #F4EFE6;
+  --saga-dark-tertiary: #FFFFFF;
+}
+
+/* SAGA dark mode — flip the warm tokens to a deep-twilight palette (from the demo).
+   The sunset accent (coral/rose/twilight) is intentionally identical in both modes. */
+.dark {
+  --background: #100C16;
+  --foreground: #ECE8F1;
+  --paper: #100C16;
+  --surface: #191320;
+  --surface-2: #211A2B;
+  --ink: #ECE8F1;
+  --ink-soft: #9A92A8;
+  --ink-faint: #6B6379;
+  --line: #2C2438;
+  --line-2: #382F47;
+  --saga-dark-bg: #100C16;
+  --saga-dark-secondary: #191320;
+  --saga-dark-tertiary: #211A2B;
 }
 
 /* SAGA Utility Classes */
 @layer components {
   /* Gradient Backgrounds */
   .saga-gradient {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--paper);
   }
 
+  /* The one primary action color — solid twilight (saga-design: gradient reserved for the donation hero) */
   .saga-button {
-    background: linear-gradient(to right, #764ba2, #ff6b35);
+    background: var(--twilight);
+    color: #fff;
+  }
+  .saga-button:hover {
+    background: var(--twilight-700);
   }
 
   .saga-header-gradient {
-    background: linear-gradient(135deg, #1a1a2e 0%, #2d1b3d 25%, #5c1644 50%, #8b1e4b 75%, #b4154b 85%, #ff6b35 100%);
+    background: var(--sunset);
   }
 
-  /* Card Components */
+  /* Card Components — warm surfaces with hairline borders (no glass, no dark) */
   .saga-card {
-    @apply bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-lg;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--ink);
   }
 
   .saga-card-default {
-    @apply bg-white/5 border-white/10;
+    background: var(--surface);
+    border: 1px solid var(--line);
   }
 
-  .saga-card-purple {
-    background: rgba(118, 75, 162, 0.2);
-    border: 1px solid rgba(118, 75, 162, 0.4);
-  }
-
-  .saga-card-orange {
-    background: rgba(255, 107, 53, 0.2);
-    border: 1px solid rgba(255, 107, 53, 0.4);
-  }
-
+  /* Former colored stat cards collapse to one calm surface (saga-design: no 4 colored tiles) */
+  .saga-card-purple,
+  .saga-card-orange,
   .saga-card-pink {
-    background: rgba(180, 21, 75, 0.2);
-    border: 1px solid rgba(180, 21, 75, 0.4);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
   }
 
   .saga-card-warning {
-    background: rgba(255, 193, 7, 0.1);
-    border: 1px solid rgba(255, 193, 7, 0.3);
+    background: #FBF3E6;
+    border: 1px solid #E9D9B8;
+    color: var(--ink);
   }
 
-  /* Form Inputs */
+  /* Form Inputs — warm tokens (was white-on-white/invisible; now flips light/dark) */
   .saga-input {
-    @apply bg-white/10 border border-white/20 text-white placeholder:text-white/40 rounded-md px-3 py-2;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    border-radius: 0.5rem;
+    padding: 0.625rem 0.875rem;
   }
-
+  .saga-input::placeholder { color: var(--ink-faint); }
   .saga-input:focus {
-    @apply ring-2 ring-white/30 border-white/30 outline-none;
+    outline: none;
+    border-color: var(--twilight);
+    box-shadow: 0 0 0 2px color-mix(in oklab, var(--twilight) 30%, transparent);
   }
 
   /* Status Badges */
@@ -190,37 +249,48 @@
     @apply px-3 py-1 rounded-full text-xs font-medium border;
   }
 
-  .saga-badge-active {
-    @apply bg-green-500/20 text-green-300 border-green-500/30;
-  }
-
-  .saga-badge-inactive {
-    @apply bg-gray-500/20 text-gray-300 border-gray-500/30;
-  }
-
+  .saga-badge-active,
   .saga-badge-completed {
-    @apply bg-green-500/20 text-green-300 border-green-500/30;
+    background: rgba(74, 140, 111, 0.12);
+    color: #356B53;
+    border-color: rgba(74, 140, 111, 0.25);
+  }
+
+  .saga-badge-inactive,
+  .saga-badge-deceased {
+    background: var(--surface-2);
+    color: #6B6475;
+    border-color: var(--line);
   }
 
   .saga-badge-pending {
-    @apply bg-yellow-500/20 text-yellow-300 border-yellow-500/30;
+    background: rgba(201, 137, 63, 0.14);
+    color: #8A5A2A;
+    border-color: rgba(201, 137, 63, 0.28);
   }
 
-  .saga-badge-failed {
-    @apply bg-red-500/20 text-red-300 border-red-500/30;
+  .saga-badge-failed,
+  .saga-badge-do-not-contact {
+    background: rgba(194, 74, 74, 0.12);
+    color: #9E3636;
+    border-color: rgba(194, 74, 74, 0.25);
   }
 
   .saga-badge-refunded {
-    @apply bg-orange-500/20 text-orange-300 border-orange-500/30;
+    background: rgba(249, 122, 94, 0.14);
+    color: #A8461E;
+    border-color: rgba(249, 122, 94, 0.28);
   }
 
-  .saga-badge-deceased {
-    @apply bg-gray-600/20 text-gray-400 border-gray-600/30;
-  }
-
-  .saga-badge-do-not-contact {
-    @apply bg-red-600/20 text-red-400 border-red-600/30;
-  }
+  /* Dark-mode badge readability — lighter text on a subtle tint */
+  .dark .saga-badge-active,
+  .dark .saga-badge-completed { background: rgba(111,207,159,0.16); color: #7FD9A8; border-color: rgba(111,207,159,0.30); }
+  .dark .saga-badge-inactive,
+  .dark .saga-badge-deceased { background: var(--surface-2); color: var(--ink-soft); border-color: var(--line); }
+  .dark .saga-badge-pending { background: rgba(232,163,61,0.16); color: #E8A33D; border-color: rgba(232,163,61,0.30); }
+  .dark .saga-badge-failed,
+  .dark .saga-badge-do-not-contact { background: rgba(208,122,102,0.16); color: #E58E78; border-color: rgba(208,122,102,0.30); }
+  .dark .saga-badge-refunded { background: rgba(249,122,94,0.16); color: #F0997B; border-color: rgba(249,122,94,0.30); }
 
   /* Glass Effect */
   .saga-glass {
@@ -229,6 +299,50 @@
 
   .saga-glass-dark {
     @apply bg-white/5 backdrop-blur-md border border-white/10;
+  }
+
+  /* Convergent-Style Gradients */
+  .gradient-hero {
+    background: linear-gradient(135deg, #003bff 0%, #bf00ff 50%, #0e0f11 100%);
+  }
+
+  .gradient-hero-clean {
+    background: linear-gradient(135deg, #003bff 0%, #0094ff 100%);
+  }
+
+  .gradient-text {
+    background: linear-gradient(90deg, #003bff, #bf00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-blue {
+    background: linear-gradient(90deg, #003bff, #0094ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-cta {
+    background: linear-gradient(90deg, #0094ff, #bf00ff);
+  }
+
+  .gradient-subtle {
+    background: linear-gradient(180deg, #f5f5f5 0%, #ffffff 100%);
+  }
+
+  /* Animated Gradient */
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .gradient-animated {
+    background: linear-gradient(270deg, #003bff, #bf00ff, #0094ff);
+    background-size: 200% 200%;
+    animation: gradient-shift 8s ease infinite;
   }
 
   /* Borders */
@@ -240,21 +354,21 @@
     border: 1px solid rgba(255, 107, 53, 0.3);
   }
 
-  /* Text Colors */
+  /* Text Colors — warm ink ramp */
   .saga-text-primary {
-    @apply text-white;
+    color: var(--ink);
   }
 
   .saga-text-secondary {
-    @apply text-white/70;
+    color: var(--ink-soft);
   }
 
   .saga-text-muted {
-    @apply text-white/50;
+    color: var(--ink-faint);
   }
 
   .saga-text-orange {
-    color: #ffa07a;
+    color: var(--coral);
   }
 }
 

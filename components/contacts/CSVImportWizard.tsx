@@ -11,7 +11,6 @@ import { importContacts } from '@/app/actions/contacts'
 import { Check } from '@phosphor-icons/react'
 
 type CSVRow = Record<string, string>
-
 type Step = 'upload' | 'mapping' | 'preview' | 'importing' | 'complete'
 
 export default function CSVImportWizard() {
@@ -33,10 +32,8 @@ export default function CSVImportWizard() {
   function handleFileUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
     if (!file) return
-
     setError(null)
     setFileName(file.name)
-
     Papa.parse(file, {
       header: true,
       skipEmptyLines: true,
@@ -45,27 +42,15 @@ export default function CSVImportWizard() {
           setError(`CSV parsing error: ${results.errors[0].message}`)
           return
         }
-
         const data = results.data as CSVRow[]
         const headers = results.meta.fields || []
-
-        if (data.length === 0) {
-          setError('CSV file is empty')
-          return
-        }
-
-        if (data.length > 5000) {
-          setError('CSV file too large. Maximum 5,000 rows allowed.')
-          return
-        }
-
+        if (data.length === 0) { setError('CSV file is empty'); return }
+        if (data.length > 5000) { setError('CSV file too large. Maximum 5,000 rows allowed.'); return }
         setCsvData(data)
         setCsvHeaders(headers)
         setStep('mapping')
       },
-      error: (error) => {
-        setError(`Failed to read CSV: ${error.message}`)
-      }
+      error: (error) => setError(`Failed to read CSV: ${error.message}`),
     })
   }
 
@@ -78,39 +63,26 @@ export default function CSVImportWizard() {
     setStep('importing')
     setError(null)
     setImportProgress(0)
-
     try {
-      // Transform CSV data using column mapping
-      const mappedData = csvData.map(row => {
+      const mappedData = csvData.map((row) => {
         const contact: any = {}
-
         Object.entries(columnMapping).forEach(([csvColumn, contactField]) => {
           if (csvColumn && contactField) {
-            let value = row[csvColumn]?.trim()
-
-            // Handle tags (comma-separated)
+            const value = row[csvColumn]?.trim()
             if (contactField === 'tags' && value) {
-              contact.tags = value.split(',').map(t => t.trim()).filter(Boolean)
+              contact.tags = value.split(',').map((t) => t.trim()).filter(Boolean)
             } else if (value) {
               contact[contactField] = value
             }
           }
         })
-
         return contact
       })
-
-      // Call server action to import
       const result = await importContacts(mappedData)
-
       setImportResult(result)
       setStep('complete')
-
       if (result.success > 0) {
-        // Small delay then redirect to contacts page
-        setTimeout(() => {
-          router.push('/contacts')
-        }, 3000)
+        setTimeout(() => router.push('/contacts'), 3000)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Import failed')
@@ -134,44 +106,35 @@ export default function CSVImportWizard() {
       {/* Progress Indicator */}
       <div className="flex items-center justify-center gap-2">
         <StepIndicator label="1. Upload" active={step === 'upload'} completed={['mapping', 'preview', 'importing', 'complete'].includes(step)} />
-        <div className="h-[2px] w-16 bg-white/20"></div>
+        <div className="h-[2px] w-16 bg-[var(--line)]" />
         <StepIndicator label="2. Map Columns" active={step === 'mapping'} completed={['preview', 'importing', 'complete'].includes(step)} />
-        <div className="h-[2px] w-16 bg-white/20"></div>
+        <div className="h-[2px] w-16 bg-[var(--line)]" />
         <StepIndicator label="3. Preview" active={step === 'preview'} completed={['importing', 'complete'].includes(step)} />
-        <div className="h-[2px] w-16 bg-white/20"></div>
+        <div className="h-[2px] w-16 bg-[var(--line)]" />
         <StepIndicator label="4. Import" active={step === 'importing' || step === 'complete'} completed={step === 'complete'} />
       </div>
 
       {/* Error Message */}
       {error && (
-        <div className="p-4 rounded-lg text-sm bg-red-500/20 border border-red-500/40 text-red-400">
-          {error}
-        </div>
+        <div className="p-4 rounded-lg text-sm bg-[#F6EBE6] border border-[#EAD3C8] text-[#C0573F]">{error}</div>
       )}
 
       {/* Step 1: Upload */}
       {step === 'upload' && (
         <SagaCard title="Step 1: Upload CSV File">
           <div className="space-y-4">
-            <div className="border-2 border-dashed border-white/30 bg-white/[0.02] rounded-lg p-12 text-center transition-colors">
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileUpload}
-                className="hidden"
-                id="csv-upload"
-              />
+            <div className="border-2 border-dashed border-[var(--line-2)] bg-[var(--paper)] rounded-lg p-12 text-center transition-colors hover:border-[#5B4B8A]">
+              <input type="file" accept=".csv" onChange={handleFileUpload} className="hidden" id="csv-upload" />
               <label htmlFor="csv-upload" className="cursor-pointer">
                 <div className="text-6xl mb-4">📄</div>
-                <p className="text-lg text-white mb-2">Click to upload CSV file</p>
-                <p className="text-sm text-white/60">or drag and drop</p>
-                <p className="text-xs text-white/40 mt-4">Maximum 5,000 rows</p>
+                <p className="text-lg text-[var(--ink)] mb-2">Click to upload CSV file</p>
+                <p className="text-sm text-[var(--ink-soft)]">or drag and drop</p>
+                <p className="text-xs text-[var(--ink-faint)] mt-4">Maximum 5,000 rows</p>
               </label>
             </div>
-
             {fileName && (
-              <p className="text-white/70 text-sm">
-                Selected: <span className="text-white font-medium">{fileName}</span>
+              <p className="text-[var(--ink-soft)] text-sm">
+                Selected: <span className="text-[var(--ink)] font-medium">{fileName}</span>
               </p>
             )}
           </div>
@@ -180,36 +143,22 @@ export default function CSVImportWizard() {
 
       {/* Step 2: Column Mapping */}
       {step === 'mapping' && (
-        <ColumnMapper
-          csvHeaders={csvHeaders}
-          onComplete={handleMappingComplete}
-          onBack={() => setStep('upload')}
-        />
+        <ColumnMapper csvHeaders={csvHeaders} onComplete={handleMappingComplete} onBack={() => setStep('upload')} />
       )}
 
       {/* Step 3: Preview */}
       {step === 'preview' && (
-        <ImportPreview
-          csvData={csvData}
-          columnMapping={columnMapping}
-          onImport={handleImport}
-          onBack={() => setStep('mapping')}
-        />
+        <ImportPreview csvData={csvData} columnMapping={columnMapping} onImport={handleImport} onBack={() => setStep('mapping')} />
       )}
 
       {/* Step 4: Importing */}
       {step === 'importing' && (
         <SagaCard title="⏳ Importing Contacts...">
           <div className="space-y-4">
-            <div className="w-full bg-white/10 rounded-full h-4 overflow-hidden">
-              <div
-                className="h-full saga-button transition-all duration-300"
-                style={{ width: `${importProgress}%` }}
-              ></div>
+            <div className="w-full bg-[var(--surface-2)] rounded-full h-4 overflow-hidden">
+              <div className="h-full saga-button transition-all duration-300" style={{ width: `${importProgress}%` }} />
             </div>
-            <p className="text-center text-white/70">
-              Processing {csvData.length} contacts...
-            </p>
+            <p className="text-center text-[var(--ink-soft)]">Processing {csvData.length} contacts...</p>
           </div>
         </SagaCard>
       )}
@@ -219,52 +168,41 @@ export default function CSVImportWizard() {
         <SagaCard title="✅ Import Complete">
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-4">
-              <div className="text-center p-4 rounded-lg bg-green-500/10 border border-green-500/30">
-                <div className="text-3xl font-bold text-green-400">{importResult.success}</div>
-                <div className="text-sm text-white/70 mt-1">Imported</div>
+              <div className="text-center p-4 rounded-lg bg-[#E6F3EE] border border-[#CDE9DD]">
+                <div className="text-3xl font-bold text-[#2E7D5B] tabular-nums">{importResult.success}</div>
+                <div className="text-sm text-[var(--ink-soft)] mt-1">Imported</div>
               </div>
-              <div className="text-center p-4 rounded-lg bg-yellow-500/10 border border-yellow-500/30">
-                <div className="text-3xl font-bold text-yellow-400">{importResult.duplicates}</div>
-                <div className="text-sm text-white/70 mt-1">Duplicates Skipped</div>
+              <div className="text-center p-4 rounded-lg bg-[#F7EFD9] border border-[#ECD9A8]">
+                <div className="text-3xl font-bold text-[#B7791F] tabular-nums">{importResult.duplicates}</div>
+                <div className="text-sm text-[var(--ink-soft)] mt-1">Duplicates Skipped</div>
               </div>
-              <div className="text-center p-4 rounded-lg bg-red-500/10 border border-red-500/30">
-                <div className="text-3xl font-bold text-red-400">{importResult.failed}</div>
-                <div className="text-sm text-white/70 mt-1">Failed</div>
+              <div className="text-center p-4 rounded-lg bg-[#F6EBE6] border border-[#EAD3C8]">
+                <div className="text-3xl font-bold text-[#C0573F] tabular-nums">{importResult.failed}</div>
+                <div className="text-sm text-[var(--ink-soft)] mt-1">Failed</div>
               </div>
             </div>
 
             {importResult.errors.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-white font-medium">Errors:</h4>
+                <h4 className="text-[var(--ink)] font-medium">Errors:</h4>
                 <div className="max-h-40 overflow-y-auto space-y-1">
                   {importResult.errors.map((error, i) => (
-                    <div key={i} className="text-sm text-red-400 bg-red-400/10 p-2 rounded">
-                      {error}
-                    </div>
+                    <div key={i} className="text-sm text-[#C0573F] bg-[#F6EBE6] p-2 rounded">{error}</div>
                   ))}
                 </div>
               </div>
             )}
 
             <div className="flex gap-3 pt-4">
-              <Button
-                onClick={() => router.push('/contacts')}
-                className="flex-1 text-white font-semibold saga-button border-none"
-              >
+              <Button onClick={() => router.push('/contacts')} className="flex-1 text-white font-semibold saga-button border-none">
                 View Contacts
               </Button>
-              <Button
-                onClick={resetWizard}
-                variant="outline"
-                className="text-white border-white/30 hover:bg-white/10"
-              >
+              <Button onClick={resetWizard} variant="outline" className="text-[var(--ink)] border-[var(--line)] hover:bg-[var(--surface-2)]">
                 Import More
               </Button>
             </div>
 
-            <p className="text-center text-white/60 text-sm">
-              Redirecting to contacts in 3 seconds...
-            </p>
+            <p className="text-center text-[var(--ink-faint)] text-sm">Redirecting to contacts in 3 seconds...</p>
           </div>
         </SagaCard>
       )}
@@ -276,17 +214,17 @@ function StepIndicator({ label, active, completed }: { label: string; active: bo
   return (
     <div className="flex flex-col items-center">
       <div
-        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all text-white ${
+        className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all ${
           completed
-            ? 'saga-button'
+            ? 'saga-button text-white'
             : active
-            ? 'bg-orange-500/30 border-2 border-orange-500'
-            : 'bg-white/10 border border-white/20'
+            ? 'bg-[#EEE9F5] border-2 border-[#5B4B8A] text-[#5B4B8A]'
+            : 'bg-[var(--surface-2)] border border-[var(--line)] text-[var(--ink-faint)]'
         }`}
       >
         {completed ? <Check size={18} weight="bold" /> : label.split('.')[0]}
       </div>
-      <span className="text-xs text-white/70 mt-2 whitespace-nowrap">{label.split('. ')[1]}</span>
+      <span className="text-xs text-[var(--ink-soft)] mt-2 whitespace-nowrap">{label.split('. ')[1]}</span>
     </div>
   )
 }

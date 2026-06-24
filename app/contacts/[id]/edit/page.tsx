@@ -18,7 +18,7 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
   const contact = await prisma.contact.findFirst({
     where: {
       id,
-      organizationId: session.user.organizationId || undefined
+      organizationId: session.user.organizationId ?? '__no_such_org__'
     }
   })
 
@@ -31,8 +31,8 @@ export default async function ContactEditPage({ params }: ContactEditPageProps) 
       searchPlaceholder="Search contacts..."
     >
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white mb-2">Edit Contact</h1>
-        <p className="text-white/70">Update contact information</p>
+        <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Edit Contact</h1>
+        <p className="text-[var(--ink-soft)]">Update contact information</p>
       </div>
 
       <ContactFormEdit contact={contact} />

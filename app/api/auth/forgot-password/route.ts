@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateToken, sendPasswordResetEmail } from '@/lib/auth-email';
+import { checkRateLimit, RATE_LIMITS, getClientIdentifier, createRateLimitHeaders } from '@/lib/security/rate-limiter';
 
 /**
  * POST /api/auth/forgot-password
@@ -8,6 +9,19 @@ import { generateToken, sendPasswordResetEmail } from '@/lib/auth-email';
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit per IP to prevent reset-email bombing and token brute force.
+    const rl = await checkRateLimit(
+      `forgot:${getClientIdentifier(req)}`,
+      RATE_LIMITS.AUTH.maxRequests,
+      RATE_LIMITS.AUTH.windowMs
+    );
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429, headers: createRateLimitHeaders(rl) }
+      );
+    }
+
     const { email } = await req.json();
 
     if (!email) {

@@ -62,7 +62,7 @@ export async function getDonationTrends(
 
   const donations = await prisma.donation.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: dateRange.startDate,
         lte: dateRange.endDate,
@@ -126,7 +126,7 @@ export async function getCampaignPerformance(
 
   const campaigns = await prisma.campaign.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       ...(dateRange && {
         createdAt: {
           gte: dateRange.startDate,
@@ -173,7 +173,7 @@ export async function getFundBreakdown(dateRange: DateRange): Promise<FundBreakd
   const donations = await prisma.donation.groupBy({
     by: ['fundRestriction'],
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: dateRange.startDate,
         lte: dateRange.endDate,
@@ -207,7 +207,7 @@ export async function getMethodDistribution(dateRange: DateRange): Promise<Metho
   const donations = await prisma.donation.groupBy({
     by: ['method'],
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: dateRange.startDate,
         lte: dateRange.endDate,
@@ -244,7 +244,7 @@ export async function getDonorRetention(
   // Get all donations with contact info
   const donations = await prisma.donation.findMany({
     where: {
-      organizationId: session.user.organizationId || undefined,
+      organizationId: session.user.organizationId ?? '__no_such_org__',
       donatedAt: {
         gte: dateRange.startDate,
         lte: dateRange.endDate,
@@ -331,7 +331,7 @@ export async function getSummaryStats(dateRange: DateRange) {
   const [donations, contacts, campaigns] = await Promise.all([
     prisma.donation.aggregate({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        organizationId: session.user.organizationId ?? '__no_such_org__',
         donatedAt: {
           gte: dateRange.startDate,
           lte: dateRange.endDate,
@@ -349,7 +349,7 @@ export async function getSummaryStats(dateRange: DateRange) {
     }),
     prisma.contact.count({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        organizationId: session.user.organizationId ?? '__no_such_org__',
         donations: {
           some: {
             donatedAt: {
@@ -362,7 +362,7 @@ export async function getSummaryStats(dateRange: DateRange) {
     }),
     prisma.campaign.count({
       where: {
-        organizationId: session.user.organizationId || undefined,
+        organizationId: session.user.organizationId ?? '__no_such_org__',
         status: 'ACTIVE',
       },
     }),

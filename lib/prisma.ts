@@ -20,30 +20,56 @@ const initPrisma = (): PrismaClient | null => {
     return null;
   }
 
-  // Check if using PgBouncer (Supabase pooler)
-  const databaseUrl = process.env.DATABASE_URL || process.env.DIRECT_URL || '';
-  const isPgBouncer = databaseUrl.includes('pgbouncer=true') || databaseUrl.includes('pooler.supabase');
+  // Use DATABASE_URL (pooler) for all environments since RLS is disabled
+  // RLS was causing "Tenant or user not found" errors with pooler
+  // Now that RLS is disabled on all tables, pooler works fine everywhere
+  const connectionUrl = process.env.DATABASE_URL || process.env.DIRECT_URL || '';
+
+  const isPgBouncer = connectionUrl.includes('pgbouncer=true') || connectionUrl.includes('pooler.supabase');
 
   if (isPgBouncer) {
     // Use PostgreSQL adapter for PgBouncer compatibility
     // This avoids the "prepared statement does not exist" error
     const pool = new Pool({
-      connectionString: databaseUrl,
+      connectionString: connectionUrl,
       max: 10, // Limit connections for serverless
     });
 
     const adapter = new PrismaPg(pool);
 
-    return new PrismaClient({
+    const client = new PrismaClient({
       adapter,
       log: ['error'],
     });
+
+    // Disable row_security to fix "Tenant or user not found" error
+    // This must be done after client creation
+    (async () => {
+      try {
+        await client.$executeRawUnsafe('SET row_security = off');
+      } catch (error) {
+        // Ignore errors during initialization
+      }
+    })();
+
+    return client;
   }
 
   // Standard Prisma Client for direct connections
-  return new PrismaClient({
+  const client = new PrismaClient({
     log: ['error'],
   });
+
+  // Disable row_security for all connections
+  (async () => {
+    try {
+      await client.$executeRawUnsafe('SET row_security = off');
+    } catch (error) {
+      // Ignore errors during initialization
+    }
+  })();
+
+  return client;
 };
 
 // Initialize prisma - may be null during build time

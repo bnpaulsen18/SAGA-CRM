@@ -17,12 +17,12 @@ export default async function NewContactPage() {
       {/* Page Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <Link href="/contacts" className="text-white/70 hover:text-white">
-            ← Back to Contacts
+          <Link href="/contacts" className="text-[var(--ink-soft)] hover:text-[var(--ink)] text-sm transition-colors">
+            ← Back to Donors
           </Link>
         </div>
-        <h1 className="text-3xl font-bold text-white mb-2">Add New Contact</h1>
-        <p className="text-white/70">Create a new contact record in your database</p>
+        <h1 className="text-3xl font-bold text-[var(--ink)] mb-2" style={{ fontFamily: 'var(--font-bricolage), sans-serif' }}>Add New Contact</h1>
+        <p className="text-[var(--ink-soft)]">Create a new contact record in your database</p>
       </div>
 
       {/* Form Card */}

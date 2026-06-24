@@ -16,6 +16,39 @@ interface RateLimitResult {
 }
 
 /**
+ * In-memory fallback used when Vercel KV is unavailable (e.g. KV not provisioned).
+ * Per-instance only (not shared across serverless instances), but it means auth and
+ * donation limits actually enforce instead of silently failing open. Provision KV for
+ * production-grade, cross-instance limiting.
+ */
+const memoryStore = new Map<string, { count: number; resetAt: number }>()
+function checkRateLimitInMemory(
+  identifier: string,
+  maxRequests: number,
+  windowMs: number
+): RateLimitResult {
+  const key = `ratelimit:${identifier}`
+  const now = Date.now()
+  const entry = memoryStore.get(key)
+
+  if (!entry || entry.resetAt <= now) {
+    if (memoryStore.size > 5000) {
+      for (const [k, v] of memoryStore) if (v.resetAt <= now) memoryStore.delete(k)
+    }
+    memoryStore.set(key, { count: 1, resetAt: now + windowMs })
+    return { allowed: true, remaining: maxRequests - 1, resetTime: now + windowMs }
+  }
+
+  if (entry.count >= maxRequests) {
+    const retryAfter = Math.ceil((entry.resetAt - now) / 1000)
+    return { allowed: false, remaining: 0, resetTime: entry.resetAt, retryAfter }
+  }
+
+  entry.count++
+  return { allowed: true, remaining: maxRequests - entry.count, resetTime: entry.resetAt }
+}
+
+/**
  * Check if request should be rate limited using Redis
  * @param identifier Unique identifier (IP address, user ID, etc.)
  * @param maxRequests Maximum requests allowed
@@ -73,15 +106,9 @@ export async function checkRateLimit(
       resetTime: now + windowMs,
     }
   } catch (error) {
-    console.error('Rate limiter error:', error)
-
-    // Fail open - allow request if Redis is unavailable
-    // This prevents complete service outage if Redis fails
-    return {
-      allowed: true,
-      remaining: maxRequests - 1,
-      resetTime: Date.now() + windowMs,
-    }
+    // KV unavailable (e.g. not provisioned) — fall back to per-instance in-memory limiting
+    // instead of failing open, so auth and donation limits still enforce.
+    return checkRateLimitInMemory(identifier, maxRequests, windowMs)
   }
 }
 
