@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAGA — Product</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF6F0;--surface:#FFFFFF;--surface-2:#F4EDE3;--line:#ECE4D8;--line-2:#E2D9CC;
+    --text:#241726;--muted:#7a7186;--muted-2:#a99fb0;
+    --coral:#E8612C;--rose:#D8345A;--twilight:#7C3AA8;
+    --green:#2E9D78;--green-bg:#E6F3EE;--red:#C0573F;--red-bg:#F6EBE6;
+    --brand:linear-gradient(150deg,#F5872F 0%,#E03E5C 55%,#7C3AA8 100%);
+    --warm:linear-gradient(150deg,#F5872F,#E03E5C);--r:14px;
+    --side-bg:#fff;--topbar-bg:rgba(250,246,240,.85);--grid:#EFE7DA;
+  }
+  body.dark{
+    --bg:#100C16;--surface:#191320;--surface-2:#211A2B;--line:#2C2438;--line-2:#382f47;
+    --text:#ECE8F1;--muted:#9A92A8;--muted-2:#6b6379;
+    --green-bg:rgba(46,157,120,.16);--red-bg:rgba(192,87,63,.18);
+    --side-bg:#140F1C;--topbar-bg:rgba(16,12,22,.82);--grid:#241a30;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Figtree',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;line-height:1.5;transition:background .25s,color .25s;
+    background-image:radial-gradient(55% 45% at 82% -5%,rgba(124,58,168,.06),transparent 60%),radial-gradient(45% 40% at 12% 0%,rgba(245,135,47,.05),transparent 55%);background-attachment:fixed}
+  .tnum{font-variant-numeric:tabular-nums}.disp{font-family:'Bricolage Grotesque',sans-serif}
+  .app{display:grid;grid-template-columns:244px 1fr;min-height:100vh}
+  .sidebar{background:var(--side-bg);border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;transition:background .25s}
+  .side-brand{display:flex;align-items:center;gap:11px;padding:6px 8px 22px}
+  .wm{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;letter-spacing:-.01em;background:linear-gradient(105deg,#F5872F,#E03E5C 55%,#7C3AA8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .side-section{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);padding:14px 12px 6px}
+  .nav-item{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:10px;color:var(--muted);font-size:13.5px;font-weight:500;cursor:pointer;transition:.15s;margin-bottom:1px}
+  .nav-item svg{width:17px;height:17px;stroke-width:1.8;flex-shrink:0}
+  .nav-item:hover{background:var(--surface-2);color:var(--text)}
+  .nav-item.active{background:var(--surface-2);color:var(--text);box-shadow:inset 0 0 0 1px var(--line-2)}
+  .nav-item.active svg{color:var(--rose)}
+  .nav-badge{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.05em;padding:2px 7px;border-radius:6px;background:rgba(216,52,90,.12);color:var(--rose)}
+  .side-foot{margin-top:auto;padding:14px 10px 2px;border-top:1px solid var(--line);display:flex;align-items:center;gap:11px}
+  .avatar{width:32px;height:32px;border-radius:9px;background:var(--warm);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+  .side-foot .nm{font-size:12.5px;font-weight:600}.side-foot .rl{font-size:11px;color:var(--muted-2)}
+  .topbar{display:flex;align-items:center;gap:16px;padding:16px 34px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--topbar-bg);backdrop-filter:blur(10px);z-index:20}
+  svg g.gl line{stroke:var(--grid)}
+  .search{flex:1;max-width:400px;display:flex;align-items:center;gap:9px;padding:8px 13px;background:var(--surface);border:1px solid var(--line);border-radius:10px;color:var(--muted)}
+  .search input{border:none;outline:none;background:none;font-family:inherit;font-size:13.5px;width:100%;color:var(--text)}
+  .search input::placeholder{color:var(--muted-2)}
+  .btn{display:inline-flex;align-items:center;gap:7px;font-family:inherit;font-size:13px;font-weight:600;padding:8px 14px;border-radius:10px;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);color:var(--text);transition:.15s}
+  .btn svg{width:15px;height:15px;stroke-width:2}.btn:hover{border-color:#cfc3b3}
+  .btn-primary{background:var(--warm);color:#fff;border:none;font-weight:700}
+  .topbtn{margin-left:auto;display:flex;gap:9px}
+  .content{max-width:1280px;margin:0 auto;padding:28px 34px 70px}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:22px;gap:16px;flex-wrap:wrap}
+  .page-head h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:27px;letter-spacing:-.02em}
+  .page-head .sub{color:var(--muted);font-size:13.5px;margin-top:5px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:17px}
+  .kpi .lbl{font-size:12px;color:var(--muted);font-weight:500}
+  .kpi .val{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:26px;letter-spacing:-.02em;margin-top:8px}
+  .delta{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600;margin-top:10px}
+  .delta svg{width:11px;height:11px;stroke-width:2.6}.up{color:var(--green);background:var(--green-bg)}.down{color:var(--red);background:var(--red-bg)}
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;align-items:start;margin-bottom:16px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+  .card-h{display:flex;align-items:center;justify-content:space-between;padding:17px 19px 13px}
+  .card-h h3{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;font-weight:600}
+  .card-h .meta{font-size:12px;color:var(--muted);margin-top:2px}
+  .link{font-size:12.5px;font-weight:600;color:var(--coral);cursor:pointer;display:inline-flex;align-items:center;gap:4px}.link svg{width:13px;height:13px;stroke-width:2}
+  .ai{background:linear-gradient(160deg,#1b1020 0%,#2a1330 50%,#1d1633 100%);border:1px solid #3a2247;border-radius:var(--r);overflow:hidden;position:relative}
+  .ai::before{content:"";position:absolute;top:-30%;right:-15%;width:60%;height:120%;background:radial-gradient(circle,rgba(224,62,92,.28),transparent 62%)}
+  .ai::after{content:"";position:absolute;bottom:-40%;left:-10%;width:55%;height:110%;background:radial-gradient(circle,rgba(155,93,224,.24),transparent 62%)}
+  .ai-h{padding:17px 19px 4px;position:relative}
+  .ai-badge{display:inline-flex;align-items:center;gap:7px;font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(255,255,255,.08);color:#fff;padding:5px 11px;border-radius:7px;border:1px solid rgba(255,255,255,.14)}
+  .pulse{width:7px;height:7px;border-radius:50%;background:#F0567A;animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(240,86,122,.5)}70%{box-shadow:0 0 0 7px rgba(240,86,122,0)}100%{box-shadow:0 0 0 0 rgba(240,86,122,0)}}
+  .ai-body{padding:13px 19px 19px;position:relative;color:#fff}
+  .ai-lead{font-family:'Bricolage Grotesque',sans-serif;font-size:17.5px;font-weight:600;line-height:1.32}.ai-lead b{background:linear-gradient(105deg,#FBA94B,#F0567A);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .ai-reason{font-size:13px;color:rgba(255,255,255,.68);margin-top:11px;line-height:1.55}
+  .ai-actions{display:flex;gap:9px;margin-top:15px;flex-wrap:wrap}
+  .ai-btn{font-family:inherit;font-size:12.5px;font-weight:600;padding:9px 13px;border-radius:9px;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:6px}
+  .ai-btn svg{width:14px;height:14px;stroke-width:2}
+  .ai-btn.solid{background:var(--warm);color:#fff}
+  .ai-btn.ghost{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.16)}
+  .tbl{width:100%;border-collapse:collapse}
+  .tbl th{text-align:left;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2);font-weight:600;padding:0 19px 10px}
+  .tbl td{padding:12px 19px;border-top:1px solid var(--line);font-size:13px}
+  .tbl tr:hover td{background:var(--surface-2)}
+  .who{display:flex;align-items:center;gap:11px}.who .av{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+  .who .nm{font-weight:600;line-height:1.2}.who .sm{font-size:11.5px;color:var(--muted)}
+  .score{display:inline-flex;align-items:center;gap:8px}.score .bar{width:46px;height:6px;border-radius:6px;background:var(--surface-2);overflow:hidden}.score .bar i{display:block;height:100%}
+  .score .n{font-weight:700;font-size:12.5px}
+  .tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;white-space:nowrap}
+  .tag.risk{color:var(--red);background:var(--red-bg)}.tag.warm{color:var(--coral);background:rgba(232,97,44,.12)}.tag.new{color:var(--twilight);background:rgba(124,58,168,.12)}.tag.champ{color:var(--green);background:var(--green-bg)}
+  .tag.live{color:var(--green);background:var(--green-bg)}.tag.draft{color:var(--muted);background:var(--surface-2)}.tag.ok{color:var(--green);background:var(--green-bg)}
+  .suggest{color:var(--coral);font-weight:600;cursor:pointer}
+  .view{display:none}.view.show{display:block;animation:fade .4s ease}@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+  .three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .two{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .prog{height:7px;border-radius:7px;background:var(--surface-2);margin-top:12px;overflow:hidden}.prog i{display:block;height:100%;background:var(--brand)}
+  .pad{padding:18px}
+  /* automation/list rows */
+  .row{display:flex;align-items:center;gap:15px;padding:15px 19px;border-top:1px solid var(--line)}
+  .row:first-of-type{border-top:none}
+  .ric{width:38px;height:38px;border-radius:10px;background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--line)}
+  .ric svg{width:19px;height:19px;color:var(--coral);stroke-width:1.8}
+  .row .t{font-weight:600;font-size:13.5px}.row .d{font-size:12px;color:var(--muted);margin-top:1px}
+  .toggle{margin-left:auto;width:42px;height:23px;border-radius:20px;background:var(--green);position:relative;cursor:pointer;flex-shrink:0}
+  .toggle::after{content:"";position:absolute;width:17px;height:17px;border-radius:50%;background:#fff;top:3px;right:3px;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .toggle.off{background:var(--line-2)}.toggle.off::after{right:22px}
+  .runs{font-size:12px;color:var(--muted);font-weight:600;background:var(--surface-2);padding:4px 10px;border-radius:7px;border:1px solid var(--line)}
+  /* integration cards */
+  .conn{display:flex;align-items:center;gap:13px;padding:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+  .conn .logo{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-family:'Bricolage Grotesque';font-weight:700;color:#fff;font-size:16px;flex-shrink:0}
+  .conn .nm{font-weight:700;font-size:14px}.conn .ds{font-size:12px;color:var(--muted);margin-top:1px}
+  .conn .act{margin-left:auto}
+  .mini-btn{font-family:inherit;font-size:12px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);color:var(--text)}
+  .mini-btn.on{background:var(--green-bg);color:var(--green);border-color:transparent}
+  /* gift cards */
+  .gift{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .gift .ph{height:120px;background:linear-gradient(135deg,#F4EDE3,#EFE3D4);display:flex;align-items:center;justify-content:center}
+  .gift .ph svg{width:42px;height:42px;color:var(--muted-2);stroke-width:1.5}
+  .gift .b{padding:14px 16px}
+  .gift .nm{font-weight:700;font-size:14px}.gift .tier{font-size:12px;color:var(--coral);font-weight:600;margin-top:2px}
+  /* settings */
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+  .field input,.field select{width:100%;padding:9px 12px;border:1px solid var(--line-2);border-radius:9px;background:var(--surface);font-family:inherit;font-size:13.5px;color:var(--text)}
+  .plan{border:1px solid var(--line);border-radius:var(--r);padding:18px;text-align:center;background:var(--surface)}
+  .plan.cur{border-color:var(--coral);box-shadow:0 0 0 3px rgba(232,97,44,.1)}
+  .plan .pn{font-weight:700;font-size:15px}.plan .pp{font-family:'Bricolage Grotesque';font-weight:700;font-size:26px;margin:8px 0}.plan .pp small{font-size:13px;color:var(--muted);font-weight:400}
+  .plan ul{list-style:none;text-align:left;margin:12px 0;font-size:12.5px;color:var(--muted)}
+  .plan li{padding:4px 0;display:flex;gap:7px}.plan li svg{width:14px;height:14px;color:var(--green);flex-shrink:0;margin-top:2px}
+  .seg{display:flex;gap:4px;background:var(--surface-2);padding:4px;border-radius:10px}
+  .seg button{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);border:none;background:none;padding:6px 13px;border-radius:7px;cursor:pointer}
+  .seg button.on{background:var(--surface);color:var(--text);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+  .settings-panel{display:none}.settings-panel.show{display:block;animation:fade .35s ease}
+  /* AI Assistant */
+  .brief-bar{display:flex;gap:30px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 22px;flex-wrap:wrap}
+  .brief-bar .bb-v{font-family:'Bricolage Grotesque';font-weight:700;font-size:22px}
+  .brief-bar .bb-l{font-size:12px;color:var(--muted);margin-top:1px}
+  .hil{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--green);background:var(--green-bg);padding:6px 12px;border-radius:20px}
+  .hil .pulse{background:var(--green)}
+  .act-item{padding:18px 19px;border-top:1px solid var(--line)}
+  .act-top{display:flex;align-items:center;gap:14px}
+  .pri{font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:6px;flex-shrink:0}
+  .pri.high{color:var(--red);background:var(--red-bg)}.pri.med{color:var(--coral);background:rgba(232,97,44,.12)}.pri.low{color:var(--muted);background:var(--surface-2)}
+  .act-val{margin-left:auto;font-size:12.5px;font-weight:700;color:var(--muted)}
+  .act-why{font-size:13px;color:var(--muted);line-height:1.55;margin:12px 0 0;padding-left:52px}
+  .draft{margin:12px 0 0 52px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;overflow:hidden}
+  .draft-h{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted-2);padding:10px 14px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+  .draft-edit{color:var(--coral);cursor:pointer;text-transform:none;letter-spacing:0;font-size:12px}
+  .draft-body{padding:14px;font-size:13.5px;line-height:1.6;color:var(--text)}
+  .draft-body[contenteditable="true"]{outline:2px solid var(--coral);outline-offset:-2px;background:var(--surface)}
+  .act-do{display:flex;gap:9px;margin:14px 0 0 52px;align-items:center;flex-wrap:wrap}
+  .ai-btn.ghost.light{background:var(--surface);color:var(--text);border:1px solid var(--line-2)}
+  .act-skip{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:none;border:none;cursor:pointer;padding:9px 6px}
+  .act-skip:hover{color:var(--text)}
+  .act-item.done{opacity:.55}.act-item.done .act-do,.act-item.done .draft{display:none}
+  .act-done-tag{display:none;align-items:center;gap:6px;color:var(--green);font-weight:600;font-size:13px;margin:12px 0 0 52px}
+  .act-item.done .act-done-tag{display:flex}
+  .act-item.skipped{display:none}
+  /* Ask SAGA */
+  .asksaga{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:14px}
+  .ask-bar{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--line);border-radius:11px;padding:10px 14px}
+  .ask-bar input{flex:1;border:none;background:none;outline:none;font-family:inherit;font-size:14px;color:var(--text)}
+  .ask-bar input::placeholder{color:var(--muted-2)}
+  .ask-chips{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .chip{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--text);background:var(--surface-2);border:1px solid var(--line-2);border-radius:20px;padding:6px 13px;cursor:pointer;transition:.15s}
+  .chip:hover{border-color:var(--coral);color:var(--coral)}
+  .ask-result{font-size:13px;color:var(--twilight);font-weight:600;margin-top:12px;display:none;align-items:center;gap:8px}
+  .ask-result.show{display:flex;animation:fade .3s}
+  .drow.hide{display:none}
+  /* Content Studio */
+  .chan{display:flex;gap:8px}
+  .chan-dot{width:30px;height:30px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .studio{background:linear-gradient(160deg,#1b1020,#2a1330 55%,#1d1633);border:1px solid #3a2247;border-radius:var(--r);padding:18px 19px;position:relative;overflow:hidden}
+  .studio::before{content:"";position:absolute;top:-40%;right:-10%;width:50%;height:130%;background:radial-gradient(circle,rgba(224,62,92,.22),transparent 62%)}
+  .studio-h{position:relative;margin-bottom:14px}
+  .studio-controls{display:flex;gap:12px;flex-wrap:wrap;position:relative}
+  .ctrl{flex:1;min-width:150px}
+  .ctrl label{display:block;font-size:11px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:6px}
+  .ctrl select{width:100%;padding:9px 11px;border-radius:9px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:13px}
+  .ctrl select option{color:#241726}
+  .gen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+  .gpost{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column}
+  .gpost .pf{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--muted-2);text-transform:uppercase;letter-spacing:.04em;margin-bottom:9px}
+  .gpost .pb{font-size:13px;line-height:1.5;color:var(--text);flex:1}
+  .gpost .pact{display:flex;gap:7px;margin-top:12px}
+  .gpost .pbtn{font-family:inherit;font-size:11.5px;font-weight:600;padding:6px 10px;border-radius:8px;cursor:pointer;border:1px solid var(--line-2);background:var(--surface);color:var(--text)}
+  .gpost .pbtn.primary{background:var(--warm);color:#fff;border:none}
+  .gen-loading{color:rgba(255,255,255,.7);font-size:13px;margin-top:14px;display:flex;align-items:center;gap:9px;position:relative}
+  .spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.25);border-top-color:#F0567A;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .cal{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;padding:0 19px 18px}
+  .cal-day{min-height:90px}
+  .cal-d{font-size:11px;font-weight:700;color:var(--muted-2);text-transform:uppercase}
+  .cal-post{font-size:11px;font-weight:600;padding:7px 8px;border-radius:8px;margin-top:7px;line-height:1.3}
+  .cal-post small{display:block;font-weight:500;color:var(--muted);margin-top:2px;font-size:10px}
+  .cal-post.live{background:var(--green-bg);color:var(--green)}
+  .cal-post.draft{background:var(--surface-2);color:var(--muted);border:1px dashed var(--line-2)}
+  .donut{display:flex;align-items:center;gap:18px}
+  @media(max-width:1080px){.app{grid-template-columns:1fr}.sidebar{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid,.three,.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+  <linearGradient id="set" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F5872F"/><stop offset="55%" stop-color="#E03E5C"/><stop offset="1" stop-color="#7C3AA8"/></linearGradient>
+</defs></svg>
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-brand">
+      <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+        <path d="M15.5 22 A4.5 4.5 0 0 1 24.5 22" fill="url(#set)"/>
+        <path d="M10.5 22 A9.5 9.5 0 0 1 29.5 22" stroke="url(#set)" stroke-width="2" opacity=".62" fill="none" stroke-linecap="round"/>
+        <path d="M5.5 22 A14.5 14.5 0 0 1 34.5 22" stroke="url(#set)" stroke-width="1.9" opacity=".34" fill="none" stroke-linecap="round" stroke-dasharray="34 12"/>
+        <line x1="5" y1="22" x2="35" y2="22" stroke="url(#set)" stroke-width="2.1" stroke-linecap="round"/>
+        <line x1="13" y1="25.6" x2="27" y2="25.6" stroke="url(#set)" stroke-width="1.7" stroke-linecap="round" opacity=".32"/>
+      </svg>
+      <div class="wm">SAGA</div>
+    </div>
+    <div class="side-section">Overview</div>
+    <div class="nav-item active" data-v="dash"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg> Dashboard</div>
+    <div class="nav-item" data-v="assistant"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3a4 4 0 0 1 4 4c0 1.5-.8 2.3-1.5 3-.6.6-1 1-1 2M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> AI Assistant <span class="nav-badge">5</span></div>
+    <div class="nav-item" data-v="donors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 8.5a3 3 0 0 1 0 5"/></svg> Donors</div>
+    <div class="nav-item" data-v="donations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M16.5 7c0-1.7-2-3-4.5-3S7.5 5.3 7.5 7s2 2.5 4.5 3 4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3"/></svg> Donations</div>
+    <div class="nav-item" data-v="pages"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h8"/></svg> Donation Pages</div>
+    <div class="nav-item" data-v="camp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l16-7-4 16-4-5z"/></svg> Campaigns</div>
+    <div class="side-section">Engage</div>
+    <div class="nav-item" data-v="gifts"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18M12 8v13M12 8s-2-5-5-4 1 4 5 4zM12 8s2-5 5-4-1 4-5 4z"/></svg> Donor Gifts</div>
+    <div class="nav-item" data-v="social"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 10.8l7.4-3.6M8.3 13.2l7.4 3.6"/></svg> Social Media</div>
+    <div class="nav-item" data-v="comms"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v11H8l-4 3z"/></svg> Communications</div>
+    <div class="nav-item" data-v="auto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg> Automation <span class="nav-badge">AI</span></div>
+    <div class="side-section">Manage</div>
+    <div class="nav-item" data-v="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V9M10 19V4M16 19v-7M4 19h16"/></svg> Reports</div>
+    <div class="nav-item" data-v="integrations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="8" height="8" rx="2"/><rect x="13" y="12" width="8" height="8" rx="2"/><path d="M11 8h2a2 2 0 0 1 2 2v2"/></svg> Integrations</div>
+    <div class="nav-item" data-v="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg> Settings</div>
+    <div class="side-foot"><div class="avatar">JM</div><div><div class="nm">Jennifer Martinez</div><div class="rl">Hope Foundation · Owner</div></div></div>
+  </aside>
+  <main>
+    <div class="topbar">
+      <div class="search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><input placeholder="Search donors, gifts, campaigns…"></div>
+      <div class="topbtn"><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> Record gift</button></div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="view show" id="dash">
+        <div class="page-head"><div><h1>Good morning, Jennifer</h1><div class="sub">Where Hope Foundation stands today · Tuesday, June 2</div></div></div>
+        <div class="kpis">
+          <div class="kpi"><div class="lbl">Raised this year</div><div class="val tnum">$842,910</div><div><span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>18.4%</span></div></div>
+          <div class="kpi"><div class="lbl">Active donors</div><div class="val tnum">1,284</div><div><span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>6.1%</span></div></div>
+          <div class="kpi"><div class="lbl">Avg. gift</div><div class="val tnum">$148</div><div><span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>4.2%</span></div></div>
+          <div class="kpi"><div class="lbl">Donor retention</div><div class="val tnum">71.3%</div><div><span class="delta down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12l7 7 7-7"/></svg>2.1%</span></div></div>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <div class="card-h"><h3>Giving over time</h3><span class="link">View report <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+            <div style="padding:0 19px 19px">
+              <svg viewBox="0 0 620 200" width="100%" height="200" fill="none" preserveAspectRatio="none">
+                <g class="gl"><line x1="0" y1="20" x2="620" y2="20"/><line x1="0" y1="70" x2="620" y2="70"/><line x1="0" y1="120" x2="620" y2="120"/><line x1="0" y1="170" x2="620" y2="170"/></g>
+                <defs><linearGradient id="agD" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E03E5C" stop-opacity=".18"/><stop offset="1" stop-color="#E03E5C" stop-opacity="0"/></linearGradient><linearGradient id="agD2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#F5872F"/><stop offset="1" stop-color="#7C3AA8"/></linearGradient></defs>
+                <path d="M0 160 C70 152,110 132,170 122 C240 110,280 86,350 84 C420 82,470 56,540 44 L620 36 L620 200 L0 200Z" fill="url(#agD)"/>
+                <path d="M0 160 C70 152,110 132,170 122 C240 110,280 86,350 84 C420 82,470 56,540 44 L620 36" stroke="url(#agD2)" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+                <circle cx="540" cy="44" r="4.5" fill="#E03E5C"/><circle cx="540" cy="44" r="9" fill="#E03E5C" opacity=".2"/>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted-2);margin-top:8px;font-weight:600"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span></div>
+            </div>
+          </div>
+          <div class="ai">
+            <div class="ai-h"><span class="ai-badge"><span class="pulse"></span> SAGA Intelligence</span></div>
+            <div class="ai-body">
+              <div class="ai-lead">Three major donors show <b>early lapse signals</b> — a note this week protects <b>$31,400</b>.</div>
+              <div class="ai-reason">Their giving slowed and they've skipped your last two appeals. Donors like this lapsed 4× more often last year — a warm note now usually brings them back.</div>
+              <div class="ai-actions"><button class="ai-btn solid"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v11H8l-4 3z"/></svg> Draft notes</button><button class="ai-btn ghost" data-jump="donors">See who</button></div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Donors who need you this week</h3><span class="link" data-jump="donors">All donors <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></div>
+          <table class="tbl"><thead><tr><th>Donor</th><th>Last gift</th><th>Engagement</th><th>Status</th><th>SAGA suggests</th></tr></thead><tbody>
+            <tr class="drow" data-seg="risk"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#C0573F,#E03E5C)">RT</div><div><div class="nm">Robert Tran</div><div class="sm">Major · 6 yrs</div></div></div></td><td class="tnum">$5,000 · 14mo</td><td><span class="score"><span class="bar"><i style="width:34%;background:var(--red)"></i></span><span class="n">34</span></span></td><td><span class="tag risk">Lapse risk</span></td><td><span class="suggest">Personal call →</span></td></tr>
+            <tr class="drow" data-seg="warm"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#E8612C,#E03E5C)">SK</div><div><div class="nm">Susan Kim</div><div class="sm">Recurring · 3 yrs</div></div></div></td><td class="tnum">$250 · 4mo</td><td><span class="score"><span class="bar"><i style="width:58%;background:var(--coral)"></i></span><span class="n">58</span></span></td><td><span class="tag warm">Cooling</span></td><td><span class="suggest">Impact update →</span></td></tr>
+            <tr class="drow" data-seg="new"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#a060d0)">DM</div><div><div class="nm">Diego Morales</div><div class="sm">First gift · new</div></div></div></td><td class="tnum">$100 · new</td><td><span class="score"><span class="bar"><i style="width:76%;background:var(--green)"></i></span><span class="n">76</span></span></td><td><span class="tag new">New donor</span></td><td><span class="suggest">Welcome series →</span></td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- AI ASSISTANT -->
+      <section class="view" id="assistant">
+        <div class="page-head"><div><h1>Your morning brief</h1><div class="sub">SAGA reviewed all 1,284 donors at 6:00 AM and found what needs you today</div></div></div>
+        <div class="brief-bar">
+          <div><div class="bb-v tnum">5</div><div class="bb-l">Actions for review</div></div>
+          <div><div class="bb-v tnum">$33,900</div><div class="bb-l">Revenue at stake</div></div>
+          <div><div class="bb-v tnum">~25 min</div><div class="bb-l">To clear the list</div></div>
+          <div style="margin-left:auto;align-self:center"><span class="hil"><span class="pulse"></span> Nothing sends without your approval</span></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <div class="card-h"><div><h3>Recommended actions</h3><div class="meta">Ranked by impact · review, edit, or skip each one</div></div></div>
+
+          <!-- action 1: draft -->
+          <div class="act-item" data-id="a1">
+            <div class="act-top">
+              <span class="pri high">High</span>
+              <div class="who"><div class="av" style="background:linear-gradient(150deg,#C0573F,#E03E5C)">RT</div><div><div class="nm">Reach out to Robert Tran</div><div class="sm">Major donor · 14 months since last gift · lapse risk 88%</div></div></div>
+              <span class="act-val tnum">$8,000+ at stake</span>
+            </div>
+            <div class="act-why">Robert gave $5,000/yr for six years, then went quiet after your director changed. SAGA drafted a warm, personal re-connect note — no ask, just genuine reconnection.</div>
+            <div class="draft" data-draft>
+              <div class="draft-h">SAGA's draft · in Jennifer's voice <span class="draft-edit" data-edit>Edit</span></div>
+              <div class="draft-body" contenteditable="false">Hi Robert,<br><br>I was looking back at everything Hope Foundation has accomplished and your name kept coming up — six years of steady generosity that helped us open two new family shelters. I don't think we ever properly thanked you for that.<br><br>No ask here at all. I'd just love to catch you up on where your past gifts have led, maybe over coffee if you're ever free. You helped build something real.<br><br>With gratitude,<br>Jennifer</div>
+            </div>
+            <div class="act-do">
+              <button class="ai-btn solid" data-approve>✓ Approve &amp; send</button>
+              <button class="ai-btn ghost light" data-editbtn>Edit draft</button>
+              <button class="act-skip" data-skip>Skip</button>
+            </div>
+            <div class="act-done-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:15px;height:15px"><path d="M5 12l5 5L20 7"/></svg> Approved — SAGA is handling it.</div>
+          </div>
+
+          <!-- action 2 -->
+          <div class="act-item" data-id="a2">
+            <div class="act-top">
+              <span class="pri high">High</span>
+              <div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#a060d0)">AP</div><div><div class="nm">Call Aisha Patel before Friday</div><div class="sm">Mid-level · 13 months quiet · gave reliably every spring</div></div></div>
+              <span class="act-val tnum">$2,500 at stake</span>
+            </div>
+            <div class="act-why">Aisha always gave in spring and hasn't this year. A 5-minute call beats an email for her. SAGA prepared talking points and her giving history.</div>
+            <div class="act-do">
+              <button class="ai-btn solid" data-approve>✓ Add to my call list</button>
+              <button class="ai-btn ghost light" data-editbtn>View talking points</button>
+              <button class="act-skip" data-skip>Skip</button>
+            </div>
+            <div class="act-done-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:15px;height:15px"><path d="M5 12l5 5L20 7"/></svg> Approved — SAGA is handling it.</div>
+          </div>
+
+          <!-- action 3 -->
+          <div class="act-item" data-id="a3">
+            <div class="act-top">
+              <span class="pri med">Opportunity</span>
+              <div class="who"><div class="av" style="background:linear-gradient(150deg,#2E9D78,#3aa17e)">MC</div><div><div class="nm">Invite Marcus Chen to upgrade</div><div class="sm">Champion · engagement 88 · capacity suggests room to grow</div></div></div>
+              <span class="act-val tnum">+$4,500 potential</span>
+            </div>
+            <div class="act-why">Marcus is highly engaged and giving below his estimated capacity. SAGA suggests a personal invitation to your monthly giving circle at the $500 level.</div>
+            <div class="act-do">
+              <button class="ai-btn solid" data-approve>✓ Draft the invitation</button>
+              <button class="ai-btn ghost light" data-editbtn>See the math</button>
+              <button class="act-skip" data-skip>Skip</button>
+            </div>
+            <div class="act-done-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:15px;height:15px"><path d="M5 12l5 5L20 7"/></svg> Approved — SAGA is handling it.</div>
+          </div>
+
+          <!-- action 4 -->
+          <div class="act-item" data-id="a4">
+            <div class="act-top">
+              <span class="pri low">Routine</span>
+              <div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#a060d0)">DM</div><div><div class="nm">Welcome 3 new donors</div><div class="sm">Diego &amp; 2 others gave their first gift this week</div></div></div>
+              <span class="act-val tnum">Retention</span>
+            </div>
+            <div class="act-why">First-time donors who get a personal welcome within 48 hours are 28% more likely to give again. SAGA drafted all three, personalized to each gift.</div>
+            <div class="act-do">
+              <button class="ai-btn solid" data-approve>✓ Approve all 3</button>
+              <button class="ai-btn ghost light" data-editbtn>Review each</button>
+              <button class="act-skip" data-skip>Skip</button>
+            </div>
+            <div class="act-done-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:15px;height:15px"><path d="M5 12l5 5L20 7"/></svg> Approved — SAGA is handling it.</div>
+          </div>
+
+          <!-- action 5 -->
+          <div class="act-item" data-id="a5">
+            <div class="act-top">
+              <span class="pri med">Opportunity</span>
+              <div class="who"><div class="av" style="background:var(--warm)">📣</div><div><div class="nm">Post the Spring Appeal milestone</div><div class="sm">Campaign just crossed 80% — momentum worth sharing</div></div></div>
+              <span class="act-val tnum">Awareness</span>
+            </div>
+            <div class="act-why">Milestone posts on Thursday mornings get your highest engagement. SAGA can generate platform-ready posts for you to review in the Content Studio.</div>
+            <div class="act-do">
+              <button class="ai-btn solid" data-jump="social">✓ Open Content Studio</button>
+              <button class="act-skip" data-skip>Skip</button>
+            </div>
+            <div class="act-done-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="width:15px;height:15px"><path d="M5 12l5 5L20 7"/></svg> Approved — SAGA is handling it.</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- DONORS -->
+      <section class="view" id="donors">
+        <div class="page-head"><div><h1>Donors</h1><div class="sub">1,284 active · ranked by SAGA engagement model</div></div><button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 5h18M6 12h12M10 19h4"/></svg> Filter</button></div>
+        <div class="asksaga">
+          <div class="ask-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:17px;height:17px;color:var(--rose)"><path d="M12 3a4 4 0 0 1 4 4c0 1.5-.8 2.3-1.5 3-.6.6-1 1-1 2M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+            <input id="askInput" placeholder="Ask in plain English — &ldquo;lapsed major donors&rdquo;, &ldquo;new donors to welcome&rdquo;…">
+          </div>
+          <div class="ask-chips">
+            <button class="chip" data-seg="risk">Lapsed major donors</button>
+            <button class="chip" data-seg="new">New donors to welcome</button>
+            <button class="chip" data-seg="champ">Champions to upgrade</button>
+            <button class="chip" data-seg="all">Everyone</button>
+          </div>
+          <div class="ask-result" id="askResult"></div>
+        </div>
+        <div class="card">
+          <table class="tbl"><thead><tr><th>Donor</th><th>Lifetime</th><th>Last gift</th><th>Engagement</th><th>Predicted capacity</th><th>Status</th></tr></thead><tbody>
+            <tr><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#C0573F,#E03E5C)">RT</div><div><div class="nm">Robert Tran</div><div class="sm">robert.tran@email.com</div></div></div></td><td class="tnum">$48,200</td><td class="tnum">14mo ago</td><td><span class="score"><span class="bar"><i style="width:34%;background:var(--red)"></i></span><span class="n">34</span></span></td><td class="tnum">$8,000+</td><td><span class="tag risk">Lapse risk</span></td></tr>
+            <tr class="drow" data-seg="risk"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#6f47b0)">AP</div><div><div class="nm">Aisha Patel</div><div class="sm">aisha.p@email.com</div></div></div></td><td class="tnum">$14,600</td><td class="tnum">13mo ago</td><td><span class="score"><span class="bar"><i style="width:41%;background:var(--red)"></i></span><span class="n">41</span></span></td><td class="tnum">$2,500</td><td><span class="tag risk">Lapse risk</span></td></tr>
+            <tr><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#E8612C,#E03E5C)">SK</div><div><div class="nm">Susan Kim</div><div class="sm">susan.kim@email.com</div></div></div></td><td class="tnum">$9,100</td><td class="tnum">4mo ago</td><td><span class="score"><span class="bar"><i style="width:58%;background:var(--coral)"></i></span><span class="n">58</span></span></td><td class="tnum">$600</td><td><span class="tag warm">Cooling</span></td></tr>
+            <tr class="drow" data-seg="champ"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#2E9D78,#3aa17e)">MC</div><div><div class="nm">Marcus Chen</div><div class="sm">m.chen@email.com</div></div></div></td><td class="tnum">$22,400</td><td class="tnum">1mo ago</td><td><span class="score"><span class="bar"><i style="width:88%;background:var(--green)"></i></span><span class="n">88</span></span></td><td class="tnum">$10,000+</td><td><span class="tag champ">Champion</span></td></tr>
+            <tr><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#a060d0)">DM</div><div><div class="nm">Diego Morales</div><div class="sm">diego.m@email.com</div></div></div></td><td class="tnum">$100</td><td class="tnum">2wks ago</td><td><span class="score"><span class="bar"><i style="width:76%;background:var(--green)"></i></span><span class="n">76</span></span></td><td class="tnum">$300</td><td><span class="tag new">New donor</span></td></tr>
+            <tr class="drow" data-seg="champ"><td><div class="who"><div class="av" style="background:linear-gradient(150deg,#E8612C,#F5872F)">LW</div><div><div class="nm">Linda Wu</div><div class="sm">linda.wu@email.com</div></div></div></td><td class="tnum">$31,800</td><td class="tnum">2mo ago</td><td><span class="score"><span class="bar"><i style="width:82%;background:var(--green)"></i></span><span class="n">82</span></span></td><td class="tnum">$5,000+</td><td><span class="tag champ">Champion</span></td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- DONATIONS -->
+      <section class="view" id="donations">
+        <div class="page-head"><div><h1>Donations</h1><div class="sub">Every gift, reconciled and tagged automatically</div></div><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> Record gift</button></div>
+        <div class="kpis">
+          <div class="kpi"><div class="lbl">This month</div><div class="val tnum">$72,410</div><div><span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>11%</span></div></div>
+          <div class="kpi"><div class="lbl">Gifts this month</div><div class="val tnum">489</div></div>
+          <div class="kpi"><div class="lbl">Recurring revenue</div><div class="val tnum">$11,840<span style="font-size:14px;color:var(--muted)">/mo</span></div></div>
+          <div class="kpi"><div class="lbl">Avg. processing</div><div class="val tnum">0%<span style="font-size:14px;color:var(--muted)"> fee</span></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Recent donations</h3><span class="link">Export CSV</span></div>
+          <table class="tbl"><thead><tr><th>Date</th><th>Donor</th><th>Amount</th><th>Designation</th><th>Method</th><th>Status</th></tr></thead><tbody>
+            <tr><td class="tnum">Jun 2</td><td>Linda Wu</td><td class="tnum" style="font-weight:700">$2,500</td><td>Spring Hope Appeal</td><td>Card</td><td><span class="tag ok">Settled</span></td></tr>
+            <tr><td class="tnum">Jun 2</td><td>Diego Morales</td><td class="tnum" style="font-weight:700">$100</td><td>General Fund</td><td>Card</td><td><span class="tag ok">Settled</span></td></tr>
+            <tr><td class="tnum">Jun 1</td><td>Susan Kim</td><td class="tnum" style="font-weight:700">$25</td><td>Monthly Sustainers</td><td>Recurring</td><td><span class="tag ok">Settled</span></td></tr>
+            <tr><td class="tnum">Jun 1</td><td>Anonymous</td><td class="tnum" style="font-weight:700">$5,000</td><td>Capital — New Shelter</td><td>ACH</td><td><span class="tag warm">Pending</span></td></tr>
+            <tr><td class="tnum">May 31</td><td>Marcus Chen</td><td class="tnum" style="font-weight:700">$500</td><td>Spring Hope Appeal</td><td>Card</td><td><span class="tag ok">Settled</span></td></tr>
+            <tr><td class="tnum">May 30</td><td>Robert Tran</td><td class="tnum" style="font-weight:700">$1,000</td><td>General Fund</td><td>Card</td><td><span class="tag ok">Settled</span></td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- DONATION PAGES -->
+      <section class="view" id="pages">
+        <div class="page-head"><div><h1>Donation Pages</h1><div class="sub">Branded giving pages — funds go straight to your Stripe account</div></div><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> New page</button></div>
+        <div class="three">
+          <div class="gift"><div class="ph" style="background:linear-gradient(135deg,#F5872F22,#7C3AA822)"><svg viewBox="0 0 24 24" fill="none" stroke="#E03E5C" stroke-width="1.5" style="width:42px;height:42px"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></div><div class="b"><div class="nm">Spring Hope Appeal</div><div style="font-size:12px;color:var(--muted);margin-top:2px">/give/spring-hope</div><div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px"><span class="tag live">Live</span><span class="tnum" style="font-weight:700">$64,200</span></div><div style="font-size:12px;color:var(--muted);margin-top:8px">4.8% conversion · 1,340 visits</div></div></div>
+          <div class="gift"><div class="ph" style="background:linear-gradient(135deg,#2E9D7822,#5b8fb022)"><svg viewBox="0 0 24 24" fill="none" stroke="#2E9D78" stroke-width="1.5" style="width:42px;height:42px"><path d="M21 12a9 9 0 1 1-6.2-8.6"/><path d="M21 4v5h-5"/></svg></div><div class="b"><div class="nm">Monthly Sustainers</div><div style="font-size:12px;color:var(--muted);margin-top:2px">/give/monthly</div><div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px"><span class="tag live">Live</span><span class="tnum" style="font-weight:700">318 active</span></div><div style="font-size:12px;color:var(--muted);margin-top:8px">7.1% conversion · 920 visits</div></div></div>
+          <div class="gift"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6"/></svg></div><div class="b"><div class="nm">Capital Campaign</div><div style="font-size:12px;color:var(--muted);margin-top:2px">/give/new-shelter</div><div style="display:flex;justify-content:space-between;margin-top:12px;font-size:12.5px"><span class="tag draft">Draft</span><span class="tnum" style="font-weight:700">—</span></div><div style="font-size:12px;color:var(--muted);margin-top:8px">Not published yet</div></div></div>
+        </div>
+      </section>
+
+      <!-- CAMPAIGNS -->
+      <section class="view" id="camp">
+        <div class="page-head"><div><h1>Campaigns</h1><div class="sub">3 active · $324,040 raised across all</div></div><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> New campaign</button></div>
+        <div class="three">
+          <div class="card pad"><div style="font-weight:700;font-size:14px">Spring Hope Appeal</div><div style="font-size:12px;color:var(--muted)">Ends in 12 days</div><div class="disp tnum" style="font-size:22px;margin-top:14px;font-weight:700">$64,200 <span style="font-size:12px;color:var(--muted);font-weight:400">of $80,000</span></div><div class="prog"><i style="width:80%"></i></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;font-weight:600"><span>80%</span><span>412 gifts</span></div></div>
+          <div class="card pad"><div style="font-weight:700;font-size:14px">Monthly Sustainers</div><div style="font-size:12px;color:var(--muted)">Ongoing</div><div class="disp tnum" style="font-size:22px;margin-top:14px;font-weight:700">$11,840 <span style="font-size:12px;color:var(--muted);font-weight:400">/ mo</span></div><div class="prog"><i style="width:62%"></i></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;font-weight:600"><span>+22 new</span><span>318 active</span></div></div>
+          <div class="card pad"><div style="font-weight:700;font-size:14px">Capital — New Shelter</div><div style="font-size:12px;color:var(--muted)">Phase 1 of 3</div><div class="disp tnum" style="font-size:22px;margin-top:14px;font-weight:700">$248,000 <span style="font-size:12px;color:var(--muted);font-weight:400">of $500k</span></div><div class="prog"><i style="width:49%"></i></div><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:8px;font-weight:600"><span>49%</span><span>9 major gifts</span></div></div>
+        </div>
+      </section>
+
+      <!-- DONOR GIFTS -->
+      <section class="view" id="gifts">
+        <div class="page-head"><div><h1>Donor Gifts</h1><div class="sub">Thank-you gifts fulfilled automatically via Printful</div></div><button class="btn">Manage catalog</button></div>
+        <div class="card pad" style="margin-bottom:16px;display:flex;align-items:center;gap:14px">
+          <div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="8" width="18" height="13" rx="1.5"/><path d="M3 12h18M12 8v13"/></svg></div>
+          <div><div style="font-weight:600;font-size:14px">12 gifts ready to ship</div><div style="font-size:12.5px;color:var(--muted)">Triggered by gifts over $250 in the last 7 days</div></div>
+          <button class="btn btn-primary" style="margin-left:auto">Fulfill all</button>
+        </div>
+        <div class="three">
+          <div class="gift"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2l3 6h6l3-6M4 8h16l-1.5 13H5.5z"/></svg></div><div class="b"><div class="nm">Hope Foundation Mug</div><div class="tier">Gifts $100+</div></div></div>
+          <div class="gift"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 7l8-4 8 4v4c0 5-3.5 8-8 10-4.5-2-8-5-8-10z"/></svg></div><div class="b"><div class="nm">Embroidered Tote</div><div class="tier">Gifts $250+</div></div></div>
+          <div class="gift"><div class="ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M8 16h5M8 8h8"/></svg></div><div class="b"><div class="nm">Annual Impact Book</div><div class="tier">Gifts $1,000+</div></div></div>
+        </div>
+      </section>
+
+      <!-- SOCIAL / CONTENT STUDIO -->
+      <section class="view" id="social">
+        <div class="page-head"><div><h1>Content Studio</h1><div class="sub">Generate, schedule, and automate social across every channel</div></div>
+          <div class="chan"><span class="chan-dot" style="background:#0866FF" title="Facebook">f</span><span class="chan-dot" style="background:#E1306C" title="Instagram">◎</span><span class="chan-dot" style="background:#0A66C2" title="LinkedIn">in</span><span class="chan-dot" style="background:#111">𝕏</span></div>
+        </div>
+
+        <!-- AI generator -->
+        <div class="studio">
+          <div class="studio-h">
+            <span class="ai-badge" style="color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16)"><span class="pulse"></span> AI Post Generator</span>
+          </div>
+          <div class="studio-controls">
+            <div class="ctrl"><label>Topic</label><select id="genTopic"><option>Spring Hope Appeal — 80% milestone</option><option>Welcome our 1,000th donor</option><option>Volunteer spotlight</option><option>Impact story: the new shelter</option></select></div>
+            <div class="ctrl"><label>Tone</label><select id="genTone"><option>Warm &amp; grateful</option><option>Urgent &amp; energetic</option><option>Inspirational</option><option>Casual</option></select></div>
+            <div class="ctrl"><label>Channels</label><select id="genChan"><option>All channels</option><option>Instagram + Facebook</option><option>LinkedIn only</option><option>X only</option></select></div>
+            <button class="ai-btn solid" id="genBtn" style="align-self:flex-end;height:38px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" style="width:15px;height:15px"><path d="M12 3a4 4 0 0 1 4 4c0 1.5-.8 2.3-1.5 3M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> Generate 3 posts</button>
+          </div>
+        </div>
+
+        <div id="genOut"></div>
+
+        <div class="two" style="margin-top:16px">
+          <!-- automation rules -->
+          <div class="card">
+            <div class="card-h"><div><h3>Automations</h3><div class="meta">SAGA drafts → you approve → it posts</div></div></div>
+            <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l16-7-4 16-4-5z"/></svg></div><div><div class="t">Milestone posts</div><div class="d">Draft a post whenever a campaign hits 25/50/75/100%</div></div><div class="toggle"></div></div>
+            <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M16.5 7c0-1.7-2-3-4.5-3"/></svg></div><div><div class="t">Thank-a-donor shoutouts</div><div class="d">Turn notable gifts into a celebration post (with consent)</div></div><div class="toggle"></div></div>
+            <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><div class="t">Best-time scheduling</div><div class="d">Auto-pick the slot your audience engages with most</div></div><div class="toggle"></div></div>
+            <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4h7v7H4zM13 13h7v7h-7z"/><path d="M11 7h4M7 11v4"/></svg></div><div><div class="t">Repurpose to every channel</div><div class="d">Write once — SAGA adapts length &amp; hashtags per platform</div></div><div class="toggle off"></div></div>
+          </div>
+
+          <!-- this week calendar -->
+          <div class="card">
+            <div class="card-h"><div><h3>This week</h3><div class="meta">3 scheduled · 1 awaiting approval</div></div><span class="link">Full calendar</span></div>
+            <div class="cal">
+              <div class="cal-day"><span class="cal-d">Tue</span><div class="cal-post live">9:00 · Diego feature <small>IG · FB</small></div></div>
+              <div class="cal-day"><span class="cal-d">Wed</span></div>
+              <div class="cal-day"><span class="cal-d">Thu</span><div class="cal-post live">11:00 · 80% milestone <small>LinkedIn</small></div><div class="cal-post draft">Pending · approve</div></div>
+              <div class="cal-day"><span class="cal-d">Fri</span><div class="cal-post live">15:00 · Volunteer crew <small>IG</small></div></div>
+              <div class="cal-day"><span class="cal-d">Sat</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COMMUNICATIONS -->
+      <section class="view" id="comms">
+        <div class="page-head"><div><h1>Communications</h1><div class="sub">Appeals, newsletters, and thank-yous</div></div><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12h14M12 5v14"/></svg> New email</button></div>
+        <div class="kpis">
+          <div class="kpi"><div class="lbl">Sent this month</div><div class="val tnum">8,420</div></div>
+          <div class="kpi"><div class="lbl">Open rate</div><div class="val tnum">42.1%</div><div><span class="delta up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg>5.3%</span></div></div>
+          <div class="kpi"><div class="lbl">Click rate</div><div class="val tnum">6.8%</div></div>
+          <div class="kpi"><div class="lbl">Gifts attributed</div><div class="val tnum">$18,200</div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Recent sends</h3></div>
+          <table class="tbl"><thead><tr><th>Subject</th><th>Audience</th><th>Sent</th><th>Opens</th><th>Gifts</th></tr></thead><tbody>
+            <tr><td style="font-weight:600">Spring Hope — we're 80% there</td><td>All active donors</td><td class="tnum">May 28</td><td class="tnum">44%</td><td class="tnum" style="font-weight:700">$9,400</td></tr>
+            <tr><td style="font-weight:600">Your impact this spring 🌱</td><td>Lapsed 12mo+</td><td class="tnum">May 21</td><td class="tnum">38%</td><td class="tnum" style="font-weight:700">$3,100</td></tr>
+            <tr><td style="font-weight:600">Thank you, Marcus (auto)</td><td>New gift</td><td class="tnum">May 31</td><td class="tnum">71%</td><td class="tnum" style="font-weight:700">—</td></tr>
+          </tbody></table>
+        </div>
+      </section>
+
+      <!-- AUTOMATION -->
+      <section class="view" id="auto">
+        <div class="page-head"><div><h1>AI Automation</h1><div class="sub">SAGA working quietly in the background · 92 actions today</div></div></div>
+        <div class="card">
+          <div class="card-h"><h3>Active intelligence</h3><span class="link">Add workflow</span></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12a9 9 0 1 1-6.2-8.6"/><path d="M21 4v5h-5"/></svg></div><div><div class="t">Lapse-risk detection</div><div class="d">Flags donors slowing down before they lapse · saved 3 majors last quarter</div></div><span class="runs">14 flagged</span><div class="toggle"></div></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v11H8l-4 3z"/></svg></div><div><div class="t">Personalized thank-you drafts</div><div class="d">Writes a warm, gift-specific note within minutes of every donation</div></div><span class="runs">412 sent</span><div class="toggle"></div></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/></svg></div><div><div class="t">New-donor welcome series</div><div class="d">3-touch sequence that lifts second-gift rate by 28%</div></div><span class="runs">74 in flow</span><div class="toggle"></div></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 11l16-7-4 16-4-5z"/></svg></div><div><div class="t">Ask-amount optimization</div><div class="d">Suggests the right ask for each donor based on capacity &amp; history</div></div><span class="runs">live</span><div class="toggle off"></div></div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section class="view" id="reports">
+        <div class="page-head"><div><h1>Reports</h1><div class="sub">Board-ready insights, one click away</div></div><button class="btn">Schedule report</button></div>
+        <div class="two" style="margin-bottom:16px">
+          <div class="card pad">
+            <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:14px">Retention by cohort</h3>
+            <svg viewBox="0 0 380 120" width="100%" height="120" fill="none">
+              <g>
+                <rect x="10" y="20" width="40" height="90" rx="4" fill="#2E9D78" opacity=".85"/>
+                <rect x="68" y="38" width="40" height="72" rx="4" fill="#2E9D78" opacity=".7"/>
+                <rect x="126" y="50" width="40" height="60" rx="4" fill="#E8612C" opacity=".75"/>
+                <rect x="184" y="60" width="40" height="50" rx="4" fill="#E8612C" opacity=".7"/>
+                <rect x="242" y="72" width="40" height="38" rx="4" fill="#D8345A" opacity=".7"/>
+                <rect x="300" y="80" width="40" height="30" rx="4" fill="#7C3AA8" opacity=".7"/>
+              </g>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted-2);font-weight:600;margin-top:6px"><span>Y1</span><span>Y2</span><span>Y3</span><span>Y4</span><span>Y5</span><span>Y6</span></div>
+          </div>
+          <div class="card pad">
+            <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:14px">Giving by channel</h3>
+            <div class="donut">
+              <svg width="110" height="110" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" fill="none" stroke="#F4EDE3" stroke-width="6"/>
+                <circle cx="21" cy="21" r="15.9" fill="none" stroke="#E8612C" stroke-width="6" stroke-dasharray="42 58" stroke-dashoffset="25"/>
+                <circle cx="21" cy="21" r="15.9" fill="none" stroke="#7C3AA8" stroke-width="6" stroke-dasharray="28 72" stroke-dashoffset="-17"/>
+                <circle cx="21" cy="21" r="15.9" fill="none" stroke="#2E9D78" stroke-width="6" stroke-dasharray="20 80" stroke-dashoffset="-45"/>
+              </svg>
+              <div style="font-size:12.5px;color:var(--muted)">
+                <div style="margin-bottom:6px"><span style="color:#E8612C;font-weight:700">●</span> Online 42%</div>
+                <div style="margin-bottom:6px"><span style="color:#7C3AA8;font-weight:700">●</span> Major gifts 28%</div>
+                <div><span style="color:#2E9D78;font-weight:700">●</span> Recurring 20%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Report library</h3></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19V9M10 19V4M16 19v-7"/></svg></div><div><div class="t">LYBUNT / SYBUNT</div><div class="d">Donors who gave last year but not this year</div></div><button class="mini-btn" style="margin-left:auto">Run</button></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M16.5 7c0-1.7-2-3-4.5-3"/></svg></div><div><div class="t">Year-end giving statement</div><div class="d">Tax receipts, batch-generated for all donors</div></div><button class="mini-btn" style="margin-left:auto">Run</button></div>
+          <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/></svg></div><div><div class="t">Campaign performance</div><div class="d">ROI and conversion across every campaign</div></div><button class="mini-btn" style="margin-left:auto">Run</button></div>
+        </div>
+      </section>
+
+      <!-- INTEGRATIONS -->
+      <section class="view" id="integrations">
+        <div class="page-head"><div><h1>Integrations</h1><div class="sub">Connect the tools you already use</div></div></div>
+        <div class="three">
+          <div class="conn"><div class="logo" style="background:#635BFF">St</div><div><div class="nm">Stripe</div><div class="ds">Payments · direct payout</div></div><div class="act"><button class="mini-btn on">Connected</button></div></div>
+          <div class="conn"><div class="logo" style="background:#1A82E2">SG</div><div><div class="nm">SendGrid</div><div class="ds">Transactional email</div></div><div class="act"><button class="mini-btn on">Connected</button></div></div>
+          <div class="conn"><div class="logo" style="background:#FFE01B;color:#241726">Mc</div><div><div class="nm">Mailchimp</div><div class="ds">Marketing email</div></div><div class="act"><button class="mini-btn on">Connected</button></div></div>
+          <div class="conn"><div class="logo" style="background:#2CA01C">QB</div><div><div class="nm">QuickBooks</div><div class="ds">Accounting sync</div></div><div class="act"><button class="mini-btn">Connect</button></div></div>
+          <div class="conn"><div class="logo" style="background:#4285F4">Gw</div><div><div class="nm">Google Workspace</div><div class="ds">Calendar &amp; contacts</div></div><div class="act"><button class="mini-btn on">Connected</button></div></div>
+          <div class="conn"><div class="logo" style="background:#0A66C2">Li</div><div><div class="nm">LinkedIn</div><div class="ds">Social posting</div></div><div class="act"><button class="mini-btn">Connect</button></div></div>
+          <div class="conn"><div class="logo" style="background:#0866FF">Me</div><div><div class="nm">Meta Business</div><div class="ds">FB &amp; Instagram</div></div><div class="act"><button class="mini-btn on">Connected</button></div></div>
+          <div class="conn"><div class="logo" style="background:#FF4F00">Zp</div><div><div class="nm">Zapier</div><div class="ds">5,000+ app connections</div></div><div class="act"><button class="mini-btn">Connect</button></div></div>
+          <div class="conn"><div class="logo" style="background:#21759B">Wp</div><div><div class="nm">WordPress</div><div class="ds">Embed donation forms</div></div><div class="act"><button class="mini-btn">Connect</button></div></div>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="settings">
+        <div class="page-head"><div><h1>Settings</h1><div class="sub">Organization, team, and billing</div></div>
+          <div class="seg" id="settingsSeg"><button class="on" data-tab="org">Organization</button><button data-tab="team">Team</button><button data-tab="billing">Billing</button></div>
+        </div>
+
+        <!-- ORG -->
+        <div class="settings-panel show" data-panel="org">
+          <div class="two">
+            <div class="card pad">
+              <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:16px">Organization profile</h3>
+              <div class="field"><label>Organization name</label><input value="Hope Foundation"></div>
+              <div class="field"><label>Public giving URL</label><input value="sagacrm.io/give/hope-foundation"></div>
+              <div class="field"><label>EIN</label><input value="47-XXXXXXX"></div>
+              <div class="field"><label>Brand color</label><input value="#E03E5C"></div>
+              <button class="btn btn-primary">Save changes</button>
+            </div>
+            <div class="card pad">
+              <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:6px">Appearance</h3>
+              <div class="row" style="padding:14px 0"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></div><div><div class="t">Dark mode</div><div class="d">Switch the whole workspace to twilight</div></div><div class="toggle theme-toggle off" id="themeToggle"></div></div>
+              <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 5h16v11H8l-4 3z"/></svg></div><div><div class="t">Weekly digest email</div><div class="d">A Monday summary of what needs attention</div></div><div class="toggle"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TEAM -->
+        <div class="settings-panel" data-panel="team">
+          <div class="card">
+            <div class="card-h"><div><h3>Team members</h3><div class="meta">3 of 5 seats used on the Growth plan</div></div><button class="btn btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> Invite</button></div>
+            <div class="row"><div class="who"><div class="av" style="background:var(--warm)">JM</div><div><div class="nm">Jennifer Martinez</div><div class="sm">jennifer@hopefoundation.org</div></div></div><span class="tag champ" style="margin-left:auto">Owner</span></div>
+            <div class="row"><div class="who"><div class="av" style="background:linear-gradient(150deg,#7C3AA8,#a060d0)">DP</div><div><div class="nm">David Park</div><div class="sm">david@hopefoundation.org</div></div></div><span class="tag new" style="margin-left:auto">Admin</span></div>
+            <div class="row"><div class="who"><div class="av" style="background:linear-gradient(150deg,#2E9D78,#3aa17e)">RB</div><div><div class="nm">Rosa Bennett</div><div class="sm">rosa@hopefoundation.org</div></div></div><span class="tag warm" style="margin-left:auto">Fundraiser</span></div>
+          </div>
+        </div>
+
+        <!-- BILLING -->
+        <div class="settings-panel" data-panel="billing">
+          <div class="two">
+            <div class="card pad">
+              <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:16px">Your plan</h3>
+              <div class="plan cur">
+                <div class="pn">Growth</div>
+                <div class="pp">$149<small>/mo</small></div>
+                <ul>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg> Up to 5,000 donors</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg> All AI automation features</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg> 0% platform fee on donations</li>
+                  <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5L20 7"/></svg> Unlimited campaigns &amp; pages</li>
+                </ul>
+                <button class="btn" style="width:100%">Manage subscription</button>
+              </div>
+            </div>
+            <div class="card pad">
+              <h3 class="disp" style="font-size:15px;font-weight:600;margin-bottom:16px">Payment &amp; payouts</h3>
+              <div class="row" style="padding:14px 0"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg></div><div><div class="t">Visa ending 4242</div><div class="d">Billing card · expires 09/27</div></div><button class="mini-btn" style="margin-left:auto">Update</button></div>
+              <div class="row"><div class="ric"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v18M16.5 7c0-1.7-2-3-4.5-3S7.5 5.3 7.5 7s2 2.5 4.5 3 4.5 1.3 4.5 3-2 3-4.5 3-4.5-1.3-4.5-3"/></svg></div><div><div class="t">Stripe payout account</div><div class="d">Donations deposit directly to your bank</div></div><button class="mini-btn on" style="margin-left:auto">Connected</button></div>
+              <div style="font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5">SAGA never holds your donations. Gifts flow straight from your donors to your Stripe account — that's how we keep your platform fee at 0%.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+<script>
+  function go(id){
+    document.querySelectorAll('.view').forEach(v=>v.classList.toggle('show',v.id===id));
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.v===id));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  // Robust navigation via delegation (handles clicks on inner icons/text)
+  document.addEventListener('click',function(e){
+    var nav=e.target.closest('.nav-item'); if(nav){go(nav.dataset.v);return;}
+    var jump=e.target.closest('[data-jump]'); if(jump){go(jump.dataset.jump);return;}
+    var seg=e.target.closest('#settingsSeg button'); if(seg){
+      document.querySelectorAll('#settingsSeg button').forEach(b=>b.classList.toggle('on',b===seg));
+      var tab=seg.dataset.tab;
+      document.querySelectorAll('.settings-panel').forEach(p=>p.classList.toggle('show',p.dataset.panel===tab));
+      return;
+    }
+    var theme=e.target.closest('.theme-toggle'); if(theme){
+      theme.classList.toggle('off');
+      document.body.classList.toggle('dark');
+      return;
+    }
+    var tog=e.target.closest('.toggle:not(.theme-toggle)'); if(tog){tog.classList.toggle('off');return;}
+    var conn=e.target.closest('.mini-btn'); if(conn && conn.textContent.trim()==='Connect'){conn.textContent='Connected';conn.classList.add('on');return;}
+
+    // AI Assistant: approve / skip / edit
+    var ap=e.target.closest('[data-approve]'); if(ap){ap.closest('.act-item').classList.add('done');refreshBrief();return;}
+    var sk=e.target.closest('[data-skip]'); if(sk){sk.closest('.act-item').classList.add('skipped');refreshBrief();return;}
+    var ed=e.target.closest('[data-editbtn],[data-edit]'); if(ed){
+      var item=ed.closest('.act-item'); var body=item&&item.querySelector('.draft-body');
+      if(body){var on=body.getAttribute('contenteditable')==='true';body.setAttribute('contenteditable',on?'false':'true');if(!on){body.focus();}var lbl=item.querySelector('.draft-edit');if(lbl)lbl.textContent=on?'Edit':'Done';}
+      return;
+    }
+
+    // Ask SAGA segment chips
+    var chip=e.target.closest('.chip'); if(chip){applySeg(chip.dataset.seg, chip.textContent);return;}
+
+    // Content Studio generate
+    var gen=e.target.closest('#genBtn'); if(gen){generatePosts();return;}
+    var pbtn=e.target.closest('.gpost .pbtn'); if(pbtn){
+      if(pbtn.classList.contains('primary')){pbtn.textContent='Scheduled ✓';pbtn.style.opacity='.7';}
+      else{var b=pbtn.closest('.gpost').querySelector('.pb');b.setAttribute('contenteditable','true');b.style.outline='2px solid var(--rose)';b.focus();}
+      return;
+    }
+  });
+
+  function refreshBrief(){
+    var active=document.querySelectorAll('#assistant .act-item:not(.done):not(.skipped)').length;
+    var v=document.querySelector('#assistant .bb-v'); if(v)v.textContent=active;
+    var badge=document.querySelector('.nav-item[data-v="assistant"] .nav-badge'); if(badge){active?badge.textContent=active:badge.remove();}
+  }
+  function applySeg(seg,label){
+    document.querySelectorAll('.drow').forEach(r=>r.classList.toggle('hide', seg!=='all' && r.dataset.seg!==seg));
+    var res=document.getElementById('askResult');
+    var n=document.querySelectorAll('.drow:not(.hide)').length;
+    res.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" style="width:14px;height:14px"><path d="M5 12l5 5L20 7"/></svg> SAGA found <b style="margin:0 4px">'+n+'</b> donors matching &ldquo;'+label+'&rdquo;';
+    res.classList.add('show');
+    var inp=document.getElementById('askInput'); if(inp)inp.value=label;
+  }
+
+  var POSTS={
+    "Spring Hope Appeal — 80% milestone":[
+      {pf:"Instagram + FB",b:"🌅 80% there! Thanks to friends like you, the Spring Hope Appeal just crossed $64,000 — that's 2 new family shelters within reach. Just $16K to go. Every gift writes the next chapter → link in bio. #EveryDonorHasAStory"},
+      {pf:"LinkedIn",b:"We're proud to share that Hope Foundation's Spring Appeal has reached 80% of its $80,000 goal. This milestone means real beds, real families, real change. Grateful to our community of supporters who make this work possible."},
+      {pf:"X",b:"80% of the way to our Spring goal 🌅 $16K left to open 2 new family shelters. Be part of the story: [link]"}
+    ],
+    "Welcome our 1,000th donor":[
+      {pf:"Instagram + FB",b:"🎉 Meet Diego — our 1,000th donor this year! When asked why he gave, he said \"because everyone deserves a place to land.\" Welcome to the family, Diego. Here's to the next 1,000. ❤️"},
+      {pf:"LinkedIn",b:"A milestone worth pausing on: this year Hope Foundation welcomed its 1,000th donor. Behind that number are 1,000 people who chose to believe in second chances. Thank you, all of you."},
+      {pf:"X",b:"1,000 donors strong this year 🎉 Welcome to our newest, Diego — \"everyone deserves a place to land.\" Couldn't agree more."}
+    ],
+    "Volunteer spotlight":[
+      {pf:"Instagram + FB",b:"This weekend, 14 volunteers showed up before sunrise to prep our new shelter space. No fanfare, just heart. 💪 Tag a volunteer who inspires you. #CommunityInAction"},
+      {pf:"LinkedIn",b:"Our weekend volunteer crew logged 90+ hours preparing our newest shelter. Volunteerism is the quiet engine of every nonprofit — and ours is extraordinary. Thank you."},
+      {pf:"X",b:"14 volunteers. 90+ hours. 1 weekend. Our crew is something else. 💪"}
+    ],
+    "Impact story: the new shelter":[
+      {pf:"Instagram + FB",b:"Six months ago this was an empty building. Today it's home to 12 families. 🏡 Swipe to see the transformation your gifts made possible. This is what hope looks like."},
+      {pf:"LinkedIn",b:"From empty building to home for 12 families in six months. Our new shelter is now fully operational — a direct result of donor generosity and community partnership. Here's the story."},
+      {pf:"X",b:"6 months ago: an empty building. Today: home to 12 families. 🏡 This is your impact."}
+    ]
+  };
+  function generatePosts(){
+    var topic=document.getElementById('genTopic').value;
+    var out=document.getElementById('genOut');
+    out.innerHTML='<div class="gen-loading"><span class="spin"></span> SAGA is writing three options in Hope Foundation\u2019s voice…</div>';
+    setTimeout(function(){
+      var set=POSTS[topic]||POSTS["Spring Hope Appeal — 80% milestone"];
+      var html='<div class="gen-grid">';
+      set.forEach(function(p){
+        html+='<div class="gpost"><div class="pf"><span class="pulse" style="background:var(--rose)"></span> '+p.pf+'</div><div class="pb">'+p.b+'</div><div class="pact"><button class="pbtn primary">Approve &amp; schedule</button><button class="pbtn">Edit</button></div></div>';
+      });
+      html+='</div>';
+      out.innerHTML=html;
+    },1100);
+  }
+</script>
+</body>
+</html>

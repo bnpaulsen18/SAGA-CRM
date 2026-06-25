@@ -3,6 +3,8 @@
 **Last Updated:** January 8, 2026
 **Status:** Phase 1 Complete ✅ | Ready for Production Use
 
+> ⚠️ **Reality check (2026-06-24):** This document describes the *intended* AI-agent architecture, not shipped functionality. As of now only ~2 agents exist in `lib/agents/`, the donor-facing agents are **not built**, and the AI features require a valid `ANTHROPIC_API_KEY` (today's dashboard "AI" is templated heuristics). Treat this as a roadmap. The honest current state lives in `docs/ARCHITECTURE.md`.
+
 ---
 
 ## ✅ Completed (Week 1 - Day 1)
