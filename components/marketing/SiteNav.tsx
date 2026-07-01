@@ -19,6 +19,7 @@ export default function SiteNav() {
 
         <div className="hidden md:flex items-center gap-8">
           <Link href="/#features" className="text-[#6B6475] hover:text-[#2A2433] transition font-medium">Features</Link>
+          <Link href="/demo" className="text-[#6B6475] hover:text-[#2A2433] transition font-medium">Live Demo</Link>
           <Link href="/about" className="text-[#6B6475] hover:text-[#2A2433] transition font-medium">About</Link>
           <Link href="/pricing" className="text-[#6B6475] hover:text-[#2A2433] transition font-medium">Pricing</Link>
         </div>

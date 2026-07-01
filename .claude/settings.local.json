@@ -61,7 +61,12 @@
       "Bash(grep -iE '\\\\.md$')",
       "Bash(git check-ignore *)",
       "Bash(ls lib/agents/*.md)",
-      "Bash(ls scripts/agents/)"
+      "Bash(ls scripts/agents/)",
+      "Bash(find app/\\\\\\(app\\\\\\)/dashboard -type f)",
+      "Bash(find lib/dashboard -type f)",
+      "Bash(find app/demo -type f)",
+      "Bash(find scripts *)",
+      "Bash(find prisma *)"
     ],
     "deny": [],
     "ask": []

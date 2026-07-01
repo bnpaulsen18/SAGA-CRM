@@ -16,6 +16,7 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { hash } from 'bcryptjs'
+import { DEMO_ORG_EIN } from '../lib/dashboard/demo-org'
 
 const url = process.env.DATABASE_URL || process.env.DIRECT_URL || ''
 if (!url) {
@@ -31,7 +32,7 @@ const prisma = isPgBouncer
 
 const EMAIL = 'demo@saga.app'
 const PASSWORD = 'SagaDemo2026!'
-const EIN = '88-8888888'
+const EIN = DEMO_ORG_EIN
 
 async function main() {
   const passwordHash = await hash(PASSWORD, 12)
