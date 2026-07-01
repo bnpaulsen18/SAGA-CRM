@@ -66,7 +66,8 @@
       "Bash(find lib/dashboard -type f)",
       "Bash(find app/demo -type f)",
       "Bash(find scripts *)",
-      "Bash(find prisma *)"
+      "Bash(find prisma *)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp"
     ],
     "deny": [],
     "ask": []
