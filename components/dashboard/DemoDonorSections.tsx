@@ -5,12 +5,18 @@ import { MorningBrief, GivingChart, AttentionTable, type LinkFor } from './Dashb
 import DonorPreviewModal from './DonorPreviewModal'
 import type { DashboardViewModel, AttentionDonor } from '@/lib/dashboard/build-dashboard-viewmodel'
 
+// Defined locally rather than accepted as a prop: functions can't cross the
+// Server->Client boundary (this component is 'use client'), only serializable
+// data can. It's always the same constant for the demo page, so there's
+// nothing lost by not threading it in from the server page.
+const linkFor: LinkFor = () => '/register'
+
 /**
  * Owns the "which donor is being previewed" state shared between the Morning
  * Brief cards and the attention table, so a click in either place opens the
  * same modal instead of bouncing an anonymous visitor to a login-gated route.
  */
-export default function DemoDonorSections({ vm, linkFor }: { vm: DashboardViewModel; linkFor: LinkFor }) {
+export default function DemoDonorSections({ vm }: { vm: DashboardViewModel }) {
   const [selected, setSelected] = useState<AttentionDonor | null>(null)
 
   return (

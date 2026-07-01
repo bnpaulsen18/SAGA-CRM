@@ -40,7 +40,7 @@ export default async function DemoPage() {
 
       <KpiGrid kpis={vm.kpis} />
 
-      <DemoDonorSections vm={vm} linkFor={linkFor} />
+      <DemoDonorSections vm={vm} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <CampaignsPanel campaigns={vm.campaigns} linkFor={linkFor} />
