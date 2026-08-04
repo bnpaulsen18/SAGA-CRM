@@ -8,15 +8,30 @@
 
 🔗 **Live:** [www.sagacrm.io](https://www.sagacrm.io)
 
-> **New here (human or AI)?** Start with **[CLAUDE.md](CLAUDE.md)** for orientation, **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for how it's built, and **[cofounder/](cofounder/)** for the business/fundraising context.
+> **New here (human or AI)?** Start with **[CLAUDE.md](CLAUDE.md)** for orientation, **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for how it's built, **[docs/SagaAgents.md](docs/SagaAgents.md)** for the four AI agents, and **[cofounder/](cofounder/)** for the business/fundraising context.
 
 ---
 
 ## What is SAGA?
 
-SAGA is a multi-tenant SaaS web app: a donor CRM built around **action**, not data entry. The long-term product is a set of AI agents that surface each day's highest-impact donor actions (e.g. a "Morning Brief") and draft outreach in the fundraiser's own voice — approve and send. It's a pre-seed-stage company.
+SAGA is a multi-tenant SaaS web app: a donor CRM built around **action**, not data entry. The long-term product is four AI agents that watch the donor file and act on the moments that decide whether a donor gives again. It's a pre-seed-stage company.
 
 **Pricing:** one plan — **$100/month + a 2% platform fee** on donations processed (no tiers yet).
+
+## The four agents
+
+Full specs, architecture diagram, and coordination rules: **[docs/SagaAgents.md](docs/SagaAgents.md)**.
+
+| Agent | What it does | Talks to donors? |
+|---|---|---|
+| **Morning Brief** | Ranks the day's three highest-impact donor actions by dollars at stake and drafts the outreach | Only after a human approves each send |
+| **Major-Gift Signal** | Finds donors whose giving is accelerating and briefs the assigned fundraiser before the ask | **Never** — internal only |
+| **Welcome Series** | Runs a first-time donor's first 90 days in the organization's own voice | Yes, autonomously |
+| **Return Series** | Wins back donors who've gone quiet — automated below a value threshold, escalated to a person above it | Yes, below the threshold |
+
+> 🚧 **None of the four are built yet.** They require an `ANTHROPIC_API_KEY`. What ships today is the deterministic classifier that produces the dashboard's donor intelligence — real logic against real gifts, but not yet AI. `docs/SagaAgents.md` marks built vs. designed in every section.
+>
+> ⚠️ Note that `lib/agents/` is **unrelated** developer tooling, not these agents.
 
 ## Status (honest)
 
@@ -28,7 +43,7 @@ SAGA is a multi-tenant SaaS web app: a donor CRM built around **action**, not da
 | Light/dark theming | ✅ Live |
 | Public donation checkout | 🚧 Placeholder — not built |
 | Live Stripe payments | 🚧 Keys not yet configured |
-| AI agents (the donor-facing agents) | 🚧 Not built — requires `ANTHROPIC_API_KEY` (today's "AI" is templated) |
+| AI agents (Morning Brief, Major-Gift Signal, Welcome Series, Return Series) | 🚧 Not built — requires `ANTHROPIC_API_KEY` (today's "AI" is a deterministic classifier) |
 
 ## Tech stack
 
@@ -55,9 +70,10 @@ Open [http://localhost:3000](http://localhost:3000). Full setup details: **[docs
 ```
 app/          Next.js routes (marketing, auth, dashboard CRM, api/)
 components/   UI components (DashboardLayout shell, marketing SiteNav/SiteFooter, …)
-lib/          Server logic: auth, prisma-rls, stripe, email, security, reports, ai, agents
+lib/          Server logic: auth, prisma-rls, stripe, email, security, reports, dashboard, ai
+              (note: lib/agents/ is developer tooling — not the donor agents)
 prisma/       schema.prisma (16 models)
-docs/         ARCHITECTURE.md + ops/ + brand/ + setup guides
+docs/         ARCHITECTURE.md + SagaAgents.md + ops/ + brand/ + setup guides
 cofounder/    business & fundraising brain (company, pitch, raise)
 scripts/      ops + seed scripts
 public/       static assets
@@ -69,6 +85,7 @@ public/       static assets
 |---|---|
 | **[CLAUDE.md](CLAUDE.md)** | Orientation + load-bearing project rules (read first) |
 | **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** | How SAGA is built (stack, data model, auth, payments, AI) |
+| **[docs/SagaAgents.md](docs/SagaAgents.md)** | The four AI agents — specs, architecture, coordination rules, guardrails |
 | **[docs/SETUP.md](docs/SETUP.md)** / **[docs/GETTING-STARTED.md](docs/GETTING-STARTED.md)** | Local setup |
 | **[docs/ops/](docs/ops/)** | Deployment, Vercel, OAuth, Sentry, database guides |
 | **[cofounder/company.md](cofounder/company.md)** | What SAGA is + business model (investor-facing) |

@@ -71,7 +71,11 @@
       "WebSearch",
       "Bash(node build_deck.js)",
       "Bash(python -)",
-      "WebFetch(domain:www.syncdai.com)"
+      "WebFetch(domain:www.syncdai.com)",
+      "Bash(cp build_deck_v2.js build_deck_v2.js.bak)",
+      "Bash(python patch_v2_return_series.py)",
+      "Bash(node build_deck_v2.js)",
+      "PowerShell(Get-Process POWERPNT -ErrorAction SilentlyContinue | Select-Object Id, MainWindowTitle, StartTime, @{n='Visible';e={$_.MainWindowHandle -ne 0}} | Format-List)"
     ],
     "deny": [],
     "ask": []

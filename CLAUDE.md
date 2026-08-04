@@ -10,6 +10,7 @@ SAGA is an **AI-native donor CRM for nonprofits** — built to help small fundra
 ## Where the knowledge lives (don't duplicate it — go here)
 - **`cofounder/`** — the **business & fundraising brain** (company, pitch, raise, investors, tasks). Source of truth for "what is SAGA / business model / the raise." Invoke the `/cofounder` skill for founder-level work.
 - **`docs/ARCHITECTURE.md`** — **how SAGA is built** (the technical answer for investors/engineers).
+- **`docs/SagaAgents.md`** — **the four AI agents** in depth: specs, architecture, coordination rules, guardrails, and what's built vs. designed. Note `lib/agents/` is *developer tooling*, not these agents.
 - **`docs/`** — setup, deployment, and ops guides.
 - **`.claude/agents/`** — the review agents (design, security, code-quality, PM). Use them before shipping UI or backend changes.
 - **Claude Code persistent memory** — a `MEMORY.md` index + per-fact files are maintained for this project across sessions. Consult it; it holds decisions and gotchas not obvious from the code.
