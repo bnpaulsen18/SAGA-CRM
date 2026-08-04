@@ -67,7 +67,11 @@
       "Bash(find app/demo -type f)",
       "Bash(find scripts *)",
       "Bash(find prisma *)",
-      "mcp__Claude_in_Chrome__tabs_context_mcp"
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "WebSearch",
+      "Bash(node build_deck.js)",
+      "Bash(python -)",
+      "WebFetch(domain:www.syncdai.com)"
     ],
     "deny": [],
     "ask": []

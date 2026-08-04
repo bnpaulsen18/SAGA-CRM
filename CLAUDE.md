@@ -25,7 +25,7 @@ SAGA is an **AI-native donor CRM for nonprofits** — built to help small fundra
 
 ## Honest current status (live vs. not yet)
 - ✅ **Live:** the full non-AI CRM (contacts, donations, campaigns, reports, settings, CSV import), the marketing site (landing, pricing, about, contact, security, privacy, terms), auth, and light/dark mode — all deployed.
-- 🚧 **Not built yet:** the 6 donor-facing **AI agents** (needs an `ANTHROPIC_API_KEY`; today's dashboard "AI" is templated heuristics), the **public donation checkout** (the current form is a placeholder), and **live Stripe payments** (test/live keys not configured).
+- 🚧 **Not built yet:** the 3 donor-facing **AI agents** — Morning Brief, Major-Gift Signal, Welcome Series (needs an `ANTHROPIC_API_KEY`; today's dashboard "AI" is templated heuristics) — the **public donation checkout** (the current form is a placeholder), and **live Stripe payments** (test/live keys not configured).
 
 ## Conventions
 Windows + PowerShell environment. Secrets live in `.env` / `.env.local` (gitignored) — never commit them. Prefer the dedicated review agents and keep changes scoped.

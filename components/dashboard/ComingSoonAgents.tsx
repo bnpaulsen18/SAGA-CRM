@@ -1,15 +1,12 @@
 import {
-  Sparkle, PhoneCall, Handshake, TrendUp, NotePencil, EnvelopeSimple,
+  Sparkle, Handshake, TrendUp,
 } from '@phosphor-icons/react/dist/ssr'
 
 const bricolage = { fontFamily: 'var(--font-bricolage), sans-serif' } as const
 
 const secondary = [
-  { icon: PhoneCall, title: 'Reactivation', body: 'Drafts personal outreach the moment a donor crosses from quiet into at-risk.' },
-  { icon: Handshake, title: 'Welcome Series', body: "Paces a first-time donor's first 90 days automatically, in the org's voice." },
-  { icon: TrendUp, title: 'Major-Gift Signal', body: 'Flags donors trending toward a bigger gift, briefs the fundraiser before the ask.' },
-  { icon: NotePencil, title: 'Impact Reporting', body: "Turns a campaign's results into a donor-ready update, drafted, not templated." },
-  { icon: EnvelopeSimple, title: 'Campaign Copy', body: "Drafts appeal and newsletter copy from the org's own donor data." },
+  { icon: TrendUp, title: 'Major-Gift Signal', body: 'Scores donors whose giving is accelerating and briefs the fundraiser before the ask. Never contacts a donor.' },
+  { icon: Handshake, title: 'Welcome Series', body: "Paces a first-time donor's first 90 days automatically, in the org's own voice." },
 ]
 
 /**
@@ -54,7 +51,7 @@ export default function ComingSoonAgents() {
         </div>
 
         {/* Secondary capabilities */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {secondary.map((item) => (
             <div key={item.title} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">
