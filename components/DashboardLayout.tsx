@@ -8,7 +8,7 @@ import { useRouter, usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import {
   Bell, MagnifyingGlass, User, SignOut, House, Users, CurrencyDollar,
-  Megaphone, EnvelopeSimple, Sparkle, TrendUp, Handshake, Gift, Globe,
+  Megaphone, EnvelopeSimple, Sparkle, TrendUp, Handshake, PhoneCall, Gift, Globe,
   ChartBar, Gear, Sun, Moon,
 } from '@phosphor-icons/react/dist/ssr'
 
@@ -48,6 +48,7 @@ const NAV: NavGroup[] = [
     { label: 'Morning Brief', href: '/morning-brief', icon: Sparkle, soon: true },
     { label: 'Major-Gift Signal', href: '/major-gift-signal', icon: TrendUp, soon: true },
     { label: 'Welcome Series', href: '/welcome-series', icon: Handshake, soon: true },
+    { label: 'Return Series', href: '/return-series', icon: PhoneCall, soon: true },
   ] },
   { group: 'Manage', items: [
     { label: 'Donation Pages', href: '/donation-pages', icon: Globe, soon: true },

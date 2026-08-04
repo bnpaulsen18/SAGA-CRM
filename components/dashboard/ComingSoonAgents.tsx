@@ -1,5 +1,5 @@
 import {
-  Sparkle, Handshake, TrendUp,
+  Sparkle, Handshake, TrendUp, PhoneCall,
 } from '@phosphor-icons/react/dist/ssr'
 
 const bricolage = { fontFamily: 'var(--font-bricolage), sans-serif' } as const
@@ -7,6 +7,7 @@ const bricolage = { fontFamily: 'var(--font-bricolage), sans-serif' } as const
 const secondary = [
   { icon: TrendUp, title: 'Major-Gift Signal', body: 'Scores donors whose giving is accelerating and briefs the fundraiser before the ask. Never contacts a donor.' },
   { icon: Handshake, title: 'Welcome Series', body: "Paces a first-time donor's first 90 days automatically, in the org's own voice." },
+  { icon: PhoneCall, title: 'Return Series', body: 'Wins back donors who have gone quiet — automatically for smaller gifts, escalated to a person for major ones.' },
 ]
 
 /**
@@ -51,7 +52,7 @@ export default function ComingSoonAgents() {
         </div>
 
         {/* Secondary capabilities */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {secondary.map((item) => (
             <div key={item.title} className="bg-[var(--surface)] border border-[var(--line)] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-2">

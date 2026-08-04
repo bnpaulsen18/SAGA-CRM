@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { useTheme } from 'next-themes'
 import {
   Sun, Moon, Info, House, Users, CurrencyDollar, Megaphone, EnvelopeSimple,
-  Sparkle, TrendUp, Handshake, Gift, Globe, ChartBar, Gear,
+  Sparkle, TrendUp, Handshake, PhoneCall, Gift, Globe, ChartBar, Gear,
 } from '@phosphor-icons/react/dist/ssr'
 
 const SUNSET = 'linear-gradient(135deg,#F97A5E,#E0507A 60%,#5B4B8A)'
@@ -32,6 +32,7 @@ const NAV: NavGroup[] = [
     { label: 'Morning Brief', icon: Sparkle, soon: true },
     { label: 'Major-Gift Signal', icon: TrendUp, soon: true },
     { label: 'Welcome Series', icon: Handshake, soon: true },
+    { label: 'Return Series', icon: PhoneCall, soon: true },
   ] },
   { group: 'Manage', items: [
     { label: 'Donation Pages', icon: Globe, soon: true },

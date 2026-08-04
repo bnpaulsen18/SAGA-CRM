@@ -1,5 +1,5 @@
 /**
- * Seeds donor histories that actually exercise the three AI agents.
+ * Seeds donor histories that actually exercise the four AI agents.
  *
  * The base demo seed (seed-demo-login.ts) dates every gift inside the last ~40
  * days, so no donor is ever lapsed, cooling, or on a multi-gift trajectory —
@@ -57,17 +57,27 @@ const DONORS: Seed[] = [
   {
     first: 'Michael', last: 'Brennan', email: 'm.brennan@example.com',
     gifts: [[1500, 46], [1500, 34], [1750, 22]],
-    demonstrates: 'Morning Brief — Lapse risk. 22 months quiet.',
+    demonstrates: 'Morning Brief — Lapse risk. 22 months quiet. Return Series: escalated tier (too big to auto-email).',
   },
   {
     first: 'David', last: 'Ashford', email: 'd.ashford@example.com',
     gifts: [[500, 49], [750, 42], [1200, 35]],
-    demonstrates: 'Morning Brief — Lapse risk, deep. 35 months quiet.',
+    demonstrates: 'Morning Brief — Lapse risk, deep. 35 months quiet. Return Series: escalated tier.',
   },
   {
     first: 'Anna', last: 'Petrov', email: 'a.petrov@example.com',
     gifts: [[300, 38], [300, 26], [250, 14]],
-    demonstrates: 'Morning Brief — Lapse risk, small. Ranks below the others on dollars.',
+    demonstrates: 'Morning Brief — Lapse risk, small. Return Series: automated tier.',
+  },
+  {
+    first: 'Ruth', last: 'Feldman', email: 'r.feldman@example.com',
+    gifts: [[100, 30], [150, 22], [120, 15]],
+    demonstrates: 'Return Series — automated tier. Too small to be worth a fundraiser call, too loyal to lose.',
+  },
+  {
+    first: 'Carlos', last: 'Mendez', email: 'c.mendez@example.com',
+    gifts: [[200, 34], [250, 26], [200, 13]],
+    demonstrates: 'Return Series — automated tier.',
   },
 
   // ---------- Major-Gift Signal ----------
@@ -222,6 +232,24 @@ async function main() {
   console.log('\nMORNING BRIEF top 3 (by dollars at stake):')
   rows.filter((r) => r.status !== 'Active').sort((a, b) => b.atStake - a.atStake).slice(0, 3)
     .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.status.padEnd(11)} ${money(r.atStake)} at stake   ${r.months.toFixed(1)}mo quiet`))
+
+  // Return Series: donors past the lapse threshold, split by lifetime value.
+  // Below the line the agent runs an automated win-back; above it, a person does.
+  const LAPSE_MONTHS = 12
+  const HUMAN_TIER = 2000
+  const lapsed = rows.filter((r) => r.months >= LAPSE_MONTHS)
+
+  console.log(`\nRETURN SERIES — automated win-back (under ${money(HUMAN_TIER)} lifetime):`)
+  const auto = lapsed.filter((r) => r.life < HUMAN_TIER).sort((a, b) => b.life - a.life)
+  auto.length
+    ? auto.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.life)} lifetime   ${r.months.toFixed(0)}mo quiet`))
+    : console.log('   (none)')
+
+  console.log(`\nRETURN SERIES — escalated to a person (${money(HUMAN_TIER)}+ lifetime):`)
+  const human = lapsed.filter((r) => r.life >= HUMAN_TIER).sort((a, b) => b.life - a.life)
+  human.length
+    ? human.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.life)} lifetime   ${r.months.toFixed(0)}mo quiet   -> Morning Brief`))
+    : console.log('   (none)')
 
   console.log('\nWELCOME SERIES would enrol:')
   const ws = rows.filter((r) => r.n === 1 && r.months < 2)

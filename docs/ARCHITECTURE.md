@@ -63,7 +63,7 @@ Everything tenant-owned carries an `organizationId`.
 
 ## 7. AI layer (honest status)
 - `lib/ai/` and `lib/agents/` contain the AI scaffolding. **Today, the dashboard "AI" is templated heuristics**, with real Claude-backed functions present behind a template fallback.
-- The product vision includes **3 donor-facing AI agents**: **Morning Brief** (ranks the day's highest-impact donor actions by dollars at stake and drafts the outreach; human approves every send), **Major-Gift Signal** (scores donors whose giving is accelerating and briefs the assigned fundraiser; never contacts a donor), and **Welcome Series** (runs a first-time donor's first 90 days). **These are not built yet** and require an `ANTHROPIC_API_KEY`.
+- The product vision includes **4 donor-facing AI agents**: **Morning Brief** (ranks the day's highest-impact donor actions by dollars at stake and drafts the outreach; human approves every send), **Major-Gift Signal** (scores donors whose giving is accelerating and briefs the assigned fundraiser; never contacts a donor), **Welcome Series** (runs a first-time donor's first 90 days), and **Return Series** (wins back donors who cross a lapse threshold — automated for smaller donors, escalated to a human for major ones). **These are not built yet** and require an `ANTHROPIC_API_KEY`.
 - Treat the AI agents as the roadmap/pitch, not shipped functionality.
 
 ## 8. Security
@@ -86,7 +86,7 @@ Everything tenant-owned carries an `organizationId`.
 | Light/dark theming | ✅ Live |
 | Public donation checkout | 🚧 Placeholder — not built |
 | Live Stripe payments | 🚧 Keys not configured |
-| AI agents (Morning Brief, Major-Gift Signal, Welcome Series) | 🚧 Not built — needs `ANTHROPIC_API_KEY` |
+| AI agents (Morning Brief, Major-Gift Signal, Welcome Series, Return Series) | 🚧 Not built — needs `ANTHROPIC_API_KEY` |
 | Durable rate limiting / full audit logging | 🚧 In progress |
 
 _Last reviewed: 2026-06-24._
