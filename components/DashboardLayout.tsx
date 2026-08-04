@@ -31,7 +31,12 @@ interface SearchResult {
   _count: { donations: number }
 }
 
-type NavItem = { label: string; href: string; icon: typeof House; soon?: boolean }
+/**
+ * `soon` shows the badge. `preview` means the item has a real page to visit even
+ * though the feature itself is not built — the agent pages explain what each
+ * agent will do and run its selection logic live against real donor data.
+ */
+type NavItem = { label: string; href: string; icon: typeof House; soon?: boolean; preview?: boolean }
 type NavGroup = { group: string; items: NavItem[] }
 
 const NAV: NavGroup[] = [
@@ -45,10 +50,10 @@ const NAV: NavGroup[] = [
     { label: 'Communications', href: '/emails/compose', icon: EnvelopeSimple },
   ] },
   { group: 'AI Agents', items: [
-    { label: 'Morning Brief', href: '/morning-brief', icon: Sparkle, soon: true },
-    { label: 'Major-Gift Signal', href: '/major-gift-signal', icon: TrendUp, soon: true },
-    { label: 'Welcome Series', href: '/welcome-series', icon: Handshake, soon: true },
-    { label: 'Return Series', href: '/return-series', icon: PhoneCall, soon: true },
+    { label: 'Morning Brief', href: '/morning-brief', icon: Sparkle, soon: true, preview: true },
+    { label: 'Major-Gift Signal', href: '/major-gift-signal', icon: TrendUp, soon: true, preview: true },
+    { label: 'Welcome Series', href: '/welcome-series', icon: Handshake, soon: true, preview: true },
+    { label: 'Return Series', href: '/return-series', icon: PhoneCall, soon: true, preview: true },
   ] },
   { group: 'Manage', items: [
     { label: 'Donation Pages', href: '/donation-pages', icon: Globe, soon: true },
@@ -135,7 +140,9 @@ export default function DashboardLayout({
               <div className="space-y-0.5">
                 {g.items.map((item) => {
                   const Icon = item.icon
-                  if (item.soon) {
+                  // "Soon" with no page behind it stays inert rather than
+                  // pretending to be clickable.
+                  if (item.soon && !item.preview) {
                     return (
                       <div key={item.href} className="flex items-center gap-3 px-2.5 py-2 rounded-lg text-[#B7AFBC] cursor-default select-none">
                         <Icon size={18} />
@@ -155,6 +162,9 @@ export default function DashboardLayout({
                     >
                       <Icon size={18} weight={active ? 'fill' : 'regular'} />
                       <span>{item.label}</span>
+                      {item.soon && (
+                        <span className="ml-auto text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--ink-faint)]">Soon</span>
+                      )}
                     </Link>
                   )
                 })}

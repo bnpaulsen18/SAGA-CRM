@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
 import { PencilSimple, CurrencyDollar, ArrowLeft } from '@phosphor-icons/react/dist/ssr'
 import DeleteContactButton from './DeleteContactButton'
+import { scoreDonor } from '@/lib/donors/scoring'
+import { EngagementScoreCard, DonorIntelligenceCard } from '@/components/donors/DonorSignalPanels'
 
 export const runtime = 'nodejs'
 
@@ -49,6 +51,11 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
   const largestGift = contact.donations.length > 0 ? Math.max(...contact.donations.map((d) => d.amount)) : 0
   const averageGift = contact.donations.length > 0 ? lifetimeGiving / contact.donations.length : 0
   const lastGiftDate = contact.donations[0]?.donatedAt || null
+
+  // Same scoring module the dashboard and the donation page use, so this donor
+  // reads identically everywhere in the app. lib/donors/scoring.ts.
+  const signal = scoreDonor({ gifts: contact.donations.map((d) => ({ amount: d.amount, donatedAt: d.donatedAt })) })
+  const funds = Array.from(new Set(contact.donations.map((d) => d.campaign?.name || 'General Fund')))
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
@@ -121,6 +128,14 @@ export default async function ContactDetailPage({ params }: { params: Promise<{ 
           </p>
         </SagaCard>
       </div>
+
+      {/* Donor signals — same scoring the dashboard and donation pages use */}
+      {contact.donations.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <EngagementScoreCard signal={signal} />
+          <DonorIntelligenceCard signal={signal} funds={funds} />
+        </div>
+      )}
 
       {/* Contact Information & Donation History Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">

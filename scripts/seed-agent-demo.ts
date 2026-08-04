@@ -21,6 +21,7 @@ import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { Pool } from 'pg'
 import { DEMO_ORG_EIN } from '../lib/dashboard/demo-org'
+import { scoreDonor } from '../lib/donors/scoring'
 
 const url = process.env.DATABASE_URL || process.env.DIRECT_URL || ''
 if (!url) {
@@ -64,9 +65,12 @@ const DONORS: Seed[] = [
     gifts: [[500, 49], [750, 42], [1200, 35]],
     demonstrates: 'Morning Brief — Lapse risk, deep. 35 months quiet. Return Series: escalated tier.',
   },
+  // These three give roughly twice a year, so 13-15 months of silence is well
+  // past their own rhythm. Cadence matters: an annual donor at 14 months is
+  // behaving normally, a twice-yearly donor at 14 months has stopped.
   {
     first: 'Anna', last: 'Petrov', email: 'a.petrov@example.com',
-    gifts: [[300, 38], [300, 26], [250, 14]],
+    gifts: [[300, 26], [300, 20], [250, 14]],
     demonstrates: 'Morning Brief — Lapse risk, small. Return Series: automated tier.',
   },
   {
@@ -76,7 +80,7 @@ const DONORS: Seed[] = [
   },
   {
     first: 'Carlos', last: 'Mendez', email: 'c.mendez@example.com',
-    gifts: [[200, 34], [250, 26], [200, 13]],
+    gifts: [[200, 25], [250, 19], [200, 13]],
     demonstrates: 'Return Series — automated tier.',
   },
 
@@ -196,71 +200,59 @@ async function main() {
     },
   })
 
-  const now = Date.now()
+  // Scored with the app's own module so this report can never drift from what
+  // the dashboard and the agents actually see.
   const rows = contacts
     .filter((c) => c.donations.length > 0)
-    .map((c) => {
-      const gs = [...c.donations].sort((a, b) => +a.donatedAt - +b.donatedAt)
-      const n = gs.length
-      const life = gs.reduce((s, g) => s + g.amount, 0)
-      const last = gs[n - 1]
-      const months = (now - +last.donatedAt) / (30.44 * DAY)
-      const priorAvg = n > 1 ? (life - last.amount) / (n - 1) : 0
-      const ratio = priorAvg ? last.amount / priorAvg : 0
-      const avg = life / n
-
-      const mgs = n >= 3 && months <= 6 && ratio >= 1.5
-      let status = 'Active', mult = 0
-      if (n === 1 && months < 2) { status = 'New donor'; mult = 4 }
-      else if (life >= 10000 && months < 6) { status = 'Champion'; mult = 2 }
-      else if (months >= 12) { status = 'Lapse risk'; mult = 1.5 }
-      else if (months >= 6) { status = 'Cooling'; mult = 1 }
-
-      return {
-        name: `${c.firstName} ${c.lastName}`, n, life, months, ratio,
-        mgs, status, atStake: avg * mult,
-      }
-    })
+    .map((c) => ({
+      name: `${c.firstName} ${c.lastName}`,
+      ...scoreDonor({ gifts: c.donations.map((d) => ({ amount: d.amount, donatedAt: d.donatedAt })) }),
+    }))
 
   const money = (v: number) => '$' + Math.round(v).toLocaleString('en-US')
+  const cad = (r: { cadenceMonths: number | null }) =>
+    r.cadenceMonths ? `every ~${r.cadenceMonths.toFixed(0)}mo` : 'no rhythm yet'
   console.log(`\nOrg: ${org.name}   donors created: ${created}   already present: ${skipped}\n`)
 
   console.log('MAJOR-GIFT SIGNAL would flag:')
-  rows.filter((r) => r.mgs).sort((a, b) => b.ratio - a.ratio)
-    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.ratio.toFixed(1)}x   ${money(r.life)} lifetime   ${r.months.toFixed(1)}mo ago`))
+  rows.filter((r) => r.majorGiftSignal).sort((a, b) => (b.trendRatio ?? 0) - (a.trendRatio ?? 0))
+    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${(r.trendRatio ?? 0).toFixed(1)}x   ${money(r.lifetime)} lifetime   ${r.monthsSince.toFixed(1)}mo ago`))
 
   console.log('\nMORNING BRIEF top 3 (by dollars at stake):')
   rows.filter((r) => r.status !== 'Active').sort((a, b) => b.atStake - a.atStake).slice(0, 3)
-    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.status.padEnd(11)} ${money(r.atStake)} at stake   ${r.months.toFixed(1)}mo quiet`))
+    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.status.padEnd(11)} ${money(r.atStake)} at stake   ${r.monthsSince.toFixed(1)}mo quiet`))
 
-  // Return Series: donors past the lapse threshold, split by lifetime value.
-  // Below the line the agent runs an automated win-back; above it, a person does.
-  const LAPSE_MONTHS = 12
-  const HUMAN_TIER = 2000
-  const lapsed = rows.filter((r) => r.months >= LAPSE_MONTHS)
+  // Return Series gates on `lapsed` — relative to each donor's own cadence, not
+  // a flat cut — then splits on lifetime value.
+  const lapsed = rows.filter((r) => r.lapsed)
 
-  console.log(`\nRETURN SERIES — automated win-back (under ${money(HUMAN_TIER)} lifetime):`)
-  const auto = lapsed.filter((r) => r.life < HUMAN_TIER).sort((a, b) => b.life - a.life)
+  console.log('\nRETURN SERIES — automated win-back (under the human-escalation tier):')
+  const auto = lapsed.filter((r) => !r.needsHumanOutreach).sort((a, b) => b.lifetime - a.lifetime)
   auto.length
-    ? auto.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.life)} lifetime   ${r.months.toFixed(0)}mo quiet`))
+    ? auto.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.lifetime)} lifetime   ${r.monthsSince.toFixed(0)}mo quiet   (gives ${cad(r)})`))
     : console.log('   (none)')
 
-  console.log(`\nRETURN SERIES — escalated to a person (${money(HUMAN_TIER)}+ lifetime):`)
-  const human = lapsed.filter((r) => r.life >= HUMAN_TIER).sort((a, b) => b.life - a.life)
+  console.log('\nRETURN SERIES — escalated to a person:')
+  const human = lapsed.filter((r) => r.needsHumanOutreach).sort((a, b) => b.lifetime - a.lifetime)
   human.length
-    ? human.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.life)} lifetime   ${r.months.toFixed(0)}mo quiet   -> Morning Brief`))
+    ? human.forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.lifetime)} lifetime   ${r.monthsSince.toFixed(0)}mo quiet   -> Morning Brief`))
     : console.log('   (none)')
 
   console.log('\nWELCOME SERIES would enrol:')
-  const ws = rows.filter((r) => r.n === 1 && r.months < 2)
+  const ws = rows.filter((r) => r.status === 'New donor')
   ws.length
-    ? ws.forEach((r) => console.log(`   ${r.name.padEnd(24)} first gift ${r.months.toFixed(1)}mo ago`))
+    ? ws.forEach((r) => console.log(`   ${r.name.padEnd(24)} first gift ${r.monthsSince.toFixed(1)}mo ago`))
     : console.log('   (none)')
 
   console.log('\nCORRECTLY SILENT (the controls that prove the gates work):')
-  rows.filter((r) => !r.mgs && r.status === 'Active' && r.n >= 3)
-    .sort((a, b) => b.n - a.n)
-    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.n} gifts   ${r.ratio.toFixed(1)}x   ${money(r.life)} lifetime`))
+  rows.filter((r) => !r.majorGiftSignal && !r.lapsed && r.status === 'Active' && r.count >= 3)
+    .sort((a, b) => b.count - a.count)
+    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${r.count} gifts   ${(r.trendRatio ?? 0).toFixed(1)}x   ${money(r.lifetime)} lifetime`))
+
+  console.log('\nQUIET BUT NOT LAPSED (cooling on the dashboard, no win-back sent):')
+  rows.filter((r) => !r.lapsed && r.monthsSince >= 6)
+    .sort((a, b) => b.lifetime - a.lifetime)
+    .forEach((r) => console.log(`   ${r.name.padEnd(24)} ${money(r.lifetime)} lifetime   ${r.monthsSince.toFixed(0)}mo quiet   (gives ${cad(r)})`))
   console.log()
 }
 

@@ -29,9 +29,11 @@ Full specs, architecture diagram, and coordination rules: **[docs/SagaAgents.md]
 | **Welcome Series** | Runs a first-time donor's first 90 days in the organization's own voice | Yes, autonomously |
 | **Return Series** | Wins back donors who've gone quiet — automated below a value threshold, escalated to a person above it | Yes, below the threshold |
 
-> 🚧 **None of the four are built yet.** They require an `ANTHROPIC_API_KEY`. What ships today is the deterministic classifier that produces the dashboard's donor intelligence — real logic against real gifts, but not yet AI. `docs/SagaAgents.md` marks built vs. designed in every section.
+Each agent has a page in the app — `/morning-brief`, `/major-gift-signal`, `/welcome-series`, `/return-series` — explaining how it works and showing **exactly which of your donors it would act on today**, computed live from real data.
+
+> 🚧 **None of the four send anything yet.** The selection logic runs (that's what the agent pages show); what's missing is the drafting and sending layer, which needs an `ANTHROPIC_API_KEY` and a scheduled job runner. `docs/SagaAgents.md` marks built vs. designed in every section.
 >
-> ⚠️ Note that `lib/agents/` is **unrelated** developer tooling, not these agents.
+> ⚠️ Note that `lib/agents/` is **unrelated** developer tooling. The donor agents live in `lib/donors/`.
 
 ## Status (honest)
 
@@ -43,7 +45,9 @@ Full specs, architecture diagram, and coordination rules: **[docs/SagaAgents.md]
 | Light/dark theming | ✅ Live |
 | Public donation checkout | 🚧 Placeholder — not built |
 | Live Stripe payments | 🚧 Keys not yet configured |
-| AI agents (Morning Brief, Major-Gift Signal, Welcome Series, Return Series) | 🚧 Not built — requires `ANTHROPIC_API_KEY` (today's "AI" is a deterministic classifier) |
+| Donor scoring (status, cadence, lapse, trajectory, engagement) | ✅ Live — one module, `lib/donors/scoring.ts` |
+| AI agent pages (what each agent does + live preview of who it would act on) | ✅ Live |
+| AI agents actually sending | 🚧 Not built — needs `ANTHROPIC_API_KEY` + a scheduled job runner |
 
 ## Tech stack
 
@@ -71,6 +75,7 @@ Open [http://localhost:3000](http://localhost:3000). Full setup details: **[docs
 app/          Next.js routes (marketing, auth, dashboard CRM, api/)
 components/   UI components (DashboardLayout shell, marketing SiteNav/SiteFooter, …)
 lib/          Server logic: auth, prisma-rls, stripe, email, security, reports, dashboard, ai
+  donors/     Donor scoring (single source of truth) + the agent catalog & previews
               (note: lib/agents/ is developer tooling — not the donor agents)
 prisma/       schema.prisma (16 models)
 docs/         ARCHITECTURE.md + SagaAgents.md + ops/ + brand/ + setup guides

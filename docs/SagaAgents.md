@@ -11,10 +11,10 @@
 | Path | What it actually is | Related to this doc? |
 |---|---|---|
 | `lib/agents/` | A **developer-tooling** framework — `frontend-developer` and `backend-architect` code-generation agents with a CLI and an admin-only API. Its README describes an aspirational "31 agents". | ❌ **No.** Unrelated. |
-| `lib/ai/` | Anthropic SDK wrapper + donor scoring/drafting helpers. | ✅ Yes — the building blocks. |
-| `lib/dashboard/build-dashboard-viewmodel.ts` | The deterministic donor classifier that powers the dashboard and `/demo`. | ✅ Yes — this is the Morning Brief prototype. |
+| `lib/donors/` | Donor scoring, the agent catalog, and the live agent previews. | ✅ **Start here.** |
+| `lib/ai/` | Anthropic SDK wrapper + narrative helpers. | ✅ Yes — the drafting layer. |
 
-If you grep this repo for "agent" you will land in `lib/agents/` first and reach the wrong conclusion. The four donor agents described here have **no implementation directory yet**.
+If you grep this repo for "agent" you will land in `lib/agents/` first and reach the wrong conclusion. The donor agents live under **`lib/donors/`**, and their send/schedule layer is not built yet.
 
 ---
 
@@ -81,7 +81,11 @@ Keeping 3 and 4 separate is the single most important design decision here. Rank
 
 ## 3. What exists today (✅ built)
 
-**`lib/dashboard/build-dashboard-viewmodel.ts`** — the classifier. Given a `TrustedOrgId`, it returns the dashboard view model including donor status, months since last gift, and dollars at stake.
+**`lib/donors/scoring.ts`** — the classifier, and the single source of donor math. `scoreDonor()` is consumed by the dashboard, `/demo`, the donor detail page, the donation detail page, the four agent pages, and the seed reporter, so no two surfaces can disagree about the same donor.
+
+**`lib/donors/agent-catalog.ts`** and **`lib/donors/agent-preview.ts`** — the agent descriptions, and the selection logic run live against real org data. Every agent has a page in the app (`/morning-brief`, `/major-gift-signal`, `/welcome-series`, `/return-series`) showing exactly who it would act on today.
+
+The status buckets:
 
 ```ts
 if (count === 1 && monthsSince < 2)            status = 'New donor'  atStake = avg * 4
@@ -91,7 +95,7 @@ else if (monthsSince >= 6)                     status = 'Cooling'    atStake = a
 else                                           status = 'Active'     atStake = avg
 ```
 
-Donors needing attention are everything except `Active`, sorted by status priority (`Lapse risk` → `Cooling` → `Champion` → `New donor`) then by dollars at stake descending.
+Donors needing attention are everything except `Active`, **sorted by dollars at stake descending**. Status is deliberately *not* the primary sort — it is already weighted into `atStake` through the multipliers below, so sorting by it first double-counts status and lets a $425 lapse risk outrank a $10,000 donor who just went quiet.
 
 The `atStake` multipliers encode a claim about *replacement cost*: a brand-new donor is worth 4× their gift because the second gift is where retention is won or lost; a lapsing donor is worth 1.5× because winning them back is cheaper than acquiring someone new. **These multipliers are a starting hypothesis, not a validated model.** They should be tuned against real retention data once SAGA has any.
 
@@ -107,7 +111,7 @@ The `atStake` multipliers encode a claim about *replacement cost*: a brand-new d
 
 ⚠️ **`lib/ai/client.ts` pins `claude-3-5-sonnet-20241022`.** That model is well behind current. Update it to a current Claude model before building any agent on top of it.
 
-⚠️ The scoring helpers in `donor-profiles.ts` overlap with — and disagree with — the dashboard classifier. `identifyMajorGiftProspects()` uses a 0-100 additive score with a 40 cutoff; the dashboard uses status buckets. **Pick one before building.** The specs below assume the classifier is authoritative.
+✅ **Resolved (2026-08-04):** `donor-profiles.ts` previously carried a second, disagreeing scoring system — `calculateDonorEngagementScore`, `identifyMajorGiftProspects` and `predictDonorLapseRisk`. The same donor could read "Lapse risk — personal call" on the dashboard and "Low — send a survey" on the donation page. Those three are deleted; their two good ideas (cadence-relative lapse detection and `reasons[]` explainability) were ported into `scoring.ts`, which now guarantees the levels cannot contradict the status. `analyzeDonorPattern` and `generateDonorEmail` remain — they write narrative rather than score, so they never conflicted.
 
 ---
 
@@ -344,7 +348,7 @@ The controls matter as much as the hits. Thomas Reed has given 8 times and is th
 |---|---|---|
 | 1 | `ANTHROPIC_API_KEY` | Absent today; `lib/ai/client.ts` disables AI without it |
 | 2 | Update the pinned model | `claude-3-5-sonnet-20241022` is well behind current |
-| 3 | Reconcile the two scoring systems | Classifier vs. `donor-profiles.ts` — pick one |
+| ~~3~~ | ~~Reconcile the two scoring systems~~ | ✅ Done — `lib/donors/scoring.ts` is the single source |
 | 4 | Scheduling | Three of four are scheduled; needs Vercel Cron or equivalent |
 | 5 | Schema additions on `Contact` | `welcomeSeriesStartedOn`, `returnSeriesStartedOn`, `returnSeriesCompletedOn`, opt-out, suppression, deceased, do-not-solicit |
 | 6 | Per-org agent config | Lapse threshold, escalation threshold, enable flags |

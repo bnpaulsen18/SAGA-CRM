@@ -1,11 +1,15 @@
 import type { PrismaClient } from '@prisma/client'
 import type { TrustedOrgId } from './demo-org'
+import { scoreDonor, STATUS_PRIORITY, type DonorStatus } from '@/lib/donors/scoring'
 
 export const money = (n: number) => '$' + Math.round(n).toLocaleString('en-US')
 export const money2 = (n: number) =>
   '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
-export type DonorStatus = 'Lapse risk' | 'Cooling' | 'New donor' | 'Champion' | 'Active'
+// Donor math lives in lib/donors/scoring.ts — the single source of truth shared
+// by the dashboard, the donor/donation pages and the agents. Re-exported here so
+// existing importers of this module keep working.
+export type { DonorStatus }
 
 export interface AttentionDonor {
   contactId: string
@@ -160,28 +164,20 @@ export async function buildDashboardViewModel(
     : (thisMonthRaised > 0 ? 100 : 0)
 
   // ---- Donor intelligence, computed off the aggregated groupBy rows (no per-donation hydration) ----
-  const monthsBetween = (d: Date) => (now.getTime() - d.getTime()) / (1000 * 60 * 60 * 24 * 30.4)
-
+  // scoreDonor's aggregate path is used deliberately: cadence and trend need every
+  // gift date, and hydrating the whole donation table to compute them for a list
+  // that renders six rows is not worth it. Per-donor pages pass the full history.
   type DonorStat = Omit<AttentionDonor, 'name' | 'email' | 'initials'>
   const donorStats: DonorStat[] = donorStatsRaw.map((row) => {
-    const lifetime = row._sum.amount ?? 0
-    const lastGift = row._max.donatedAt ?? null
-    const count = row._count._all
-    const monthsSince = lastGift ? monthsBetween(lastGift) : 999
-    const avg = lifetime / Math.max(count, 1)
-    let status: DonorStatus = 'Active'
-    let suggestion = 'Send impact update'
-    let atStake = avg
-    if (count === 1 && monthsSince < 2) {
-      status = 'New donor'; suggestion = 'Start welcome series'; atStake = avg * 4
-    } else if (lifetime >= 10000 && monthsSince < 6) {
-      status = 'Champion'; suggestion = 'Invite to upgrade'; atStake = avg * 2
-    } else if (monthsSince >= 12) {
-      status = 'Lapse risk'; suggestion = 'Personal call'; atStake = avg * 1.5
-    } else if (monthsSince >= 6) {
-      status = 'Cooling'; suggestion = 'Re-engage with story'; atStake = avg
+    const s = scoreDonor(
+      { count: row._count._all, lifetime: row._sum.amount ?? 0, lastGift: row._max.donatedAt ?? null },
+      { now }
+    )
+    return {
+      contactId: row.contactId,
+      lifetime: s.lifetime, lastGift: s.lastGift, count: s.count,
+      monthsSince: s.monthsSince, status: s.status, suggestion: s.suggestion, atStake: s.atStake,
     }
-    return { contactId: row.contactId, lifetime, lastGift, count, monthsSince, status, suggestion, atStake }
   })
 
   const activeDonorCount = donorStats.length
@@ -189,12 +185,12 @@ export async function buildDashboardViewModel(
   const repeatDonors = donorStats.filter((d) => d.count > 1).length
   const retention = activeDonorCount > 0 ? Math.round((repeatDonors / activeDonorCount) * 100) : 0
 
-  const priority: Record<DonorStatus, number> = {
-    'Lapse risk': 0, Cooling: 1, Champion: 2, 'New donor': 3, Active: 4,
-  }
+  // Ranked purely by dollars at stake. Status is already weighted into atStake
+  // via its multipliers, so sorting by status first double-counts it — and lets
+  // a $425 lapse risk outrank a $10,000 donor who just went quiet.
   const needAttentionStats = donorStats
     .filter((d) => d.status !== 'Active')
-    .sort((a, b) => priority[a.status] - priority[b.status] || b.atStake - a.atStake)
+    .sort((a, b) => b.atStake - a.atStake || STATUS_PRIORITY[a.status] - STATUS_PRIORITY[b.status])
 
   const attentionCount = needAttentionStats.length
   const atStakeTotal = needAttentionStats.reduce((s, d) => s + d.atStake, 0)

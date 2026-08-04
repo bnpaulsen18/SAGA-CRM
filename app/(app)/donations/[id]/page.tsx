@@ -1,11 +1,12 @@
 import { requireAuth } from '@/lib/permissions'
 import { getPrismaWithRLS } from '@/lib/prisma-rls'
 import SagaCard from '@/components/ui/saga-card'
-import { analyzeDonorPattern, calculateDonorEngagementScore } from '@/lib/ai/donor-profiles'
+import { scoreDonor } from '@/lib/donors/scoring'
+import { EngagementScoreCard, DonorIntelligenceCard } from '@/components/donors/DonorSignalPanels'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { PencilSimple, TrendUp, TrendDown, ArrowRight, FileText } from '@phosphor-icons/react/dist/ssr'
+import { PencilSimple, FileText } from '@phosphor-icons/react/dist/ssr'
 
 export const runtime = 'nodejs'
 
@@ -38,36 +39,10 @@ export default async function DonationDetailPage({ params }: { params: Promise<{
   const totalGiven = donorHistory.reduce((sum, d) => sum + d.amount, 0)
   const donationCount = donorHistory.length
   const averageGift = totalGiven / donationCount
-  const daysSinceLastGift = Math.floor((Date.now() - new Date(donorHistory[0].donatedAt).getTime()) / (1000 * 60 * 60 * 24))
 
-  let giftTrend: 'increasing' | 'decreasing' | 'stable' = 'stable'
-  if (donorHistory.length >= 3) {
-    const recentAvg = donorHistory.slice(0, 3).reduce((sum, d) => sum + d.amount, 0) / 3
-    const olderAvg = donorHistory.slice(-3).reduce((sum, d) => sum + d.amount, 0) / 3
-    if (recentAvg > olderAvg * 1.1) giftTrend = 'increasing'
-    else if (recentAvg < olderAvg * 0.9) giftTrend = 'decreasing'
-  }
-
-  let donorIntelligence = null
-  let engagementScore = null
-  try {
-    if (donorHistory.length > 0) {
-      donorIntelligence = await analyzeDonorPattern(
-        donorHistory.map((d) => ({ date: d.donatedAt, amount: d.amount, fund: d.campaign?.name || 'General' }))
-      )
-      engagementScore = calculateDonorEngagementScore({ donationCount, totalGiven, daysSinceLastGift, averageGiftTrend: giftTrend })
-    }
-  } catch (error) {
-    console.error('AI analysis failed:', error)
-  }
-
-  const scoreColor = (level: string) =>
-    level === 'High' ? '#2E7D5B' : level === 'Medium' ? '#B7791F' : level === 'Low' ? '#C77A3F' : '#C0573F'
-  const scoreBar = (level: string) =>
-    level === 'High' ? 'linear-gradient(90deg,#4A8C6F,#2E7D5B)' :
-    level === 'Medium' ? 'linear-gradient(90deg,#E8A33D,#B7791F)' :
-    level === 'Low' ? 'linear-gradient(90deg,#E0875A,#C77A3F)' :
-    'linear-gradient(90deg,#D17A66,#C0573F)'
+  // One scoring module for every surface — see lib/donors/scoring.ts.
+  const signal = scoreDonor({ gifts: donorHistory.map((d) => ({ amount: d.amount, donatedAt: d.donatedAt })) })
+  const funds = Array.from(new Set(donorHistory.map((d) => d.campaign?.name || 'General Fund')))
 
   return (
     <>
@@ -216,81 +191,10 @@ export default async function DonationDetailPage({ params }: { params: Promise<{
           </SagaCard>
         </div>
 
-        {/* Sidebar - AI Insights */}
+        {/* Sidebar — donor signals, shared with the donor detail page */}
         <div className="space-y-6">
-          {engagementScore && (
-            <SagaCard title="Engagement Score">
-              <div className="text-center mb-4">
-                <div className="text-5xl font-bold mb-2 tabular-nums" style={{ color: scoreColor(engagementScore.level) }}>
-                  {engagementScore.score}
-                </div>
-                <div className="text-lg text-[var(--ink)] font-medium">{engagementScore.level} Engagement</div>
-              </div>
-              <div className="w-full bg-[var(--surface-2)] rounded-full h-3 overflow-hidden mb-4">
-                <div className="h-full transition-all" style={{ width: `${engagementScore.score}%`, background: scoreBar(engagementScore.level) }} />
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-[var(--ink-soft)] mb-2">Recommendations:</h4>
-                <ul className="space-y-2">
-                  {engagementScore.recommendations.map((rec, i) => (
-                    <li key={i} className="text-sm text-[var(--ink-soft)] flex gap-2">
-                      <span className="text-[#E0507A]">•</span>
-                      <span>{rec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </SagaCard>
-          )}
-
-          {donorIntelligence && (
-            <SagaCard title="🤖 AI Donor Intelligence">
-              <div className="space-y-4">
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase">Giving Frequency</label>
-                  <p className="text-[var(--ink)] mt-1 capitalize">{donorIntelligence.givingFrequency}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase">Gift Trend</label>
-                  <p className="text-[var(--ink)] mt-1 capitalize flex items-center gap-2">
-                    {donorIntelligence.averageGiftTrend}
-                    {donorIntelligence.averageGiftTrend === 'increasing' && <TrendUp size={18} weight="bold" className="text-[#4A8C6F]" />}
-                    {donorIntelligence.averageGiftTrend === 'decreasing' && <TrendDown size={18} weight="bold" className="text-[#C0573F]" />}
-                    {donorIntelligence.averageGiftTrend === 'stable' && <ArrowRight size={18} weight="bold" className="text-[#5B4B8A]" />}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase">Best Time to Ask</label>
-                  <p className="text-[var(--ink-soft)] text-sm mt-1">{donorIntelligence.bestTimeToAsk}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase">Suggested Ask Amount</label>
-                  <p className="text-xl font-bold text-[#4A8C6F] mt-1 tabular-nums">${donorIntelligence.suggestedAskAmount.toLocaleString()}</p>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase mb-2 block">Preferred Causes</label>
-                  <div className="flex flex-wrap gap-2">
-                    {donorIntelligence.preferredCauses.map((cause, i) => (
-                      <span key={i} className="px-2 py-1 rounded text-xs" style={{ background: '#EEE9F5', color: '#5B4B8A', border: '1px solid #DDD3EC' }}>
-                        {cause}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-[var(--ink-faint)] uppercase mb-2 block">Key Insights</label>
-                  <ul className="space-y-1">
-                    {donorIntelligence.insights.map((insight, i) => (
-                      <li key={i} className="text-sm text-[var(--ink-soft)] flex gap-2">
-                        <span className="text-[#E0507A]">•</span>
-                        <span>{insight}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </SagaCard>
-          )}
+          <EngagementScoreCard signal={signal} />
+          <DonorIntelligenceCard signal={signal} funds={funds} />
         </div>
       </div>
     </>
