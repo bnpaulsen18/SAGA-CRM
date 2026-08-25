@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
+  // Pin the workspace root so Next doesn't have to guess from multiple
+  // lockfiles (voice/ is a separate tool with its own package-lock.json).
+  turbopack: { root: __dirname },
+
   serverExternalPackages: ['@prisma/client', '@prisma/engines'],
 
   // Security headers
