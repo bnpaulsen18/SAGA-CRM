@@ -26,9 +26,9 @@ export default function LandingNav({ variant = 'light' }: LandingNavProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/SAGA_Logo_transparent.png"
+              src="/SAGA_mark.png"
               alt="SAGA CRM"
-              width={120}
+              width={40}
               height={40}
               className="h-10 w-auto"
             />

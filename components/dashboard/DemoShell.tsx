@@ -12,7 +12,7 @@ import {
 const SUNSET = 'linear-gradient(135deg,#F97A5E,#E0507A 60%,#5B4B8A)'
 const bricolage = { fontFamily: 'var(--font-bricolage), sans-serif' } as const
 
-type NavItem = { label: string; icon: typeof House; soon?: boolean; active?: boolean }
+type NavItem = { label: string; icon: typeof House; soon?: boolean; active?: boolean; preview?: boolean }
 type NavGroup = { group: string; items: NavItem[] }
 
 // Mirrors the real DashboardLayout's NAV structure so /demo reads as the
@@ -29,10 +29,10 @@ const NAV: NavGroup[] = [
     { label: 'Communications', icon: EnvelopeSimple },
   ] },
   { group: 'AI Agents', items: [
-    { label: 'Morning Brief', icon: Sparkle, soon: true },
-    { label: 'Major-Gift Signal', icon: TrendUp, soon: true },
-    { label: 'Welcome Series', icon: Handshake, soon: true },
-    { label: 'Return Series', icon: PhoneCall, soon: true },
+    { label: 'Morning Brief', icon: Sparkle, soon: true, preview: true },
+    { label: 'Major-Gift Signal', icon: TrendUp, soon: true, preview: true },
+    { label: 'Welcome Series', icon: Handshake, soon: true, preview: true },
+    { label: 'Return Series', icon: PhoneCall, soon: true, preview: true },
   ] },
   { group: 'Manage', items: [
     { label: 'Donation Pages', icon: Globe, soon: true },
@@ -82,7 +82,10 @@ export default function DemoShell({ children }: { children: React.ReactNode }) {
               <div className="space-y-0.5">
                 {g.items.map((item) => {
                   const Icon = item.icon
-                  if (item.soon) {
+                  // "Soon" with no page behind it stays inert. Agent items
+                  // (preview) stay clickable — like every other demo nav item they
+                  // route to /register — while keeping the Soon badge.
+                  if (item.soon && !item.preview) {
                     return (
                       <div key={item.label} className="flex items-center gap-3 px-2.5 py-2 rounded-lg text-[#B7AFBC] cursor-default select-none">
                         <Icon size={18} />
@@ -92,7 +95,7 @@ export default function DemoShell({ children }: { children: React.ReactNode }) {
                     )
                   }
                   return (
-                    <Link
+                    <a
                       key={item.label}
                       href={item.active ? '/demo' : '/register'}
                       className={`flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -101,7 +104,10 @@ export default function DemoShell({ children }: { children: React.ReactNode }) {
                     >
                       <Icon size={18} weight={item.active ? 'fill' : 'regular'} />
                       <span>{item.label}</span>
-                    </Link>
+                      {item.soon && (
+                        <span className="ml-auto text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--ink-faint)]">Soon</span>
+                      )}
+                    </a>
                   )
                 })}
               </div>

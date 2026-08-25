@@ -152,20 +152,30 @@ export default function DashboardLayout({
                     )
                   }
                   const active = isActive(item.href)
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={`flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
-                        active ? 'bg-[var(--surface-2)] text-[var(--ink)]' : 'text-[var(--ink-soft)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
-                      }`}
-                    >
+                  const cls = `flex items-center gap-3 px-2.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    active ? 'bg-[var(--surface-2)] text-[var(--ink)]' : 'text-[var(--ink-soft)] hover:bg-[var(--surface-2)] hover:text-[var(--ink)]'
+                  }`
+                  const inner = (
+                    <>
                       <Icon size={18} weight={active ? 'fill' : 'regular'} />
                       <span>{item.label}</span>
                       {item.soon && (
                         <span className="ml-auto text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded bg-[var(--surface-2)] text-[var(--ink-faint)]">Soon</span>
                       )}
-                    </Link>
+                    </>
+                  )
+                  // The agent "preview" routes navigate via a native <a> instead of
+                  // next/link. Their client-side Link click intermittently no-ops on
+                  // the first interaction after a cold dashboard load (works only after
+                  // navigating elsewhere first); a plain anchor always navigates on
+                  // click. Full reload on these rarely-visited "Soon" pages is fine.
+                  if (item.preview) {
+                    return (
+                      <a key={item.href} href={item.href} className={cls}>{inner}</a>
+                    )
+                  }
+                  return (
+                    <Link key={item.href} href={item.href} className={cls}>{inner}</Link>
                   )
                 })}
               </div>

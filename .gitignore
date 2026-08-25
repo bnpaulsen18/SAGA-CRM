@@ -66,3 +66,6 @@ lighthouse-report.*
 # stray local HTML mockups / asset bundles at the repo root (real assets live in public/)
 /*.html
 /*.zip
+
+# Saga.Syncd partnership scratch (deck relocated to cofounder/)
+/Saga.Syncd

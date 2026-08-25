@@ -75,7 +75,22 @@
       "Bash(cp build_deck_v2.js build_deck_v2.js.bak)",
       "Bash(python patch_v2_return_series.py)",
       "Bash(node build_deck_v2.js)",
-      "PowerShell(Get-Process POWERPNT -ErrorAction SilentlyContinue | Select-Object Id, MainWindowTitle, StartTime, @{n='Visible';e={$_.MainWindowHandle -ne 0}} | Format-List)"
+      "PowerShell(Get-Process POWERPNT -ErrorAction SilentlyContinue | Select-Object Id, MainWindowTitle, StartTime, @{n='Visible';e={$_.MainWindowHandle -ne 0}} | Format-List)",
+      "WebFetch(domain:microsoft.github.io)",
+      "PowerShell(Test-Path \"C:\\\\Users\\\\BeauP\\\\OneDrive\\\\Desktop\\\\TrainElite-deploy\\\\index.html\"; [Environment]::GetFolderPath\\('Desktop'\\); Test-Path \"C:\\\\Users\\\\BeauP\\\\Desktop\")",
+      "PowerShell(Compress-Archive -Path \"C:\\\\Users\\\\BeauP\\\\OneDrive\\\\Desktop\\\\TrainElite-deploy\\\\index.html\" -DestinationPath \"C:\\\\Users\\\\BeauP\\\\OneDrive\\\\Desktop\\\\TrainElite-site.zip\" -Force)",
+      "Bash(node build_preview_slide.js)",
+      "Bash(node build_week_deck.js)",
+      "Bash(node build_week_summary_deck.js)",
+      "mcp__claude-in-chrome__select_browser",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__read_page",
+      "mcp__claude-in-chrome__read_console_messages",
+      "mcp__claude-in-chrome__computer",
+      "mcp__claude-in-chrome__javascript_tool",
+      "Bash(npx tsc *)",
+      "Bash(npx vercel *)"
     ],
     "deny": [],
     "ask": []

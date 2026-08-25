@@ -75,10 +75,10 @@ export default async function CreateOrganizationPage() {
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-4">
               <Image
-                src="/SAGA_Logo_final.png"
+                src="/SAGA_mark.png"
                 alt="SAGA CRM"
-                width={180}
-                height={50}
+                width={48}
+                height={48}
                 className="h-12 w-auto"
               />
               <div>
