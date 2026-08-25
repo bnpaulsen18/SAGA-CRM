@@ -7,6 +7,11 @@
 **Target Launch:** 8-10 weeks from start
 **Author:** SAGA Product Team
 
+> **📌 Document status — pricing updated 2026-08-06.**
+> Pricing throughout this document has been corrected to SAGA's current model: **$100/month + a 2% platform fee on donations processed** (one plan, no tiers). **[README.md](../README.md) is the single source of truth for pricing** — if the two ever disagree, README wins.
+>
+> The rest of this PRD is a **December 2025 planning artifact** and has not been rewritten. Its timelines, target launch window, revenue targets, and visual direction reflect what was planned then, not what shipped. For current build status see **[README.md](../README.md)**; for how SAGA is actually built see **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+
 ---
 
 ## 📋 TABLE OF CONTENTS
@@ -89,9 +94,9 @@ SAGA CRM is an AI-powered customer relationship management platform designed spe
    - Mobile-responsive
    - Fast, delightful interactions
 
-4. **Affordable Pricing**
-   - $49/month (vs Bloomerang $99/month, DonorPerfect $150/month)
-   - No hidden fees
+4. **Transparent Pricing**
+   - $100/month + a 2% platform fee on donations processed
+   - One plan — no tiers, no per-seat pricing, and the 2% is disclosed up front
    - Unlimited contacts
    - Unlimited users
 
@@ -837,10 +842,13 @@ Action Item: Re-engage Lapsed Donors
 ### 8.2 Business Metrics (Month 1-6)
 
 **Revenue Goals:**
-- Month 1: $150 MRR (3 paying customers @ $49/month)
-- Month 2: $500 MRR (10 customers)
-- Month 3: $1,000 MRR (20 customers)
-- Month 6: $2,500 MRR (50 customers)
+- Month 1: $300 MRR (3 paying customers @ $100/month)
+- Month 2: $1,000 MRR (10 customers)
+- Month 3: $2,000 MRR (20 customers)
+- Month 6: $5,000 MRR (50 customers)
+
+> Subscription revenue only — the 2% platform fee on donations processed is additional and scales with each organization's volume.
+> ⚠️ These are the original December 2025 **targets**, rebased to current pricing. They are not achieved figures and must never be presented as traction.
 
 **Customer Acquisition:**
 - Cost per acquisition (CPA): <$100
@@ -1113,9 +1121,11 @@ Action Item: Re-engage Lapsed Donors
 ### A. Pricing Strategy
 
 **Free Trial:** 14 days, no credit card required
-**Pricing Tier:** Single tier (for now)
+**Pricing Tier:** Single plan — no tiers
 
-**Growth Plan: $49/month**
+**SAGA: $100/month + a 2% platform fee**
+- $100/month subscription
+- 2% platform fee on donations processed through SAGA (a Stripe Connect application fee — Stripe's own processing fees are separate)
 - Unlimited contacts
 - Unlimited donations
 - Unlimited users
@@ -1127,17 +1137,19 @@ Action Item: Re-engage Lapsed Donors
 - Email support
 - All future features included
 
-**Why $49?**
-- Affordable for small nonprofits (<$500k budget)
-- Undercuts competitors (Bloomerang $99/mo, DonorPerfect $150/mo)
-- Provides >10x ROI (saves 8+ hours/week @ $20/hr = $640/month value)
-- Allows room for future price increases
+**Why $100 + 2%?**
+- Priced at parity with mainstream nonprofit CRMs rather than as the budget option — SAGA competes on the AI agents, not on being the cheapest
+- The 2% aligns SAGA's revenue with the customer's outcome: SAGA earns more only when the organization raises more
+- A flat subscription keeps the base cost predictable — no per-seat or per-contact metering
+- Donations settle directly into the organization's own Stripe account; SAGA never holds the funds
+
+> **This price point is negotiable.** $100 + 2% is positioned *relative to competing platforms*, and is expected to move as that landscape shifts or as specific partnerships warrant. What is fixed is the **shape** of the model — one plan, a flat subscription plus a percentage of donations processed. Any change to the numbers lands in **[README.md](../README.md)** first; treat that file as canonical over this appendix.
 
 ### B. Competitor Analysis
 
 | Feature | SAGA CRM | Bloomerang | DonorPerfect | Kindful |
 |---------|----------|------------|--------------|---------|
-| **Price** | $49/mo | $99/mo | $150/mo | $100/mo |
+| **Price** | $100/mo + 2% | $99/mo | $150/mo | $100/mo |
 | **AI Thank-Yous** | ✅ | ❌ | ❌ | ❌ |
 | **AI Insights** | ✅ | Limited | ❌ | ❌ |
 | **Modern UI** | ✅ | ⚠️ | ❌ | ⚠️ |
@@ -1148,12 +1160,16 @@ Action Item: Re-engage Lapsed Donors
 | **Mobile App** | ❌ (Post-MVP) | ✅ | ✅ | ⚠️ |
 | **Integrations** | Limited | Many | Many | Many |
 
+> Competitor pricing above is **December 2025 desk research** and has not been re-verified since. Verify current list prices before using this table in any external or investor-facing material.
+
 **SAGA's Competitive Advantages:**
 1. AI-first (unique positioning)
 2. Modern, beautiful UI
 3. Fastest setup (<15 min vs. 1-4 hours)
-4. Most affordable ($49 vs. $99-150)
+4. Priced at market parity, with the 2% fee tying SAGA's revenue to the organization's fundraising results
 5. Built for 2025+ (not legacy software)
+
+> **Note on positioning:** SAGA is *not* the cheapest option at $100/mo + 2% — it sits at roughly the same list price as Kindful and slightly above Bloomerang. The differentiation is the four AI agents and time-to-value, not price. Earlier drafts of this PRD claimed "most affordable" against a $49 price point; that claim was retired along with that price.
 
 ### C. Risk Mitigation
 

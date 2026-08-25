@@ -4,6 +4,11 @@
 **Timeline:** 24-32 weeks for complete vision
 **Current Completion:** 40% of MVP, 15% of full vision
 
+> **📌 Document status — pricing updated 2026-08-06.**
+> The Pricing Strategy section below has been corrected to SAGA's current model: **$100/month + a 2% platform fee on donations processed** (one plan, no tiers). **[README.md](../README.md) is the single source of truth for pricing** — if the two ever disagree, README wins.
+>
+> **The rest of this document is a planning artifact, not a commitment.** The status line above ("40% of MVP") is stale — the non-AI CRM has since shipped and is live; see **[README.md](../README.md)** for actual build status. Several phases below describe integrations that were **never started and are not current product scope** — notably Printful merchandise fulfilment, n8n social-media automation, and Twilio SMS. Treat everything here as historical planning unless it is confirmed in README.md or **[ARCHITECTURE.md](ARCHITECTURE.md)**.
+
 ---
 
 ## 🎯 Executive Summary
@@ -785,7 +790,7 @@ This roadmap implements **Option A: Phased Development** with all features from 
 - Beta testing with select customers
 - Collect feedback and iterate
 - Marketing materials for new feature
-- Pricing strategy for social media tier
+- Pricing impact assessment for social media features (SAGA ships a single plan — there is no separate tier to price)
 - Customer support training
 
 ---
@@ -967,36 +972,21 @@ model N8nIntegration {
 
 ---
 
-## 💰 Pricing Strategy (Recommendation)
+## 💰 Pricing Strategy
 
-### Tiered Pricing Based on Features:
+### Current model: one plan, no tiers
 
-**Starter ($49/mo)**
-- Up to 1,000 contacts
-- Unlimited donations
-- Email receipts
-- Basic reports
-- 1 user
+**SAGA — $100/month + a 2% platform fee on donations processed**
+- Unlimited contacts, donations, users, and campaigns
+- Every shipped feature included — no feature gating between customers
+- The 2% is a Stripe Connect application fee on donations processed through SAGA (Stripe's own processing fees are separate)
+- Donations settle directly into the organization's own Stripe account
 
-**Professional ($149/mo)** - Most Popular
-- Up to 10,000 contacts
-- Everything in Starter
-- Campaigns
-- Donation pages
-- Automation workflows
-- Communication hub
-- 5 users
-- Priority support
+Canonical source: **[README.md](../README.md)**.
 
-**Enterprise ($399/mo)**
-- Unlimited contacts
-- Everything in Professional
-- Donor gifts (Printful)
-- All integrations (Stripe, QuickBooks, Mailchimp, Meta)
-- AI social media + n8n
-- Advanced analytics
-- Unlimited users
-- Dedicated support
+> **The price point is negotiable; the shape is not.** $100 + 2% is positioned relative to competing platforms and is expected to move as that landscape shifts or as specific partnerships warrant. What is settled is that SAGA charges **one flat subscription plus a percentage of donations processed** — not per-seat, per-contact, or feature-gated tiers.
+
+> **Superseded — feature-gated tiers.** An earlier draft of this roadmap proposed three tiers (Starter $49 / Professional $149 / Enterprise $399) that gated features by plan. **That model was not adopted.** SAGA ships a single plan specifically so that the smallest nonprofits aren't priced out of the four AI agents, which are the product's whole point. Recorded here as planning history — these numbers are not SAGA's pricing.
 
 ---
 

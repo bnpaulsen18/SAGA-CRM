@@ -98,10 +98,15 @@ enum StripeConnectStatus {
   RESTRICTED         // Stripe flagged account (needs review)
 }
 
+// NOTE: SAGA sells ONE plan — $100/month + a 2% platform fee on donations
+// processed. README.md is canonical for pricing. The values below are internal
+// access states, NOT customer-facing pricing tiers; the names are retained only
+// because they are persisted in the database and referenced in app code. The
+// $99/$199 tier prices previously noted here were never SAGA's pricing.
 enum SubscriptionTier {
-  FREE               // Up to 500 contacts, manual donations only
-  PRO                // $99/mo + 2% donations, unlimited features
-  ENTERPRISE         // $199/mo + 2% donations, advanced features
+  FREE               // Not on a paid plan: manual donations only, no Stripe Connect
+  PRO                // On the paid plan ($100/mo + 2%) — full access
+  ENTERPRISE         // Legacy value; same access as PRO
 }
 
 enum SubscriptionStatus {
