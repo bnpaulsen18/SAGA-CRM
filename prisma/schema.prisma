@@ -62,6 +62,8 @@ model Organization {
   emails       Email[]
   interactions Interaction[]
   tasks        Task[]
+  agentRuns    AgentRun[]
+  agentActions AgentAction[]
 
   // Hierarchical relationships
   parentOrganization Organization?  @relation("OrgHierarchy", fields: [parentOrganizationId], references: [id])
@@ -198,11 +200,17 @@ model Contact {
   tags  String[]
   notes String?
 
+  // Agent enrollment / suppression stamps (see docs/AGENTS-BUILD-PLAN.md)
+  welcomeEnrolledAt    DateTime?
+  returnEnrolledAt     DateTime?
+  agentSuppressedUntil DateTime?
+
   // Relationships
   organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   donations        Donation[]
   interactions     Interaction[]
   campaignContacts CampaignContact[]
+  agentActions     AgentAction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -653,6 +661,85 @@ model AuditLog {
   @@index([createdAt])
   @@index([action])
   @@map("audit_logs")
+}
+
+// ========================================
+// DONOR AGENTS (Morning Brief, Major-Gift Signal, Welcome/Return Series)
+// See docs/AGENTS-BUILD-PLAN.md. Selection logic lives in lib/donors/.
+// ========================================
+
+model AgentRun {
+  id             String         @id @default(cuid())
+  organizationId String
+  agentKey       String // morning-brief | major-gift-signal | welcome-series | return-series
+  mode           AgentRunMode   @default(DRY_RUN)
+  status         AgentRunStatus @default(RUNNING)
+  selectedCount  Int            @default(0)
+  actionCount    Int            @default(0)
+  error          String?
+  startedAt      DateTime       @default(now())
+  finishedAt     DateTime?
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actions      AgentAction[]
+
+  @@index([organizationId])
+  @@index([agentKey])
+  @@index([startedAt])
+  @@map("agent_runs")
+}
+
+model AgentAction {
+  id             String @id @default(cuid())
+  organizationId String
+  runId          String?
+  agentKey       String
+  contactId      String
+
+  kind         AgentActionKind
+  draftSubject String?
+  draftBody    String?
+  status       AgentActionStatus @default(PENDING)
+
+  decidedById String? // user who approved / edited / skipped
+  decidedAt   DateTime?
+  sentAt      DateTime?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  run          AgentRun?    @relation(fields: [runId], references: [id], onDelete: SetNull)
+  contact      Contact      @relation(fields: [contactId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([contactId])
+  @@index([status])
+  @@map("agent_actions")
+}
+
+enum AgentRunMode {
+  DRY_RUN
+  LIVE
+}
+
+enum AgentRunStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+enum AgentActionKind {
+  OUTREACH_DRAFT // donor-facing message (Morning Brief / Welcome / Return)
+  INTERNAL_BRIEF // internal task, never sent to a donor (Major-Gift Signal)
+}
+
+enum AgentActionStatus {
+  PENDING
+  APPROVED
+  EDITED
+  SKIPPED
+  SENT
 }
 
 // ========================================

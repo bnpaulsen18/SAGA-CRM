@@ -14,6 +14,15 @@ export const ai = initAnthropic();
 export const isAnthropicAvailable = !!ai;
 
 /**
+ * Model used by the donor agents. Configurable via AGENT_MODEL so you can trade
+ * quality vs cost without a code change:
+ *   - claude-opus-5    (default) — highest quality drafts
+ *   - claude-sonnet-5             — strong, cheaper
+ *   - claude-haiku-4-5            — cheapest, good for high-volume drafting
+ */
+export const AGENT_MODEL = process.env.AGENT_MODEL || 'claude-opus-5';
+
+/**
  * Generate text using Claude AI with a given prompt and optional system message
  * @param prompt - The user prompt to send to Claude
  * @param system - Optional system message to set context and behavior
@@ -31,7 +40,7 @@ export async function generateText(
 
   try {
     const response = await ai.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: AGENT_MODEL,
       max_tokens: maxTokens,
       system: system || 'You are a helpful assistant for nonprofit organizations.',
       messages: [{ role: 'user', content: prompt }],
@@ -72,5 +81,33 @@ export async function generateJSON<T = any>(
     console.error('JSON parsing error:', error);
     console.error('Raw response:', text);
     throw new Error('Failed to parse JSON response from AI');
+  }
+}
+
+/**
+ * Stream a completion token-by-token, yielding text deltas as they arrive.
+ * This powers the live "watch it run" agent test pane: an SSE route forwards
+ * each yielded chunk to the browser so a draft types itself in in real time.
+ */
+export async function* streamCompletion(
+  prompt: string,
+  system?: string,
+  maxTokens: number = 1024
+): AsyncGenerator<string> {
+  if (!ai) {
+    throw new Error('AI service not configured — set ANTHROPIC_API_KEY');
+  }
+
+  const stream = ai.messages.stream({
+    model: AGENT_MODEL,
+    max_tokens: maxTokens,
+    system: system || 'You are a helpful assistant for nonprofit organizations.',
+    messages: [{ role: 'user', content: prompt }],
+  });
+
+  for await (const event of stream) {
+    if (event.type === 'content_block_delta' && event.delta.type === 'text_delta') {
+      yield event.delta.text;
+    }
   }
 }
