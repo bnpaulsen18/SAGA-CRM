@@ -9,6 +9,8 @@
 🔗 **Live:** [www.sagacrm.io](https://www.sagacrm.io)
 
 > **New here (human or AI)?** Start with **[CLAUDE.md](CLAUDE.md)** for orientation, **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** for how it's built, **[docs/SagaAgents.md](docs/SagaAgents.md)** for the four AI agents, and **[cofounder/](cofounder/)** for the business/fundraising context.
+>
+> 🗺️ **Visual map of where the code lives** (front end → back end → security, with clickable file links): open **[docs/SAGA-Codebase-Atlas.html](docs/SAGA-Codebase-Atlas.html)** in a browser.
 
 ---
 

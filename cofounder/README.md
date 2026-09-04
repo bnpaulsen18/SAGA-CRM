@@ -14,6 +14,7 @@ This folder is the shared memory for your SAGA cofounder. In Claude Code, invoke
 - **investors.md** — target investor profile + live pipeline.
 - **pitch.md** — the narrative spine + answers to the tough questions.
 - **tasks.md** — this week's focus + open commitments.
+- **SAGA-Business.md** — the operating plan: getting SAGA running, building the AI agents, landing first customers, and the secure data-migration process.
 
 ## The one rule that matters most
 The SAGA product demos use **illustrative data** for a fictional customer ("Hope Foundation" — $11,840 MRR, 318 sustainers, ~41% retention, and so on). **Those are not SAGA's company metrics.** Never let them reach a deck, an email, or an investor. Real traction goes in `company.md`, clearly marked as real. Everything tagged `<!-- FILL IN -->` is unknown until you fill it.
