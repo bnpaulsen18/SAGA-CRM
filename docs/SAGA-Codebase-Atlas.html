@@ -1,0 +1,511 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAGA Codebase Atlas</title>
+<style>
+  :root {
+    --bg: #F7F4F1;
+    --surface: #FFFFFF;
+    --surface-2: #F1ECE8;
+    --ink: #241E28;
+    --ink-soft: #5A5060;
+    --ink-faint: #8B8290;
+    --hair: #E6DFDA;
+    --hair-strong: #D8CFC8;
+    --mono-bg: #F3EEEA;
+    --mono-ink: #3A3040;
+
+    --coral: #F97A5E;
+    --coral-ink: #B44328;
+    --coral-wash: #FDEEE9;
+    --rose: #E0507A;
+    --rose-ink: #B22B54;
+    --rose-wash: #FBE9EF;
+    --violet: #5B4B8A;
+    --violet-ink: #463A6E;
+    --violet-wash: #ECE8F4;
+
+    --link: #B22B54;
+    --link-hover-bg: #FBE9EF;
+
+    --shadow: 0 1px 2px rgba(36,30,40,.04), 0 8px 24px -12px rgba(36,30,40,.14);
+    --radius: 14px;
+    --maxw: 1180px;
+    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", "JetBrains Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #16131A;
+      --surface: #1F1B26;
+      --surface-2: #29232F;
+      --ink: #F1ECF2;
+      --ink-soft: #B7ADBE;
+      --ink-faint: #857B8E;
+      --hair: #322B3A;
+      --hair-strong: #3E3648;
+      --mono-bg: #241F2C;
+      --mono-ink: #D9CFE2;
+      --coral: #FF8E74; --coral-ink: #FFB4A0; --coral-wash: #2E2029;
+      --rose: #F06D95;  --rose-ink: #FF9DBB;  --rose-wash: #301F2A;
+      --violet: #A99BDA; --violet-ink: #C7BCEC; --violet-wash: #241F33;
+      --link: #FF9DBB;
+      --link-hover-bg: #301F2A;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #16131A;
+    --surface: #1F1B26;
+    --surface-2: #29232F;
+    --ink: #F1ECF2;
+    --ink-soft: #B7ADBE;
+    --ink-faint: #857B8E;
+    --hair: #322B3A;
+    --hair-strong: #3E3648;
+    --mono-bg: #241F2C;
+    --mono-ink: #D9CFE2;
+    --coral: #FF8E74; --coral-ink: #FFB4A0; --coral-wash: #2E2029;
+    --rose: #F06D95;  --rose-ink: #FF9DBB;  --rose-wash: #301F2A;
+    --violet: #A99BDA; --violet-ink: #C7BCEC; --violet-wash: #241F33;
+    --link: #FF9DBB;
+    --link-hover-bg: #301F2A;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 40px 24px 80px; }
+
+  header.mast { margin-bottom: 24px; }
+  .sunbar {
+    height: 6px; width: 100%; border-radius: 6px;
+    background: linear-gradient(90deg, var(--coral), var(--rose) 55%, var(--violet));
+    margin-bottom: 22px;
+  }
+  .eyebrow {
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--ink-faint); font-weight: 700; margin: 0 0 6px;
+  }
+  h1 {
+    font-size: clamp(30px, 5vw, 46px); line-height: 1.02; letter-spacing: -.02em;
+    margin: 0 0 12px; font-weight: 800; text-wrap: balance;
+  }
+  .lede { max-width: 62ch; color: var(--ink-soft); font-size: 16px; margin: 0; }
+  .lede code, .tip code { font-family: var(--mono); font-size: .88em; background: var(--mono-bg); color: var(--mono-ink); padding: 1px 5px; border-radius: 5px; }
+
+  .tip {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    margin: 16px 0 26px; padding: 10px 14px;
+    background: var(--rose-wash); color: var(--rose-ink);
+    border: 1px solid color-mix(in srgb, var(--rose) 30%, transparent);
+    border-radius: 10px; font-size: 13.5px; font-weight: 600;
+  }
+  .tip .arrow { font-family: var(--mono); }
+
+  .flow {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 6px;
+    margin: 0 0 30px; padding: 16px 18px;
+    background: var(--surface); border: 1px solid var(--hair); border-radius: var(--radius);
+    box-shadow: var(--shadow); font-family: var(--mono); font-size: 13px;
+  }
+  .flow .node { padding: 5px 10px; border-radius: 8px; background: var(--surface-2); color: var(--ink); white-space: nowrap; }
+  .flow .node.fe { background: var(--coral-wash); color: var(--coral-ink); }
+  .flow .node.be { background: var(--rose-wash); color: var(--rose-ink); }
+  .flow .node.se { background: var(--violet-wash); color: var(--violet-ink); }
+  .flow .arr { color: var(--ink-faint); font-weight: 700; }
+  .flow .ext { margin-left: auto; font-family: var(--sans); font-size: 12px; color: var(--ink-faint); }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 0 0 30px; font-size: 13px; }
+  .legend .item { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); }
+  .dot { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+
+  .layer { margin-bottom: 30px; border-radius: 18px; overflow: hidden; border: 1px solid var(--hair); box-shadow: var(--shadow); }
+  .layer > .head {
+    display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap;
+    padding: 18px 22px; color: #fff;
+  }
+  .layer.fe > .head { background: linear-gradient(100deg, var(--coral), #f26a4d); }
+  .layer.be > .head { background: linear-gradient(100deg, var(--rose), #d13d6b); }
+  .layer.se > .head { background: linear-gradient(100deg, var(--violet), #4a3c76); }
+  .layer > .head .num { font-family: var(--mono); font-size: 13px; opacity: .8; font-weight: 700; }
+  .layer > .head h2 { margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+  .layer > .head .sub { color: rgba(255,255,255,.85); font-size: 14px; margin-left: auto; }
+  .layer > .head .sub code { font-family: var(--mono); background: rgba(255,255,255,.15); padding: 1px 5px; border-radius: 5px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1px; background: var(--hair); }
+  .cell { background: var(--surface); padding: 18px 20px; }
+  .cell h3 {
+    margin: 0 0 3px; font-size: 14px; font-weight: 750; letter-spacing: .01em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cell h3 .tick { width: 8px; height: 8px; border-radius: 3px; flex: none; }
+  .fe .tick { background: var(--coral); }
+  .be .tick { background: var(--rose); }
+  .se .tick { background: var(--violet); }
+  .cell .role { margin: 0 0 12px; font-size: 12.5px; color: var(--ink-faint); }
+
+  .paths { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .paths li { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .paths .grp { display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline; }
+
+  /* file links */
+  a.fl { text-decoration: none; border-radius: 6px; display: inline-block; }
+  a.fl code {
+    font-family: var(--mono); font-size: 12px; background: var(--mono-bg); color: var(--mono-ink);
+    padding: 2px 7px; border-radius: 6px; white-space: nowrap;
+    border: 1px solid transparent; transition: background .12s, border-color .12s, color .12s;
+  }
+  a.fl:hover code, a.fl:focus-visible code {
+    background: var(--link-hover-bg); color: var(--link);
+    border-color: color-mix(in srgb, var(--link) 45%, transparent);
+    text-decoration: underline; text-underline-offset: 2px; cursor: pointer;
+  }
+  a.fl:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+  .paths .note { font-size: 12px; color: var(--ink-soft); }
+  .paths .plain { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); padding: 2px 0; }
+
+  .crown { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--violet-ink); background: var(--violet-wash); padding: 2px 7px; border-radius: 999px; vertical-align: middle; }
+
+  footer { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--hair); color: var(--ink-faint); font-size: 12.5px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  footer a.fl code { font-size: 12px; }
+
+  @media (max-width: 560px) {
+    .layer > .head .sub { margin-left: 0; width: 100%; }
+    .flow .ext { margin-left: 0; width: 100%; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <div class="sunbar"></div>
+    <p class="eyebrow">SAGA · Codebase Atlas</p>
+    <h1>Where the code lives — front end to back end to security</h1>
+    <p class="lede">A map of the SAGA CRM by layer, keyed to real file paths. Colors follow the SAGA sunset: <strong style="color:var(--coral-ink)">coral = front end</strong>, <strong style="color:var(--rose-ink)">rose = back end</strong>, <strong style="color:var(--violet-ink)">violet = security</strong>.</p>
+  </header>
+
+  <div class="tip">
+    <span class="arrow">→</span>
+    <span>Click any file path to open it on GitHub in a new tab. Paths resolve on the <code>main</code> branch.</span>
+  </div>
+
+  <div class="flow" aria-label="Request flow">
+    <span class="node">Browser</span>
+    <span class="arr">→</span>
+    <span class="node se">middleware.ts</span>
+    <span class="arr">→</span>
+    <span class="node fe">app/ route</span>
+    <span class="arr">→</span>
+    <span class="node be">app/api · lib/</span>
+    <span class="arr">→</span>
+    <span class="node se">prisma-rls</span>
+    <span class="arr">→</span>
+    <span class="node be">Supabase&nbsp;Postgres</span>
+    <span class="ext">External: Stripe · Resend · Anthropic · Sentry</span>
+  </div>
+
+  <div class="legend">
+    <span class="item"><span class="dot" style="background:var(--coral)"></span>Front end — what the user sees &amp; clicks</span>
+    <span class="item"><span class="dot" style="background:var(--rose)"></span>Back end — APIs, logic, data</span>
+    <span class="item"><span class="dot" style="background:var(--violet)"></span>Security — auth, isolation, money, secrets</span>
+  </div>
+
+  <!-- ============ FRONTEND ============ -->
+  <section class="layer fe">
+    <div class="head">
+      <span class="num">01</span>
+      <h2>Front end</h2>
+      <span class="sub">Next.js App Router pages &amp; React components — <code>app/</code> + <code>components/</code></span>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <h3><span class="tick"></span>Marketing site (public)</h3>
+        <p class="role">Logged-out pages at sagacrm.io</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/page.tsx" target="_blank" rel="noopener" title="Open app/page.tsx on GitHub"><code>app/page.tsx</code></a><span class="note">landing</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/pricing" target="_blank" rel="noopener" title="Open app/pricing on GitHub"><code>app/pricing/</code></a><span class="note">$100/mo + 2% fee</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/about" target="_blank" rel="noopener"><code>about/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/contact" target="_blank" rel="noopener"><code>contact/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/security" target="_blank" rel="noopener"><code>security/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/privacy" target="_blank" rel="noopener"><code>privacy/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/terms" target="_blank" rel="noopener"><code>terms/</code></a>
+          </span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/demo" target="_blank" rel="noopener" title="Open app/demo on GitHub"><code>app/demo/</code></a><span class="note">interactive demo shell</span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Auth &amp; onboarding screens</h3>
+        <p class="role">Sign-in, sign-up, password, first-run</p>
+        <ul class="paths">
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/login" target="_blank" rel="noopener"><code>app/login/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/register" target="_blank" rel="noopener"><code>app/register/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/forgot-password" target="_blank" rel="noopener"><code>forgot-password/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/reset-password" target="_blank" rel="noopener"><code>reset-password/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/welcome" target="_blank" rel="noopener"><code>app/welcome/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/onboarding" target="_blank" rel="noopener"><code>app/onboarding/</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>The CRM (authenticated)</h3>
+        <p class="role">Route group <code style="font-family:var(--mono)">app/(app)/</code> — the product</p>
+        <ul class="paths">
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/dashboard" target="_blank" rel="noopener"><code>dashboard/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/contacts" target="_blank" rel="noopener"><code>contacts/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/donations" target="_blank" rel="noopener"><code>donations/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/campaigns" target="_blank" rel="noopener"><code>campaigns/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/reports" target="_blank" rel="noopener"><code>reports/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/emails" target="_blank" rel="noopener"><code>emails/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/settings" target="_blank" rel="noopener"><code>settings/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/morning-brief" target="_blank" rel="noopener"><code>morning-brief/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/major-gift-signal" target="_blank" rel="noopener"><code>major-gift-signal/</code></a>
+          </span><span class="note">AI agent pages</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/welcome-series" target="_blank" rel="noopener"><code>welcome-series/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/%28app%29/return-series" target="_blank" rel="noopener"><code>return-series/</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Public donation flow</h3>
+        <p class="role">Where donors actually give</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/donate/%5BorganizationId%5D" target="_blank" rel="noopener" title="Open app/donate/[organizationId] on GitHub"><code>app/donate/[organizationId]/</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/components/donation" target="_blank" rel="noopener"><code>components/donation/</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Admin console</h3>
+        <p class="role">Platform-owner views</p>
+        <ul class="paths">
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/admin/organizations" target="_blank" rel="noopener"><code>admin/organizations</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/admin/users" target="_blank" rel="noopener"><code>users</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/admin/reports" target="_blank" rel="noopener"><code>reports</code></a>
+          </span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/admin/fraud-monitor" target="_blank" rel="noopener"><code>app/admin/fraud-monitor/</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Shells, components &amp; styling</h3>
+        <p class="role">Layout chrome + the component library</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/components/DashboardLayout.tsx" target="_blank" rel="noopener"><code>components/DashboardLayout.tsx</code></a><span class="note">authed shell</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/components/dashboard/DemoShell.tsx" target="_blank" rel="noopener"><code>components/dashboard/DemoShell.tsx</code></a></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/components/ui" target="_blank" rel="noopener"><code>components/ui/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/components/landing" target="_blank" rel="noopener"><code>landing/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/components/reports" target="_blank" rel="noopener"><code>reports/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/globals.css" target="_blank" rel="noopener"><code>app/globals.css</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/design-system" target="_blank" rel="noopener"><code>lib/design-system/</code></a>
+          </span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BACKEND ============ -->
+  <section class="layer be">
+    <div class="head">
+      <span class="num">02</span>
+      <h2>Back end</h2>
+      <span class="sub">Routes, actions, logic, data — <code>app/api/</code> + <code>lib/</code> + <code>prisma/</code></span>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <h3><span class="tick"></span>API routes</h3>
+        <p class="role">HTTP handlers under <code style="font-family:var(--mono)">app/api/</code></p>
+        <ul class="paths">
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/contacts" target="_blank" rel="noopener"><code>contacts/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/donations" target="_blank" rel="noopener"><code>donations/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/campaigns" target="_blank" rel="noopener"><code>campaigns/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/reports" target="_blank" rel="noopener"><code>reports/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/emails" target="_blank" rel="noopener"><code>emails/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/newsletter" target="_blank" rel="noopener"><code>newsletter/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/team" target="_blank" rel="noopener"><code>team/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/organization" target="_blank" rel="noopener"><code>organization/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/agents" target="_blank" rel="noopener"><code>agents/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/ai" target="_blank" rel="noopener"><code>ai/</code></a>
+          </span><span class="note">AI endpoints</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/register" target="_blank" rel="noopener"><code>register/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/onboarding" target="_blank" rel="noopener"><code>onboarding/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/health" target="_blank" rel="noopener"><code>health/</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Server actions</h3>
+        <p class="role">Mutations called straight from components</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/actions/contacts.ts" target="_blank" rel="noopener"><code>app/actions/contacts.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/actions/emails.ts" target="_blank" rel="noopener"><code>app/actions/emails.ts</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Business logic</h3>
+        <p class="role">The real work, framework-free — <code style="font-family:var(--mono)">lib/</code></p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/ai" target="_blank" rel="noopener"><code>lib/ai/</code></a><span class="note">insights, profiles, receipts</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/donors/scoring.ts" target="_blank" rel="noopener"><code>lib/donors/scoring.ts</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/donors/agent-catalog.ts" target="_blank" rel="noopener"><code>agent-catalog.ts</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/dashboard" target="_blank" rel="noopener"><code>lib/dashboard/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/reports" target="_blank" rel="noopener"><code>lib/reports/</code></a>
+          </span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/email" target="_blank" rel="noopener"><code>lib/email/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/pdf" target="_blank" rel="noopener"><code>lib/pdf/</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Data layer</h3>
+        <p class="role">Prisma over Supabase Postgres</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/prisma/schema.prisma" target="_blank" rel="noopener"><code>prisma/schema.prisma</code></a><span class="note">the model</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/prisma.ts" target="_blank" rel="noopener"><code>lib/prisma.ts</code></a><span class="note">client</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/prisma-rls.ts" target="_blank" rel="noopener"><code>lib/prisma-rls.ts</code></a><span class="note">tenant-scoped</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/prisma/migrations" target="_blank" rel="noopener"><code>prisma/migrations/</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>External integrations</h3>
+        <p class="role">Third-party services SAGA talks to</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/stripe" target="_blank" rel="noopener"><code>lib/stripe/</code></a><span class="note">Connect + checkout</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/email/client.ts" target="_blank" rel="noopener"><code>lib/email/client.ts</code></a><span class="note">Resend</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/ai/client.ts" target="_blank" rel="noopener"><code>lib/ai/client.ts</code></a><span class="note">Anthropic</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/lib/analytics" target="_blank" rel="noopener"><code>lib/analytics/</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/sentry.client.config.ts" target="_blank" rel="noopener"><code>sentry.*.config.ts</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Reporting &amp; aggregation</h3>
+        <p class="role">The numbers behind dashboards/exports</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/reports/aggregations.ts" target="_blank" rel="noopener"><code>lib/reports/aggregations.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/reports/donor-analytics.ts" target="_blank" rel="noopener"><code>lib/reports/donor-analytics.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/api/reports/export/route.ts" target="_blank" rel="noopener"><code>api/reports/export/route.ts</code></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECURITY ============ -->
+  <section class="layer se">
+    <div class="head">
+      <span class="num">03</span>
+      <h2>Security</h2>
+      <span class="sub">Cross-cutting — runs under every layer above. Real donor money, so the bar is high.</span>
+    </div>
+    <div class="grid">
+      <div class="cell">
+        <h3><span class="tick"></span>Auth &amp; sessions</h3>
+        <p class="role">NextAuth v5 — who is this request</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/auth.ts" target="_blank" rel="noopener"><code>lib/auth.ts</code></a><span class="note">config</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/auth-helpers.ts" target="_blank" rel="noopener"><code>lib/auth-helpers.ts</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/auth-email.ts" target="_blank" rel="noopener"><code>auth-email.ts</code></a>
+          </span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/auth" target="_blank" rel="noopener"><code>app/api/auth/</code></a><span class="note">reset, verify</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/types/next-auth.d.ts" target="_blank" rel="noopener"><code>types/next-auth.d.ts</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Tenant isolation<span class="crown">crown jewel</span></h3>
+        <p class="role">Manual, fail-closed. RLS is deny-all; app filters by org.</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/prisma-rls.ts" target="_blank" rel="noopener"><code>lib/prisma-rls.ts</code></a><span class="note">scoped client</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/permissions.ts" target="_blank" rel="noopener"><code>lib/permissions.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/prisma/migrations/disable-rls.sql" target="_blank" rel="noopener"><code>migrations/disable-rls.sql</code></a></li>
+          <li><span class="plain">rule: organizationId ?? '__no_such_org__'</span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Payments security</h3>
+        <p class="role">Money moves — verify server-side, never trust the client</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/api/stripe/webhook/route.ts" target="_blank" rel="noopener"><code>api/stripe/webhook/route.ts</code></a><span class="note">signature + idempotency</span></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/tree/main/app/api/stripe/connect" target="_blank" rel="noopener"><code>app/api/stripe/connect/</code></a></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/stripe/connect.ts" target="_blank" rel="noopener"><code>lib/stripe/connect.ts</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/stripe/client.ts" target="_blank" rel="noopener"><code>client.ts</code></a>
+          </span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Input validation &amp; PII</h3>
+        <p class="role">Every mutation validated before it touches data</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/validation.ts" target="_blank" rel="noopener"><code>lib/validation.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/encryption.ts" target="_blank" rel="noopener"><code>lib/encryption.ts</code></a><span class="note">sensitive fields</span></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Rate limiting &amp; fraud</h3>
+        <p class="role">Abuse controls on auth &amp; donation paths</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/security/rate-limiter.ts" target="_blank" rel="noopener"><code>lib/security/rate-limiter.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/security/fraud-detector.ts" target="_blank" rel="noopener"><code>lib/security/fraud-detector.ts</code></a></li>
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/app/api/admin/fraud-monitor/route.ts" target="_blank" rel="noopener"><code>admin/fraud-monitor/route.ts</code></a></li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3><span class="tick"></span>Perimeter, secrets &amp; audit</h3>
+        <p class="role">Headers/CSP at the edge, secrets, the paper trail</p>
+        <ul class="paths">
+          <li><a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/middleware.ts" target="_blank" rel="noopener"><code>middleware.ts</code></a><span class="note">edge gate</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/security/headers.ts" target="_blank" rel="noopener"><code>lib/security/headers.ts</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/next.config.ts" target="_blank" rel="noopener"><code>next.config.ts</code></a>
+          </span></li>
+          <li><span class="plain">.env / .env.local  ·  gitignored (not on GitHub)</span></li>
+          <li><span class="grp">
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/lib/audit.ts" target="_blank" rel="noopener"><code>lib/audit.ts</code></a>
+            <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/instrumentation.ts" target="_blank" rel="noopener"><code>instrumentation.ts</code></a>
+          </span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>SAGA CRM · Next.js 16 · Prisma · Supabase · NextAuth v5 · Stripe Connect · Vercel</span>
+    <span>Deep dive:
+      <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener"><code>docs/ARCHITECTURE.md</code></a>
+      <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/docs/SagaAgents.md" target="_blank" rel="noopener"><code>docs/SagaAgents.md</code></a>
+      <a class="fl" href="https://github.com/bnpaulsen18/SAGA-CRM/blob/main/CLAUDE.md" target="_blank" rel="noopener"><code>CLAUDE.md</code></a>
+    </span>
+  </footer>
+</div>

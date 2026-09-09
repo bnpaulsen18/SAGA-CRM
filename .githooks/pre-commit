@@ -1,0 +1,47 @@
+#!/bin/sh
+# SAGA pre-commit secret scanner.
+# Blocks a commit if it would introduce a credential (Stripe/Anthropic/AWS keys,
+# private keys, JWTs) or a .env file. This protects real donor-money keys from
+# ever entering git history. See CLAUDE.md — secrets live in .env, never in git.
+#
+# If gitleaks is installed it is used (deeper coverage); otherwise a built-in
+# pattern scan runs. Emergency bypass: `git commit --no-verify` (avoid it).
+
+RED=''; YEL=''; NC=''
+if [ -t 1 ]; then RED='\033[0;31m'; YEL='\033[0;33m'; NC='\033[0m'; fi
+fail() { printf "${RED}✖ commit blocked — %s${NC}\n" "$1" 1>&2; }
+
+# 1) Never commit a real .env file (.env.example is fine).
+env_hits=$(git diff --cached --name-only --diff-filter=ACM \
+  | grep -E '(^|/)\.env($|\.)' | grep -vE '\.env\.example$' || true)
+if [ -n "$env_hits" ]; then
+  fail "an environment file is staged:"
+  printf '    %s\n' $env_hits 1>&2
+  printf "${YEL}  Add it to .gitignore instead — it holds SAGA's live secrets.${NC}\n" 1>&2
+  exit 1
+fi
+
+# 2) Prefer gitleaks when available.
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --no-banner || {
+    fail "gitleaks found a secret in the staged changes (see above)."
+    exit 1
+  }
+  exit 0
+fi
+
+# 3) Built-in fallback: scan ADDED lines for high-signal credential patterns.
+added=$(git diff --cached -U0 --diff-filter=ACM | grep -E '^\+' | grep -vE '^\+\+\+')
+[ -z "$added" ] && exit 0
+
+patterns='sk_live_[0-9A-Za-z]{16,}|sk_test_[0-9A-Za-z]{16,}|rk_live_[0-9A-Za-z]{16,}|whsec_[0-9A-Za-z]{16,}|sk-ant-[0-9A-Za-z_-]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}'
+
+matches=$(printf '%s\n' "$added" | grep -nE "$patterns" || true)
+if [ -n "$matches" ]; then
+  fail "a possible secret (API key / token / private key) is in the staged changes:"
+  printf '%s\n' "$matches" | sed 's/^/    /' 1>&2
+  printf "${YEL}  Move it to .env and reference process.env.* instead.\n  If it is a false positive: git commit --no-verify${NC}\n" 1>&2
+  exit 1
+fi
+
+exit 0

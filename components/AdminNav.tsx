@@ -35,7 +35,7 @@ export default function AdminNav({
           <div className="flex items-center gap-4">
             <Link href="/admin">
               <img
-                src="/SAGA_Logo_final.png"
+                src="/SAGA_mark.png"
                 alt="SAGA CRM"
                 style={{
                   height: '70px',

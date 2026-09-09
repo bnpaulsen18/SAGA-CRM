@@ -3,7 +3,14 @@
 > The cofounder maintains this. Commitments and follow-ups land here so nothing drops.
 
 ## This week's focus
-- <!-- FILL IN: the single thing that most moves the raise this week -->
+- **Get SAGA running for real users + stand up the AI agents + land the first design partners.** Full operating plan in [`SAGA-Business.md`](SAGA-Business.md). Single highest-leverage move: set `ANTHROPIC_API_KEY` and build **Morning Brief** end-to-end (the agent that sells the product).
+
+## Operating tasks — this week (see SAGA-Business.md)
+- [ ] Set `ANTHROPIC_API_KEY` in Vercel → build Morning Brief first, end-to-end.
+- [ ] Choose the first design-partner offer (recommend CRM-only to start now).
+- [ ] Line up 3 warm-intro nonprofits to approach this week.
+- [ ] Merge cleanup PR #2; then Stripe live keys + public donation checkout.
+- [ ] After the first real data import, capture REAL retention/usage → `company.md`.
 
 ## Open tasks (start here)
 - [ ] Replace the `<!-- FILL IN -->` company facts with reality in `company.md` — the brain is only as good as this.

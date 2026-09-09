@@ -21,7 +21,7 @@ if (!existsSync(optimizedDir)) {
 // Images to optimize with their target sizes
 const images = [
   {
-    input: 'SAGA_Logo_final.png',
+    input: 'SAGA_lockup.png',
     outputName: 'saga-logo',
     sizes: [
       { width: 400, suffix: '-400w' },

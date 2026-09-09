@@ -46,7 +46,7 @@ export const metadata = {
     description: 'Every donor. Every gift. Every impact. Stop losing donors to spreadsheets and start building relationships that last with SAGA CRM.',
     images: [
       {
-        url: '/SAGA_Logo_final.png',
+        url: '/SAGA_lockup.png',
         width: 1200,
         height: 630,
         alt: 'SAGA CRM - Nonprofit Fundraising Software',
@@ -57,7 +57,7 @@ export const metadata = {
     card: 'summary_large_image',
     title: 'SAGA CRM - Transform Your Nonprofit Fundraising',
     description: 'Every donor. Every gift. Every impact. Stop losing donors to spreadsheets and start building relationships that last.',
-    images: ['/SAGA_Logo_final.png'],
+    images: ['/SAGA_lockup.png'],
     creator: '@sagacrm',
   },
   alternates: {
@@ -83,7 +83,7 @@ export default function HomePage() {
         url: 'https://sagacrm.io',
         logo: {
           '@type': 'ImageObject',
-          url: 'https://sagacrm.io/SAGA_Logo_final.png',
+          url: 'https://sagacrm.io/SAGA_lockup.png',
           width: 1200,
           height: 630,
         },

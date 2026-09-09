@@ -51,7 +51,7 @@ export function OrganizationStructuredData() {
   const schema: OrganizationSchema = {
     name: 'SAGA CRM',
     url: process.env.NEXTAUTH_URL || 'https://saga-crm.com',
-    logo: `${process.env.NEXTAUTH_URL || 'https://saga-crm.com'}/SAGA_Logo_final.png`,
+    logo: `${process.env.NEXTAUTH_URL || 'https://saga-crm.com'}/SAGA_mark.png`,
     description:
       'Modern CRM built for nonprofits. Manage donors, track donations, run campaigns, and grow your mission.',
   };

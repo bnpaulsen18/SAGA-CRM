@@ -76,9 +76,9 @@ const initPrisma = (): PrismaClient | null => {
 const _prisma = globalForPrisma.prisma ?? initPrisma();
 
 // Export a proxy that throws a helpful error if used without proper config
-export const prisma = new Proxy(_prisma as PrismaClient, {
+export const prisma = new Proxy((_prisma ?? {}) as PrismaClient, {
   get(target, prop) {
-    if (target === null) {
+    if (!_prisma) {
       throw new Error(
         '[Prisma] DATABASE_URL or DIRECT_URL must be configured. ' +
         'The application cannot function without a database connection. ' +
